@@ -46,7 +46,8 @@
 .button {
 	border-radius: 5px;
   	background-color: #0B6EFD;
-  	padding: 20px;
-	width: 50%;
+  	padding: 10px;
+	width: 80%;
 	margin:auto;
+	color: white;
 }
