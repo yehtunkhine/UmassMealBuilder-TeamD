@@ -20,18 +20,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Oswald';
 }
 
-.nav {
-  background-color: maroon;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  gap: 2rem;
-  padding: 0 1rem;
+.bg-maroon {
+    background-color: maroon;
+    color: white;
 }
 
 .site-title {
-  font-size: 2rem;
+  font-size: 2rem !important;
 }
 .nav ul{
   padding: 0;
