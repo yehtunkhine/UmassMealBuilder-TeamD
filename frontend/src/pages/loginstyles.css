@@ -1,0 +1,53 @@
+.loginBox{
+	border-radius: 5px;
+  	background-color: #BE3C20;
+  	padding: 20px;
+	width: 50%;
+	margin:auto;
+}
+
+.outerBox{
+	border-radius: 5px;
+  	background-color: #EFEFEF;
+  	padding: 20px;
+	width: 50%;
+	margin:auto;
+}
+
+.labelText{
+	text-align: left;
+}
+
+.input{
+	width: 100%;
+	padding: 12px 20px;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+	background-color: #BE3C20;
+}
+
+.inputText{
+	width: 100%;
+	padding: 12px 20px;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.button:hover {
+	background-color: #151976;
+}
+
+.button {
+	border-radius: 5px;
+  	background-color: #0B6EFD;
+  	padding: 10px;
+	width: 80%;
+	margin:auto;
+	color: white;
+}
