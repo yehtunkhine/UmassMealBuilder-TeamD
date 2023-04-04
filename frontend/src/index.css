@@ -50,3 +50,78 @@ code {
 .nav li:hover{
   color: black;
 }
+
+/* Dining Halls */
+.dining-card {
+    position: relative;
+    cursor: pointer;
+    height: 90%;
+    width: 90%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.dining-card img {
+    height: 100%;
+    width: 100%;
+}
+
+/* .dining-card .card-description { */
+/*     display: none; */
+/* } */
+
+.dining-card * {
+    transition: all 0.3s ease-in-out;
+}
+
+.dining-card:before {
+    content: "";
+    height: 50%;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background: linear-gradient(rgba(255,255,255, 0.1), rgba(136, 28, 28, 0.8));
+    z-index: 10;
+}
+
+.dining-card:after {
+    content: "";
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 5;
+    transition: all 0.3s ease-in-out;
+}
+
+
+.dining-card .card-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    z-index: 20;
+}
+
+/* .dining-card:hover .card-description { */
+/*     display: block; */
+/* } */
+
+.dining-card:hover img{
+    transform: scale(1.1);
+}
+
+.dining-card:hover:after{
+    background-color: rgba(0,0,0,0.1)
+}
+
