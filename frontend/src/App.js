@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import NavBar from './NavBar';
 import Analysis from "./pages/Analysis"
@@ -10,7 +9,6 @@ import Home from "./pages/Home"
 import {Route, Routes} from "react-router-dom"
 
 function App(){
-  let component
   return (
     <>
     <NavBar/>
