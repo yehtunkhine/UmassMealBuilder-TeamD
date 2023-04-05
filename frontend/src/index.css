@@ -66,9 +66,10 @@ code {
     width: 100%;
 }
 
-/* .dining-card .card-description { */
-/*     display: none; */
-/* } */
+.dining-card .card-description {
+    height: 0;
+    overflow: hidden;
+}
 
 .dining-card * {
     transition: all 0.3s ease-in-out;
@@ -80,7 +81,7 @@ code {
     width: 100%;
     position: absolute;
     bottom: 0;
-    background: linear-gradient(rgba(255,255,255, 0.1), rgba(136, 28, 28, 0.8));
+    background: linear-gradient(rgba(255,255,255, 0), rgba(136, 28, 28, 0.8));
     z-index: 10;
 }
 
@@ -113,9 +114,9 @@ code {
     z-index: 20;
 }
 
-/* .dining-card:hover .card-description { */
-/*     display: block; */
-/* } */
+.dining-card:hover .card-description {
+    height: 50px;
+}
 
 .dining-card:hover img{
     transform: scale(1.1);
