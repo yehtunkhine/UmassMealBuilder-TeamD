@@ -28,6 +28,11 @@ code {
 .site-title {
   font-size: 2rem !important;
 }
+
+.nav #navbarNav{
+    justify-content: flex-end;
+}
+
 .nav ul{
   padding: 0;
   margin:0;
