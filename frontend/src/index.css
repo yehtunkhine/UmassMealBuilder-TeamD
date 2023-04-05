@@ -73,6 +73,7 @@ code {
 
 .dining-card .card-description {
     height: 0;
+    opacity: 0;
     overflow: hidden;
 }
 
@@ -121,6 +122,7 @@ code {
 
 .dining-card:hover .card-description {
     height: 50px;
+    opacity: 1;
 }
 
 .dining-card:hover img{
