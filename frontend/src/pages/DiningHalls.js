@@ -1,4 +1,4 @@
-import { Link, useMatch, useResolvedPath} from "react-router-dom"
+import { Link} from "react-router-dom"
 
 const DINING_HALLS = [
     {
@@ -40,26 +40,12 @@ export default function DiningHalls(){
 const DiningCard = ({imgUrl, name,link}) => {
     return (
         <div className="dining-card">
-            <img src={imgUrl} className=""/>
-            <div className="card-content">
-                <h4>{name}</h4>
-                <CustomLink to = {link}>{name}</CustomLink>
-            </div>
+            <Link to={link}>
+                <img src={imgUrl} alt=""/>
+                <div className="card-content">
+                    <h4>{name}</h4>
+                </div>
+            </Link>
         </div>
     )
 }
-
-function CustomLink({ to,children, ...props}){
-    const resolvedPath = useResolvedPath(to)
-    const isActive = useMatch({path: resolvedPath.pathname, end:true})
-       return(
-           <li className = {isActive ? "active":""}>
-               <Link to = {to}{...props}>
-                    {children}
-               </Link>
-           </li>
-       )
-   }
-   
-  
-  
