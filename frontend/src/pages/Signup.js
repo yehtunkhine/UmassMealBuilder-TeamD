@@ -1,34 +1,23 @@
 import React from "react";
 import { useRef, useState } from 'react';
 import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
 import './loginstyles.css';
+import firebaseInit from "./firebaseInit";
 
-//Initialize firebase
-const firebaseApp = initializeApp({
-    apiKey: "AIzaSyBIQMdCZU3XRcV0GhvD2N90bTgTZr9sxrk",
-    authDomain: "umassmealbuilder-d9713.firebaseapp.com",
-    projectId: "umassmealbuilder-d9713",
-    storageBucket: "umassmealbuilder-d9713.appspot.com",
-    messagingSenderId: "244857604224",
-    appId: "1:244857604224:web:8ba3536d6ad5bb5dbf3e65",
-    measurementId: "G-K58XKBTEEZ"
-});
-  
+const app = firebaseInit();
 
-const auth = getAuth(firebaseApp);
-connectAuthEmulator(auth, "https://localhost:9099");
 
 const Signup = () => {
     const txtEmail = useRef(null);
     const txtPassword = useRef(null);
     const txtConfirmPassword = useRef(null);
+    const auth = getAuth(app);
 
     const createAccount = async () => {
-        const email = txtEmail.value;
-        const password = txtPassword.value;
-        const confirmPassword = txtConfirmPassword.value;
-        if(password.localCompare(confirmPassword) != 0){
+        const email = txtEmail.current.value;
+        const password = txtPassword.current.value;
+        const confirmPassword = txtConfirmPassword.current.value;
+        if(password.localeCompare(confirmPassword) != 0){
             throw new Error("Passwords don't match");
         }
       
@@ -73,6 +62,7 @@ const Signup = () => {
         </div>  
         </html>
     );
+    return (<div></div>);
 }
 
 export default Signup;
