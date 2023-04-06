@@ -66,16 +66,6 @@ code {
     overflow: hidden;
 }
 
-.dining-card img {
-    height: 100%;
-    width: 100%;
-}
-
-.dining-card .card-description {
-    height: 0;
-    opacity: 0;
-    overflow: hidden;
-}
 
 .dining-card * {
     transition: all 0.3s ease-in-out;
@@ -103,6 +93,38 @@ code {
     transition: all 0.3s ease-in-out;
 }
 
+.dining-card img {
+    height: 100%;
+    width: 100%;
+}
+
+.dining-card .card-description {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.dining-card .card-favorite {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 50px;
+    width: 50px;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+.isFavorite {
+    opacity: 1 !important;
+}
+
+.dining-card .card-favorite i {
+    font-size: 1.5rem;
+    color: white;
+}
 
 .dining-card .card-content {
     position: absolute;
@@ -131,4 +153,8 @@ code {
 
 .dining-card:hover:after{
     background-color: rgba(0,0,0,0.1)
+}
+
+.dining-card:hover .card-favorite {
+    opacity: 1;
 }
