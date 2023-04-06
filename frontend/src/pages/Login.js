@@ -2,11 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { GoogleButton } from 'react-google-button';
 import { useNavigate } from 'react-router-dom';
 
+
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
-
+import { 
+  getAuth, 
+  connectAuthEmulator, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  createUserWithEmailAndPassword, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  onAuthStateChanged } from 'firebase/auth';
+import './loginstyles.css';
 
 // Web app's Firebase configuration
 const firebaseConfig = {
@@ -90,7 +98,6 @@ export default function Login() {
       <h1 className='text-center text-3xl font-bold py-8'>Welcome {user.displayName}</h1>
       <button onClick={logOut}>Sign out</button>
     </div>
-
   );
 
   };
