@@ -52,6 +52,8 @@ border-bottom: 1px solid black;
 border-top: 1px solid black;
 border-left: 1px solid;
 border-right: 1px solid;
+max-height: 300px;
+overflow-y: scroll;
 
 
 
@@ -67,17 +69,20 @@ align-items: center;
     border-radius: 10px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
     display: flex;
-    justify-content: space-around;
-    height: 50px;
-    width: 300px;
+    max-width: 50px;
+    max-height: 50px;
+    justify-content: center;
     scale: 20%;
 
 `;
 
 const FContent= styled.div`
 display: grid;
-  grid-gap: 1rem;
-  grid-template-rows: repeat(auto-fit, 100px);
+  grid-gap: 2rem;
+  padding: 1.5rem 2rem;
+  
+  grid-template-columns: repeat(auto-fit, 0px);
+  justify-content: space-evenly;
 `;
 
 
@@ -86,7 +91,7 @@ const FoodCard = () => {
         <FContent>
     { FoodData.map((_, i) => (
         <FCard key={i}>
-            <img src = {_.image}></img>
+            <img src = {_.image} style={{ width: 400, height: 400 }}></img>
         </FCard>
       ))
     }
