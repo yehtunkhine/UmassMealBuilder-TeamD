@@ -48,3 +48,43 @@ export const FoodData = [
         image: "assets/food4.png"
     }
 ];
+
+export const MealData = [
+    {
+        category: "Soups",
+        recipes: [
+            {
+                name: "Chicken Noodle Soup"
+            },
+            {
+                name: "Creamy Tomato Soup"
+            },
+            {
+                name: "Broccoli Cheddar Soup"
+            },
+            {
+                name: "Chicken Wild Rice Soup"
+            }
+        ]
+
+    },
+    {
+        category: "Entrees",
+        recipes: [
+            {
+                name: "Burger and fries"
+            },
+            {
+                name: "Grilled Cheese"
+            },
+            {
+                name: "Caesar Salad"
+            },
+            {
+                name: "Cheese Pizza"
+            }
+        ]
+    }
+
+
+]

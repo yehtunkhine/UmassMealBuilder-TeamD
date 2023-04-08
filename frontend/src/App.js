@@ -10,6 +10,7 @@ import Worcester from "./diningHalls/Worcester"
 import Hampshire from "./diningHalls/Hampshire"
 import Franklin from "./diningHalls/Franklin"
 import Berkshire from "./diningHalls/Franklin"
+import FactsTemplate from './components/FactsTemplate';
 
 import {Route, Routes} from "react-router-dom"
 
@@ -29,6 +30,7 @@ function App(){
               <Route path ="/hampshire" element={<Hampshire />} />
               <Route path ="/franklin" element={<Franklin />} />
               <Route path ="/berkshire" element={<Berkshire />} />
+              <Route path ="/FactsTemplate" element={<FactsTemplate />} />
           </Routes>
       </div>
     </>
