@@ -3,6 +3,7 @@
 }
 
 body {
+    color: #212721;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Oswald' ;
   font-style:normal;
@@ -18,6 +19,17 @@ body {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Oswald';
+}
+
+footer {
+    padding: 1rem;
+    background-color: maroon;
+    color: white;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
 }
 
 .bg-maroon {

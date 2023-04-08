@@ -12,6 +12,7 @@ import Franklin from "./diningHalls/Franklin"
 import Berkshire from "./diningHalls/Franklin"
 
 import {Route, Routes} from "react-router-dom"
+import Footer from './components/Footer';
 
 function App(){
   return (
@@ -31,6 +32,7 @@ function App(){
               <Route path ="/berkshire" element={<Berkshire />} />
           </Routes>
       </div>
+      <Footer/>
     </>
     )
 }
