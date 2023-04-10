@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { GoogleButton } from 'react-google-button';
 import { useNavigate } from 'react-router-dom';
 
@@ -61,6 +61,8 @@ const handleGoogleSignIn = async () => {
 export default function Login() {
 
   const [user, setUser] = useState();
+  const txtEmail = useRef(null);
+  const txtPassword = useRef(null);
 
 
   useEffect(() => {
@@ -82,11 +84,49 @@ export default function Login() {
     });
   }
 
+  const login = async() => {
+    //Get text values
+    const loginEmail = txtEmail.current.value;
+    const loginPassword = txtPassword.current.value;
+    //Try singup
+    try {
+        await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+    }
+    //If error, then probably username/password invalid.
+    catch(error) {
+        console.log(`There was an error: ${error}`);
+        alert("Invalid Username/Password");
+    }
+  };
+
+      //Toggle password
+  const hidePassword = () => {
+      var x = document.getElementById("password");
+      if (x.type === "password") {
+          x.type = "text";
+      } else {
+          x.type = "password";
+      }
+    }
+
   if(!user) {
     return (
-      <div>
+      <div class = "outerBox" >
+            <text class = "labelText">Email:</text>
+            <input class = "inputText" ref = {txtEmail} type = "text" id = "username" name = "emailInput" placeholder="Email"/>
+
+            <text class =  "labelText">Password:</text>
+            <input class = "inputText" ref = {txtPassword} type = "text" id = "password" name = "passwordInput" placeholder="Password" type = "password"/>
+            <input type="checkbox" onClick = {hidePassword}/>
+            <text>Show Password</text>
+            <div>
+                <button class = "button" onClick={login}>Login</button>
+            </div>
+            <div>
+                    <button class = "button" onClick={login}>Sign Up</button>
+            </div>
           <h1 className='text-center text-3xl font-bold py-8'>Sign in</h1>
-          <div className='max-w-[240px] m-auto py-4' >
+          <div className='signUpButton max-w-[240px] m-auto py-4' >
               <GoogleButton onClick={handleGoogleSignIn} />
           </div>
       </div>

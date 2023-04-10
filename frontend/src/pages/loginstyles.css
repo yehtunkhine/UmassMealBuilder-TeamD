@@ -51,3 +51,8 @@
   margin: auto;
   color: white;
 }
+
+.signUpButton {
+  justify-content: center;
+  align-items: center;
+}
