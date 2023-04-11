@@ -1,20 +1,5 @@
 import './App.css';
 import NavBar from './NavBar';
-<<<<<<< HEAD
-import Login from './pages/Login'
-import Signup from './pages/Signup'
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import firebaseInit from "./pages/firebaseInit";
-
-
-
-//Initialize firebase
-const app = firebaseInit();
-
-const auth = getAuth(app);
-
-
-=======
 import Analysis from "./pages/Analysis"
 import Favorites from "./pages/Favorites"
 import Login from "./pages/Login"
@@ -25,21 +10,19 @@ import Worcester from "./diningHalls/Worcester"
 import Hampshire from "./diningHalls/Hampshire"
 import Franklin from "./diningHalls/Franklin"
 import Berkshire from "./diningHalls/Franklin"
->>>>>>> develop
-
 import {Route, Routes} from "react-router-dom"
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import firebaseInit from "./pages/firebaseInit";
+
+
+
+//Initialize firebase
+const app = firebaseInit();
+
+const auth = getAuth(app);
 
 function App(){
   return (
-<<<<<<< HEAD
-    <div className="App">
-      <NavBar></NavBar>
-      <h1>Hello World!</h1>
-      <Login/>
-
-    </div>
-  );
-=======
     <>
     <NavBar/>
       <div className = "container">
@@ -57,14 +40,6 @@ function App(){
           </Routes>
       </div>
     </>
-    )
->>>>>>> develop
+    );
 }
 export default App
-
-
-<<<<<<< HEAD
-
-export default App;
-=======
->>>>>>> develop
