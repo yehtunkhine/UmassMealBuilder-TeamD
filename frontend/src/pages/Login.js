@@ -30,6 +30,7 @@ const firebaseConfig = {
   measurementId: "G-K58XKBTEEZ"
 };
 
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -72,6 +73,24 @@ export default function Login() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
+        let userObject = {
+          uid: user.uid,
+          displayName: user.displayName,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          Allergens: "None",
+          DietaryRestrictions: "None"
+        }
+        
+        fetch(`http://localhost:3000/users/${user.uid}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userObject),
+        })
+
+
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
         const uid = user.uid;
