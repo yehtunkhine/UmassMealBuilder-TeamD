@@ -21,7 +21,7 @@ box-shadow: 2px 10px 35px 1px rgba(153,153,153,0.3);
 `;
 const Wrap = styled.div`
 flex-direction: row;
-background: lightgray;
+background: maroon;
 color: black;
 display: flex;
 justify-content: space-between;
@@ -35,6 +35,7 @@ border-right: 2px solid;
 h1 {
     padding: 2rem;
     font-size: 2rem;
+    color: white;
 }
 
 span {
@@ -84,26 +85,55 @@ const Category = styled.div`
 margin: 25px;
 scale: 300%;
 background-color: lightgray;
+
+
 `;
+var modal = document.getElementById("myModal");
 
+var Btn = document.getElementById("myBtn")
 
+var span = document.getElementsByClassName("close")[0];
+
+/*
+Btn.onclick = function () {
+    modal.style.display = "block"
+}
+span.onclick = function() {
+    modal.style.display = "none";
+  }
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+}
+*/
+
+const Popup = (itm) => {
+    return (
+        <div>
+            <button id="myBtn">modal</button>
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <p>Some text in the Modal..</p>
+                </div>
+            </div>
+        </div>
+    )
+}
 
 const MealCard = () => {
-    const navigate = useNavigate();
-
-
     return (
         <FContent >
     { MealData.map((_, i) => (
         <FCard key={i}>
             <Category><u>{_.category}</u></Category>
             <RecipeContent>
-                {_.recipes.map((item,i) => (
-                    
-                    <Recipe>
-                        
+                {_.recipes.map((item,i) => (  
+                    <Recipe>     
                         <Link to={{pathname: "/FactsTemplate"}} state={{name: item.name}} style={{ textDecoration: 'none',color: 'black'}} >
-                        <h1>{item.name}</h1>
+                            <h1>{item.name}</h1>
                         </Link>
                     </Recipe>
                 ))}
@@ -116,7 +146,6 @@ const MealCard = () => {
 }
 
 const MenuData = () => {
-
     const [clicked, setClicked] = useState(false);
     const toggle = index => {
         if(clicked === index) {
@@ -127,7 +156,7 @@ const MenuData = () => {
     }
   return (
     <Menu>
-      <IconContext.Provider value={{color: 'black', size: '30px'}}>
+      <IconContext.Provider value={{color: 'white', size: '30px'}}>
           <AccordionSection>
             <Container>
                 {Data.map((item, index) => {  
