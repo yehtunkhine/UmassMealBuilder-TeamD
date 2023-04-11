@@ -82,20 +82,30 @@ code {
 
 @media (hover:none){
     .dining-card {
+      display:flex;
       position: relative;
       cursor: pointer;
-      height: 70%;
-      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      height: 50vw;
+      width: 75vw;
       border-radius: 10px;
       overflow: hidden;
-  }
 
-  .dining-card .card-description {
-    height: 5%;
-    opacity: 100%;
-    overflow: visible;
-  }
-  
+    }
+
+    .dining-card img {
+      height: 120%;
+      width: 120%;
+      object-fit: cover;
+    }
+
+    .dining-card .card-description {
+      height: 5%;
+      opacity: 100%;
+      overflow: visible;
+    }
+    
 }
 
 .dining-card * {
