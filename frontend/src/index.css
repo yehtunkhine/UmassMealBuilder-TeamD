@@ -58,6 +58,8 @@ code {
 }
 
 /* Dining Halls */
+
+
 .dining-card {
     position: relative;
     cursor: pointer;
@@ -72,8 +74,6 @@ code {
     width: 100%;
 }
 
-
-
 .dining-card .card-description {
     height: 0;
     opacity: 0;
@@ -81,14 +81,15 @@ code {
 }
 
 @media (hover:none){
-  .dining-card {
-    position: relative;
-    cursor: pointer;
-    height: 90%;
-    width: 90%;
-    border-radius: 10px;
-    overflow: hidden;
-}
+    .dining-card {
+      position: relative;
+      cursor: pointer;
+      height: 70%;
+      width: 90%;
+      border-radius: 10px;
+      overflow: hidden;
+  }
+
   .dining-card .card-description {
     height: 5%;
     opacity: 100%;
