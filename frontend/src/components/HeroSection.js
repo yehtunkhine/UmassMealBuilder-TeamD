@@ -9,11 +9,10 @@ function HeroSection() {
       <h1>Welcome to your Umass Dining meal builder</h1>
       <p>description</p>
       <div className='hero-btns'>
-        <Button buttonStyle='btn--outline' buttonSize='btn--large'>
+        <Button buttonStyle ={'btn--outline'} buttonSize={'btn--large'}>
           See how it works
         </Button>
         <Button
-          // className='btns'
           buttonStyle={'btn--primary'}
           buttonSize={'btn--large'}
         >
