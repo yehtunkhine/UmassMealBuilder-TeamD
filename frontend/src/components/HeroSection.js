@@ -6,7 +6,9 @@ import './HeroSection.css';
 function HeroSection() {
   return (
     <div className='hero-container'>
-      <h1>Welcome to your Umass Dining meal builder</h1>
+      <h1>Welcome to your Umass</h1>
+      <p></p>
+      <h1>Dining meal builder</h1>
       <p>description</p>
       <div className='hero-btns'>
         <Button buttonStyle ={'btn--outline'} buttonSize={'btn--large'}>

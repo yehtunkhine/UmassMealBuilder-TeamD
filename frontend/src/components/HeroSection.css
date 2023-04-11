@@ -14,8 +14,10 @@
   
   .hero-container > h1 {
     color: #fff;
-    font-size: 100px;
+    font-size: 80px;
     margin-top: -50px;
+    text-align: center;
+    font-weight: bold;
   }
   
   .hero-container > p {
