@@ -6,11 +6,11 @@ import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import DiningHalls from "./pages/DiningHalls"
 import Home from "./pages/Home"
-import Button from "./components/Button"
 import Worcester from "./diningHalls/Worcester"
 import Hampshire from "./diningHalls/Hampshire"
 import Franklin from "./diningHalls/Franklin"
 import Berkshire from "./diningHalls/Franklin"
+// import MenuData from "./components/Fran"
 
 import {Route, Routes} from "react-router-dom"
 
@@ -18,7 +18,7 @@ function App(){
   return (
     <>
     <NavBar/>
-      <div className = "container">
+
           <Routes>
               <Route path ="/" element={<Home />} />
               <Route path ="/analysis" element={<Analysis />} />
@@ -31,7 +31,6 @@ function App(){
               <Route path ="/franklin" element={<Franklin />} />
               <Route path ="/berkshire" element={<Berkshire />} />
           </Routes>
-      </div>
     </>
     )
 }
