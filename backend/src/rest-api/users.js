@@ -15,6 +15,8 @@ testConnection()
 
 
 //retrieve user PK
+console.log(seq)
+
 
 
 //create new user PK
