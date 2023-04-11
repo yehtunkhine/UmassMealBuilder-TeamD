@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
+import { Sequelize, DataTypes, STRING } from 'sequelize';
 
 const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb') // Example for postgres
 
@@ -14,154 +14,244 @@ async function testConnection() {
 testConnection()
 
 //models
-//FoodRestricion
+//FoodRestriction
 const FoodRestriction = sequelize.define("FoodRestriction", {
-    name: DataTypes.STRING,
-    foodId: DataTypes.INTEGER,
+    restriction: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
 },
 {
-    freezeTableName: true
+    noPrimaryKey: true,
+    timestamps: false
 });
-//Userrestriction
+
+//UserRestriction
 const UserRestriction = sequelize.define("UserRestriction",{
-    name: DataTypes.STRING,
-    userID: DataTypes.STRING,
-},
+    restriction: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, 
 {
-    freezeTableName: true
+    noPrimaryKey: true,
+    timestamps: false
 });
+
 //Food
 const Food = sequelize.define("Food",{
-    PK: DataTypes.INTEGER,
-    name: DataTypes.STRING,
-    calories: DataTypes.DOUBLE,
-    fat:DataTypes.DOUBLE,
-    saturated_fat: DataTypes.DOUBLE,
-    protein: DataTypes.DOUBLE,
-    carbs: DataTypes.DOUBLE,
-    ingerdients: DataTypes.STRING,
-    halthfulness: DataTypes.STRING,
-    servingSize: DataTypes.STRING,
+    foodId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    name: {
+        type: DataTypes.STRING(512),
+        allowNull: false,
+        defaultValue: "N/A"
+    },
+    calories: {
+        type: DataTypes.DECIMAL(9,3).UNSIGNED,
+        defaultValue: 0
+    },
+    fat:{
+        type: DataTypes.DECIMAL(9,3).UNSIGNED,
+        defaultValue: 0
+    },
+    saturated_fat: {
+        type: DataTypes.DECIMAL(9,3).UNSIGNED,
+        defaultValue: 0
+    },
+    protein: {
+        type: DataTypes.DECIMAL(9,3).UNSIGNED,
+        defaultValue: 0
+    },
+    carbs: {
+        type: DataTypes.DECIMAL(9,3).UNSIGNED,
+        defaultValue: 0
+    },
+    ingredients: {
+        type: DataTypes.STRING(2048),
+        defaultValue: "N/A",
+        allowNull: false
+    },
+    halthfulness: {
+        type: DataTypes.SMALLINT.UNSIGNED,
+        defaultValue: "0",
+        allowNull: false
+    },
+    servingSize: {
+        type: DataTypes.STRING(255),
+        defaultValue: "N/A",
+        allowNull: false
+    }
 },
 {
-    freezeTableName: true
-});
+    timestamps: false
+}
+);
+
 //FavoriteFoodsBridge
-const FavoriteFoodsBridge = sequelize.define("FavoriteFoodsBridge", {
-    userID: DataTypes.STRING,
-    foodID: DataTypes.INTEGER,
-},
+const FavoriteFoodsBridge = sequelize.define("FavoriteFoodsBridge", {},
 {
-    freezeTableName: true
+    freezeTableName: true,
+    noPrimaryKey: true,
+    timestamps: false
 });
+
 //User
-const User = sequelize.define("User", {
-    PK: DataTypes.STRING,
-},
+const User = sequelize.define('User', {
+    // Model attributes are defined here
+    userId: {
+        type: DataTypes.STRING(64),
+        allowNull: false,
+        primaryKey: true
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    phone : {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+}, 
 {
-    freezeTableName: true
+    timestamps: false
 });
+
 //FavoriteLocationsBridge
-const FavoriteLocationsBridge = sequelize.define("FavoriteLocationsBridge", {
-    userID: DataTypes.STRING,
-    foodID: DataTypes.INTEGER,
-},
+const FavoriteLocationsBridge = sequelize.define("FavoriteLocationsBridge", {},
 {
-    freezeTableName: true
+    freezeTableName: true,
+    timestamps: false,
+    noPrimaryKey: true
 });
+
 //MealFoodBridge
-const MealFoodBridge = sequelize.define("MealFoodBridge", {
-    mealID: DataTypes.INTEGER,
-    foodID: DataTypes.INTEGER,
-},
+const MealFoodBridge = sequelize.define("MealFoodBridge", {},
 {
-    freezeTableName: true
+    freezeTableName: true,
+    timestamps: false,
+    noPrimaryKey: true
 });
+
 //Meal
 const Meal = sequelize.define("Meal", {
-    PK: DataTypes.INTEGER,
-    userID: DataTypes.STRING,
+    mealId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    }
 },
 {
-    freezeTableName: true
+    timestamps: false
 });
+
 //LocationFoodBridge
 const LocationFoodBridge = sequelize.define("LocationFoodBridge", {
-    locationID: DataTypes.INTEGER,
-    foodID: DataTypes.INTEGER,
     Date: DataTypes.STRING,
     Time: DataTypes.TIME,
 },
 {
-    freezeTableName: true
+    freezeTableName: true,
+    timestamps: false
 });
+
 //Location
 const Location = sequelize.define("Location", {
-    PK: DataTypes.INTEGER,
+    locationId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    locationName: {
+        type: DataTypes.STRING(128),
+        allowNull: false
+    }
 },
 {
-    freezeTableName: true
+    timestamps: false
 });
+
 //LocationTimes
 const LocationTimes = sequelize.define("LocationTimes", {
-    locationID: DataTypes.INTEGER,
-    day: DataTypes.INTEGER,
+    day: {
+        type: DataTypes.SMALLINT.UNSIGNED,
+        allowNull: false
+    },
     breakfastTime: DataTypes.TIME,
     lunchTime: DataTypes.TIME,
     brunchTime: DataTypes.TIME,
     dinnerTime: DataTypes.TIME,
-    openTime: DataTypes.TIME,
-    closeTime: DataTypes.TIME,
+    openTime: {
+        type: DataTypes.TIME,
+        allowNull: false
+    },
+    closeTime: {
+        type: DataTypes.TIME,
+        allowNull: false
+    }
 },
 {
-    freezeTableName: true
+    freezeTableName: true,
+    timestamps: false
 });
 
+// 1 to Many Relationships
 
-//relations -- sorted by outgoing direction
-//FoodRestriction relations
-FoodRestriction.hasOne(Food);
-FoodRestriction.belongsTo(Food);
-//UserRestriction relations
-UserRestriction.hasOne(User);
-UserRestriction.belongsTo(User);
-//Food relation
-Food.hasMany(FoodRestriction);
-Food.hasMany(FavoriteFoodsBridge);
-Food.hasMany(MealFoodBridge);
-Food.hasMany(LocationFoodBridge);
-//favoritefoodsbridge relation
-FavoriteFoodsBridge.hasOne(Food);
-FavoriteFoodsBridge.hasOne(User);
-FavoriteFoodsBridge.belongsTo(Food);
-FavoriteFoodsBridge.belongsTo(User);
-//User relations
-User.hasMany(UserRestriction);
-User.hasMany(FavoriteFoodsBridge);
-User.hasMany(Meal);
-//favoriteLocationsbridge relations
-FavoriteLocationsBridge.hasOne(Location);
-FavoriteLocationsBridge.hasOne(User);
-FavoriteLocationsBridge.belongsTo(Location);
-FavoriteLocationsBridge.belongsTo(User);
-//mealFoodBridge relations
-MealFoodBridge.hasOne(Food);
-MealFoodBridge.hasOne(Meal);
-MealFoodBridge.belongsTo(Food);
-MealFoodBridge.belongsTo(Meal);
-//meal relations
-Meal.hasOne(User);
-Meal.hasMany(MealFoodBridge);
-Meal.belongsTo(User);
-//locationfoodbridge relations
-LocationFoodBridge.hasOne(Food);
-LocationFoodBridge.hasOne(Location);
-LocationFoodBridge.belongsTo(Food);
-LocationFoodBridge.belongsTo(Location);
-//location relations
-Location.hasMany(LocationFoodBridge);
-Location.hasMany(FavoriteLocationsBridge);
-Location.hasMany(LocationTimes);
-//locationtimes relation
-LocationTimes.hasOne(location);
-LocationTimes.belongsTo(Location);
+// 1 user can have many meals, but each meal belongs to only one user
+User.hasMany(Meal, {foreignKey: "userId"})
+Meal.belongsTo(User, {foreignKey: "userId"});
+
+// 1 location can have sevaral time, but each listed time is for only one location
+Location.hasMany(LocationTimes, {foreignKey: "locationId"});
+LocationTimes.belongsTo(Location, {foreignKey: "locationId"});
+
+// one food item can have many restrictions, but each instance of there being
+// a restriction is only for one food
+Food.hasMany(FoodRestriction, {foreignKey: "foodId"});
+FoodRestriction.belongsTo(Food, {foreignKey: "foodId"});
+
+// one user can have many restrictions, but each instance of there being
+// a restriction is only for one user
+User.hasMany(UserRestriction, {foreignKey: "userId"});
+UserRestriction.belongsTo(User, {foreignKey: "userId"});
+
+// Many to Many Relationshipds
+// A food can be favorited by many users, and many users can favorite the same item
+Food.belongsToMany(User, {through: "FavoriteFoodsBridge", foreignKey: "foodId"});
+User.belongsToMany(Food, {through: "FavoriteFoodsBridge", foreignKey: "userId"});
+
+// A location can be favorited by many users, and many users can favorite the same location 
+Location.belongsToMany(User, {through: "FavoriteLocationsBridge", foreignKey: "locationId"});
+User.belongsToMany(Location, {through: "FavoriteLocationsBridge", foreignKey: "userId"});
+
+// A food can be in many meals, and many meals can use the same food
+Food.belongsToMany(Meal, {through: "MealFoodBridge", foreignKey: "foodId"});
+Meal.belongsToMany(Food, {through: "MealFoodBridge", foreignKey: "mealId"});
+
+// A food can be served in many locations and many locations can serve many foods
+Food.belongsToMany(Location, {through: "LocationFoodBridge", foreignKey: "foodId"});
+Location.belongsToMany(Food, {through: "LocationFoodBridge", foreignKey: "locationId"});
+
+// remove automatically generated PK's
+FavoriteFoodsBridge.removeAttribute('id')
+FavoriteLocationsBridge.removeAttribute('id')
+MealFoodBridge.removeAttribute('id')
+LocationFoodBridge.removeAttribute('id')
+FoodRestriction.removeAttribute('id')
+UserRestriction.removeAttribute('id')
+LocationTimes.removeAttribute('id')
+
+// Push to db
+// Change models above and then uncomment and run this file to make db changes
+// force option will wipe database before updating tables!!!
+// sequelize.sync({force: true}).then()
+
+// Export Models For Other Files
+export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes};
