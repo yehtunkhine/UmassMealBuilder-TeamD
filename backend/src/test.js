@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('postgres://DB_USERNAME:DB_PASSEORD@DB_IP_ADDRESS/DB_NAME')
+const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb') // Example for postgres
 
 async function testConnection() {
   try {
