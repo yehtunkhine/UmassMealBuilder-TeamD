@@ -52,6 +52,7 @@ code {
 .nav li.active{
   color: black;
 }
+
 .nav li:hover{
   color: black;
 }
@@ -71,10 +72,20 @@ code {
     width: 100%;
 }
 
+
+
 .dining-card .card-description {
     height: 0;
     opacity: 0;
     overflow: hidden;
+}
+
+@media (hover:none){
+  .dining-card .card-description {
+    height: 5%;
+    opacity: 100%;
+    overflow: visible;
+  }
 }
 
 .dining-card * {
