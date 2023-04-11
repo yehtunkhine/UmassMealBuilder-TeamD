@@ -109,11 +109,12 @@ window.onclick = function(event) {
 }
 */
 
-const Popup = (itm) => {
+const Popup = ({closeModal}) => {
     return (
         <div>
             <button id="myBtn">modal</button>
             <div id="myModal" class="modal">
+                <button onClick = {() =>closeModal(false)}> X </button>
                 <div class="modal-content">
                     <span class="close">&times;</span>
                     <p>Some text in the Modal..</p>
@@ -124,6 +125,9 @@ const Popup = (itm) => {
 }
 
 const MealCard = () => {
+    // states
+    const [openModal, setOpenModal] = useState(false) 
+
     return (
         <FContent >
     { MealData.map((_, i) => (
@@ -135,6 +139,16 @@ const MealCard = () => {
                         <Link to={{pathname: "/FactsTemplate"}} state={{name: item.name}} style={{ textDecoration: 'none',color: 'black'}} >
                             <h1>{item.name}</h1>
                         </Link>
+                        
+                        {/* how to make above part into a button???? */}
+                        <button 
+                            onClick={()=>{
+                                setOpenModal(true);
+                            }}
+                        >
+                            something
+                        </button>
+                        {openModal && <Popup closeModal={setOpenModal}/>}
                     </Recipe>
                 ))}
             </RecipeContent>
