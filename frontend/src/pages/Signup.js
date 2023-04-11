@@ -62,7 +62,6 @@ const Signup = () => {
         </div>  
         </html>
     );
-    return (<div></div>);
 }
 
 export default Signup;
