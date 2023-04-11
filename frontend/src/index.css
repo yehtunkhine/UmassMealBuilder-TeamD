@@ -81,11 +81,20 @@ code {
 }
 
 @media (hover:none){
+  .dining-card {
+    position: relative;
+    cursor: pointer;
+    height: 90%;
+    width: 90%;
+    border-radius: 10px;
+    overflow: hidden;
+}
   .dining-card .card-description {
     height: 5%;
     opacity: 100%;
     overflow: visible;
   }
+  
 }
 
 .dining-card * {
