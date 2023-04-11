@@ -1,6 +1,6 @@
 import React from "react";
 import { useRef, useState } from 'react';
-import { getAuth, connectAuthEmulator, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, connectAuthEmulator, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
 import './loginstyles.css';
 import firebaseInit from "./firebaseInit";
 

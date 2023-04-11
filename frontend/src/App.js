@@ -3,6 +3,16 @@ import './App.css';
 import NavBar from './NavBar';
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import firebaseInit from "./pages/firebaseInit";
+
+
+
+//Initialize firebase
+const app = firebaseInit();
+
+const auth = getAuth(app);
+
 
 
 function App() {
@@ -10,9 +20,11 @@ function App() {
     <div className="App">
       <NavBar></NavBar>
       <h1>Hello World!</h1>
-      <Signup/>
+      <Login/>
+
     </div>
   );
 }
+
 
 export default App;
