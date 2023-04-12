@@ -87,9 +87,8 @@ code {
       cursor: pointer;
       margin-left: auto;
       margin-right: auto;
-      height: 50vw;
-      width: 75vw;
-      border-radius: 10px;
+      height: 45vw;
+      width: 65vw;
       overflow: hidden;
 
     }
