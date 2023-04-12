@@ -124,9 +124,8 @@ const Login = () => {
             <div>
                 <button class = "button" onClick={login}>Login</button>
             </div>
-            <h1 className='text-center text-3xl font-bold py-8'>Sign in</h1>
-            <div className='signUpButton max-w-[240px] m-auto py-4' >
-                <GoogleButton onClick={handleGoogleSignIn} />
+            <div  class = 'max-w-[240px] m-auto py-4'>
+                <GoogleButton className='signUpButton ' onClick={handleGoogleSignIn} />
             </div>
         </div>
     );
