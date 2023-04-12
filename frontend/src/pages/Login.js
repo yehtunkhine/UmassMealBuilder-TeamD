@@ -1,45 +1,54 @@
 import React from "react";
 import { useRef, useState } from 'react';
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged} from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail} from 'firebase/auth';
 import './loginstyles.css';
-import { Link } from "react-router-dom";
-import firebaseInit from "./firebaseInit";
+import { Link, NavLink } from "react-router-dom";
+import { useContext } from 'react';
+import { FirebaseContext, AuthenticationContext } from './../App';
 
 
 
-//Initialize firebase
-const app = firebaseInit();
 
 
 const Login = () => {
+    //Initialize firebase
+    const app = useContext(FirebaseContext);
+    const auth = useContext(AuthenticationContext);
     const txtEmail = useRef(null);
     const txtPassword = useRef(null);
-    const auth = getAuth(app);
 
-    let x = 0;
-    const monitorAuthState = async () => {
+
+    /*const monitorAuthState = async () => {
         onAuthStateChanged(auth, user => {
             if (user) {
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/firebase.User
             const uid = user.uid;
-            console.log("Hi");
-            x = 12;
+            console.log("Hello");
             // ...
             } else {
             // User is signed out
             // ...
-            x = 2;
-            console.log("hello");
+            console.log("Hi");
             }
         });
-    }
+    }*/
+    
+    const sendPasswordReset = async (email) => {
+        try {
+          await sendPasswordResetEmail(auth, email);
+          alert("Password reset link sent!");
+        } catch (err) {
+          console.error(err);
+          alert(err.message);
+        }
+      };
 
     const login = async() => {
-        monitorAuthState();
         //Get text values
         const loginEmail = txtEmail.current.value;
         const loginPassword = txtPassword.current.value;
+        //monitorAuthState();
         //Try signup
         try {
             await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
@@ -57,9 +66,10 @@ const Login = () => {
         }
     };
 
-    const logout = async() => {
-        await signOut(auth);
-    }
+   /*const logout = async() => {
+       // monitorAuthState();
+        signOut(auth);
+    }*/
 
     //Toggle password
     const hidePassword = () => {
@@ -80,19 +90,24 @@ const Login = () => {
             <text class =  "labelText">Password:</text>
             <input class = "inputText" ref = {txtPassword} type = "text" id = "password" name = "passwordInput" placeholder="Password" type = "password"/>
             <input type="checkbox" onClick = {hidePassword}/>
-            <text>Show Password</text>
+            <text>   Show Password</text>
+            
+            <br></br>
             <div>
                 <button class = "button" onClick={login}>Login</button>
             </div>
-            <div>
-                    <button class = "button" onClick={login}>Sign Up</button>
-            </div>
             
-            <div>
-                <button className="button" onclick={logout}>Logout</button>
-            </div>
-            <hi>{x}</hi>
         </div>
     );
 }
+
+/*
+<br></br> Singup button
+            <div>
+                <button class = "button" onClick={login}>Sign Up</button>
+            </div>
+<br></br> Logout button
+            <div>
+                <button class="button" onClick={logout}>Logout</button>
+            </div> */
 export default Login;

@@ -2,16 +2,19 @@ import React from "react";
 import { useRef, useState } from 'react';
 import { getAuth, connectAuthEmulator, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
 import './loginstyles.css';
-import firebaseInit from "./firebaseInit";
+import { useContext } from 'react';
+import { FirebaseContext, AuthenticationContext } from './../App';
 
-const app = firebaseInit();
+
 
 
 const Signup = () => {
+    const app = useContext(FirebaseContext);
+    const auth = useContext(AuthenticationContext);
+    
     const txtEmail = useRef(null);
     const txtPassword = useRef(null);
     const txtConfirmPassword = useRef(null);
-    const auth = getAuth(app);
 
     const createAccount = async () => {
         const email = txtEmail.current.value;
@@ -54,7 +57,8 @@ const Signup = () => {
                 <text class =  "labelText">Confirm Password:</text>
                 <input class = "inputText" ref = {txtConfirmPassword} type = "text" id = "confirmPassword" name = "confirmPasswordInput" placeholder="Confirm Password" type = "password"/>
                 <input type="checkbox" onClick = {hidePassword}/>
-                <text>Show Password</text>
+                <text>   Show Password</text>
+                <br></br>
                 <div>
                     <button class = "button" onClick={createAccount}>Sign Up</button>
                 </div>

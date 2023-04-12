@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import React from 'react';
-import firebase from 'firebase/compat/app';
+
+//This is so we can initialize it in one place since, it was giving errors initializing it on both Login & Signup
 
 const firebaseConfig = {
     apiKey: "AIzaSyBIQMdCZU3XRcV0GhvD2N90bTgTZr9sxrk",
@@ -14,13 +14,12 @@ const firebaseConfig = {
 
 const firebaseInit = () => {
   /*if(!firebase.app.length){*/
-    const retVal = initializeApp(firebaseConfig);
-    console.log("Hi");
+  const retVal = initializeApp(firebaseConfig);
   /*}else{
     const retVal = firebase.app();
     console.log("Hi");
-  }
-  return retVal;*/
+  }*/
+  return retVal;
 };
 
 export default firebaseInit;
