@@ -78,6 +78,8 @@ footer p {
 }
 
 /* Dining Halls */
+
+
 .dining-card {
     position: relative;
     cursor: pointer;
@@ -87,6 +89,35 @@ footer p {
     overflow: hidden;
 }
 
+
+@media (hover:none){
+    .dining-card {
+      display:flex;
+      position: relative;
+      cursor: pointer;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 10px;
+      margin-bottom:10px;
+      height: 45vw;
+      width: 65vw;
+      overflow: hidden;
+
+    }
+
+    .dining-card img {
+      height: 120%;
+      width: 120%;
+      object-fit: cover;
+    }
+
+    .dining-card .card-description {
+      height: 5%;
+      opacity: 100%;
+      overflow: visible;
+    }
+    
+}
 
 .dining-card * {
     transition: all 0.3s ease-in-out;
