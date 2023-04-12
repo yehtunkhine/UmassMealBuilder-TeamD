@@ -5,8 +5,15 @@ import './loginstyles.css';
 import { Link, NavLink } from "react-router-dom";
 import { useContext } from 'react';
 import { FirebaseContext, AuthenticationContext } from './../App';
+import { useEffect} from 'react';
+import { GoogleButton } from 'react-google-button';
+import { useNavigate } from 'react-router-dom';
 
 
+// Import the functions you need from the SDKs you need
+import { 
+  GoogleAuthProvider, 
+  signInWithPopup } from 'firebase/auth';
 
 
 
@@ -14,25 +21,46 @@ const Login = () => {
     //Initialize firebase
     const app = useContext(FirebaseContext);
     const auth = useContext(AuthenticationContext);
+    const provider = new GoogleAuthProvider();
+
     const txtEmail = useRef(null);
     const txtPassword = useRef(null);
 
-
-    /*const monitorAuthState = async () => {
-        onAuthStateChanged(auth, user => {
-            if (user) {
+    const [user, setUser] = useState();
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            setUser(user);
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/firebase.User
             const uid = user.uid;
-            console.log("Hello");
-            // ...
-            } else {
-            // User is signed out
-            // ...
-            console.log("Hi");
-            }
+          } 
         });
-    }*/
+      }, []);
+
+    const handleGoogleSignIn = async () => {
+        console.log('signing in');
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            // The signed-in user info.
+            const user = result.user;
+            // IdP data available using getAdditionalUserInfo(result)
+            console.log('user', user);
+            console.log('token', token);
+            console.log('credential', credential);
+          }).catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+          });
+    }
     
     const sendPasswordReset = async (email) => {
         try {
@@ -96,7 +124,10 @@ const Login = () => {
             <div>
                 <button class = "button" onClick={login}>Login</button>
             </div>
-            
+            <h1 className='text-center text-3xl font-bold py-8'>Sign in</h1>
+            <div className='signUpButton max-w-[240px] m-auto py-4' >
+                <GoogleButton onClick={handleGoogleSignIn} />
+            </div>
         </div>
     );
 }
@@ -111,3 +142,4 @@ const Login = () => {
                 <button class="button" onClick={logout}>Logout</button>
             </div> */
 export default Login;
+
