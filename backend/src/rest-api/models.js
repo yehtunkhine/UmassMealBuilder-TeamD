@@ -251,7 +251,7 @@ LocationTimes.removeAttribute('id')
 // Push to db
 // Change models above and then uncomment and run this file to make db changes
 // force option will wipe database before updating tables!!!
-// sequelize.sync({force: true}).then()
+// sequelize.sync({force: true})
 
 // Export Models For Other Files
 export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes};
