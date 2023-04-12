@@ -3,6 +3,7 @@
 }
 
 body {
+    color: #212721;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Oswald' ;
   font-style:normal;
@@ -18,6 +19,17 @@ body {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Oswald';
+}
+
+footer {
+    padding: 1rem;
+    background-color: maroon;
+    color: white;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
 }
 
 .bg-maroon {
@@ -41,20 +53,28 @@ code {
   height: 50px;
   gap: 1rem;
 }
+
 .nav a{
   color:inherit;
   text-decoration: none;
   height:100%;
   display: flex;
   align-items:center;
-  padding: .25 rem;
+  padding: .25rem;
+  text-transform: uppercase;
+  font-weight: 600;
 }
+
 .nav li.active{
   color: black;
 }
 
 .nav li:hover{
   color: black;
+}
+
+.nav a:hover {
+    color: black;
 }
 
 /* Dining Halls */
@@ -69,16 +89,6 @@ code {
     overflow: hidden;
 }
 
-.dining-card img {
-    height: 100%;
-    width: 100%;
-}
-
-.dining-card .card-description {
-    height: 0;
-    opacity: 0;
-    overflow: hidden;
-}
 
 @media (hover:none){
     .dining-card {
@@ -135,6 +145,38 @@ code {
     transition: all 0.3s ease-in-out;
 }
 
+.dining-card img {
+    height: 100%;
+    width: 100%;
+}
+
+.dining-card .card-description {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.dining-card .card-favorite {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 50px;
+    width: 50px;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+.isFavorite {
+    opacity: 1 !important;
+}
+
+.dining-card .card-favorite i {
+    font-size: 1.5rem;
+    color: white;
+}
 
 .dining-card .card-content {
     position: absolute;
@@ -163,4 +205,8 @@ code {
 
 .dining-card:hover:after{
     background-color: rgba(0,0,0,0.1)
+}
+
+.dining-card:hover .card-favorite {
+    opacity: 1;
 }
