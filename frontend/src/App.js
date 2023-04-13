@@ -76,6 +76,7 @@ function App(){
               <Route path = "/userPage" element = {<User />} />
           </Routes>
       </div>
+      <Footer/>
     </>
     );
 }
