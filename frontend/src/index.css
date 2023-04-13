@@ -1,13 +1,134 @@
+* {
+  box-sizing:border-box;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Oswald' ;
+  font-style:normal;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+.container{
+  margin: 2rem;
+  text-align: center;
+}
+
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Oswald';
+}
+
+.bg-maroon {
+    background-color: maroon;
+    color: white;
+}
+
+.site-title {
+  font-size: 2rem !important;
+}
+
+.nav #navbarNav{
+    justify-content: flex-end;
+}
+
+.nav ul{
+  padding: 0;
+  margin:0;
+  list-style: none;
+  display: flex;
+  height: 50px;
+  gap: 1rem;
+}
+.nav a{
+  color:inherit;
+  text-decoration: none;
+  height:100%;
+  display: flex;
+  align-items:center;
+  padding: .25 rem;
+}
+.nav li.active{
+  color: black;
+}
+.nav li:hover{
+  color: black;
+}
+
+/* Dining Halls */
+.dining-card {
+    position: relative;
+    cursor: pointer;
+    height: 90%;
+    width: 90%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.dining-card img {
+    height: 100%;
+    width: 100%;
+}
+
+.dining-card .card-description {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.dining-card * {
+    transition: all 0.3s ease-in-out;
+}
+
+.dining-card:before {
+    content: "";
+    height: 50%;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background: linear-gradient(rgba(255,255,255, 0), rgba(136, 28, 28, 0.8));
+    z-index: 10;
+}
+
+.dining-card:after {
+    content: "";
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 5;
+    transition: all 0.3s ease-in-out;
+}
+
+
+.dining-card .card-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    z-index: 20;
+}
+
+.dining-card:hover .card-description {
+    height: 50px;
+    opacity: 1;
+}
+
+.dining-card:hover img{
+    transform: scale(1.1);
+}
+
+.dining-card:hover:after{
+    background-color: rgba(0,0,0,0.1)
 }
