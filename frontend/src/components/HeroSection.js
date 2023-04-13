@@ -6,10 +6,11 @@ import './HeroSection.css';
 function HeroSection() {
   return (
     <div className='hero-container'>
-      <h1>Welcome to your Umass</h1>
-      <p></p>
-      <h1>Dining meal builder</h1>
-      <p>description</p>
+      <h1>
+        Welcome to Your UMass <br/>
+        Dining Meal Builder
+      </h1>
+      
       <div className='hero-btns'>
         <Button buttonStyle ={'btn--outline'} buttonSize={'btn--large'}>
           See how it works
