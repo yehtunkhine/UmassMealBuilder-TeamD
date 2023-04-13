@@ -15,6 +15,7 @@ import {Route, Routes} from "react-router-dom"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseInit from "./pages/firebaseInit";
 import { createContext, setState, toggleIsActive } from 'react';//To pass getAuth for user data
+import Footer from './components/Footer';
 
 
 
