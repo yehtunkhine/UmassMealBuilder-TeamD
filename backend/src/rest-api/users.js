@@ -79,7 +79,77 @@ app.get('/getUserRestrictions', (req, res)=>{
   })();
 })
 
+//fetch favorite foods
+async function fetchFavoriteFoods(userid){
+  let fav_foods=[]
+  try{
+    const fav_food_list = await FavoriteFoodsBridge.findAll({
+      where:{
+        userID: userid,
+      }
+    });
+    fav_foods.push(fav_food_list.foodID);
+  } catch{
+    console.log("user has no favorites")
+  }
+  return fav_foods;
+}
+app.get('/getFavoriteFoods', (req,res)=>{
+  (async function getFavoriteFoods(){
+    let favs= await fetchFavoriteFoods(req.userID)
+    res.end(favs)
+  })();
+})
+//fetch meals
+async function fetchMeals(userid){
+  let meals=[]
+  try{
+    const usermeal=await meals.findAll({
+      where:{
+        userID:userid,
+      }
+    });
+    const food_in_meal=await MealFoodBridge.findAll({
+      where:{
+        mealID: usermeal.meadId,
+      }
+    });
+    meals.push([meal, usermeal])
+  }catch{
+    console.log('user has no meals')
+  }
+  return meals;
 
+}
+app.get('/getmeals', (req, res)=>{
+  (async function getmeals(){
+    let meal_ret=await fetchMeals(req.userID)
+    res.end(meal_ret)
+  })();
+})
+
+//fetch favorite locations
+
+async function fetchfavoritelocations(userid){
+  let fav_loc=[]
+  try{
+    const favs= await favoriteLocationsBridge.findAll({
+      where:{
+        userID:userid,
+      }
+    });
+    fav_loc.push(favs.locationid)
+  } catch{
+    console.log('user has no favorite locations')
+  }
+  return fav_loc;
+}
+app.get('/getfavoritelocations', (req,res)=>{
+  (async function getfavoriteLocations(){
+    let loc=await fetchfavoritelocations(req.userID)
+    res.end(loc)
+  })();
+})
 
 
 
