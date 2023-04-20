@@ -1,10 +1,10 @@
-import { Link, useNavigate} from "react-router-dom"
+
+import { Link, useNavigate, useLocation} from "react-router-dom"
 import React, {useState} from 'react'
-import { Data, MealData } from './AccData'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
-
+let Data = require('./database.json');
 
 const AccordionSection = styled.div`
 display: flex;
@@ -37,7 +37,6 @@ h1 {
     font-size: 2rem;
     color: white;
 }
-
 span {
     margin: 2em;
 }
@@ -51,26 +50,18 @@ border-top: 1px solid black;
 border-left: 1px solid;
 border-right: 1px solid;
 max-height: 300px;
-
 overflow-y: scroll;
 overflow-x: hidden;
 align-items: start;
-
-
-
 `;
 
 const Menu = styled.div`
-
 `;
 
 const FCard = styled.div`
-
 `;
 
 const FContent= styled.div`
-
-
 `;
 
 const RecipeContent = styled.div`
@@ -85,8 +76,6 @@ const Category = styled.div`
 margin: 25px;
 scale: 300%;
 background-color: lightgray;
-
-
 `;
 var modal = document.getElementById("myModal");
 
@@ -101,7 +90,6 @@ Btn.onclick = function () {
 span.onclick = function() {
     modal.style.display = "none";
   }
-
 window.onclick = function(event) {
     if (event.target == modal) {
       modal.style.display = "none";
@@ -124,13 +112,19 @@ const Popup = ({closeModal}) => {
     )
 }
 
-const MealCard = () => {
+
+const MealCard = ({mtime, hall}) => {
     // states
+    const date = new Date();
+    const datestring = date.toLocaleDateString();
+    let mealtime = Data[hall][0].meals
+    Data[hall].forEach(x=> x.date === datestring? mealtime = x.meals : 0)
     const [openModal, setOpenModal] = useState(false) 
+    const mdata = mealtime[mtime];
 
     return (
         <FContent >
-    { MealData.map((_, i) => (
+    { mdata.map((_, i) => (
         <FCard key={i}>
             <Category><u>{_.category}</u></Category>
             <RecipeContent>
@@ -146,7 +140,6 @@ const MealCard = () => {
                                 setOpenModal(true);
                             }}
                         >
-                            something
                         </button>
                         {openModal && <Popup closeModal={setOpenModal}/>}
                     </Recipe>
@@ -159,7 +152,8 @@ const MealCard = () => {
     )
 }
 
-const MenuData = () => {
+
+const MenuData = ({hall}) => {
     const [clicked, setClicked] = useState(false);
     const toggle = index => {
         if(clicked === index) {
@@ -168,21 +162,24 @@ const MenuData = () => {
         }
         setClicked(index);
     }
+    const times = Object.keys(Data[hall][0].meals);
+
   return (
     <Menu>
       <IconContext.Provider value={{color: 'white', size: '30px'}}>
           <AccordionSection>
             <Container>
-                {Data.map((item, index) => {  
+                {times.map((item, index) => {  
                     return (
                         <>
                         <Wrap onClick={() => toggle(index)} key = {index}>
-                        <h1>{item.category}</h1>
+                        <h1>{times[index]}</h1>
                         <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
                         </Wrap>
                         {clicked === index ? (
                         <Dropdown>
-                            <MealCard/>
+                            
+                            <MealCard mtime = {times[index]} hall = {hall}/>
                         </Dropdown>
                         ) : null}
                         </>

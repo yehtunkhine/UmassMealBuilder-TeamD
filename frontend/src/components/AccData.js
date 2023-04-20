@@ -1,17 +1,518 @@
-export const Data = [
+export const Data = 
     {
-        category: 'Breakfast',
-    },
-    {
-        category: "Lunch",
-    },
-    {
-        category: "Dinner",
-    },
-    {
-        category: "Late Night",
+
+        Berkshire_Dining_Commons: [
+            {
+                date: "1/1/1",
+                meals: {
+                    Breakfast: [{
+                        category: "Soups",
+                        recipes: [
+                            {
+                                name: "Cereal"
+                            },
+                            {
+                                name: "Oatmeal"
+                            }
+                        ]
+                
+                    },{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "French Toast"
+                            },
+                            {
+                                name: "Quiche"
+                            },
+                            {
+                                name: "Egg Sandwich"
+                            }
+                        ]
+                    }],
+                    Lunch: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Burger and fries"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                        ]
+                    }],
+                    Dinner: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Burger and fries"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                            {
+                                name: "Caesar Salad"
+                            },
+                            {
+                                name: "Cheese Pizza"
+                            }
+                        ]
+                    },{
+                        category: "Desert",
+                        recipes: [
+                            {
+                                name: "Ice Cream"
+                            },
+                            {
+                                name: "Cake "
+                            }
+                        ]
+                
+                    }],
+                    LateNight: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Cookies"
+                            },
+                            {
+                                name: "Pretzels"
+                            }
+                        ]
+                    }],
+                }
+            }
+        ],
+        Franklin_Dining_Commons: [
+            {
+                date: "1/1/1",
+                meals: {
+                    Breakfast: [{
+                        category: "Soups",
+                        recipes: [
+                            {
+                                name: "Cereal"
+                            },
+                            {
+                                name: "Oatmeal"
+                            }
+                        ]
+                
+                    },{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "English Muffin"
+                            },
+                            {
+                                name: "Quiche"
+                            },
+                            {
+                                name: "Egg Sandwich"
+                            }
+                        ]
+                    }],
+                    Lunch: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Burger and fries"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                        ]
+                    }],
+                    Dinner: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Burger and fries"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                            {
+                                name: "Caesar Salad"
+                            },
+                            {
+                                name: "Cheese Pizza"
+                            }
+                        ]
+                    },{
+                        category: "Desert",
+                        recipes: [
+                            {
+                                name: "Ice Cream"
+                            },
+                            {
+                                name: "Cake "
+                            }
+                        ]
+                
+                    }],
+                    LateNight: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Cookies"
+                            },
+                            {
+                                name: "Pretzels"
+                            }
+                        ]
+                    }],
+                }
+            }
+        ],
+        Worcester_Dining_Commons: [
+            {
+                date: "1/1/1",
+                meals: {
+                    Breakfast: [{
+                        category: "Soups",
+                        recipes: [
+                            {
+                                name: "Cereal"
+                            },
+                            {
+                                name: "Oatmeal"
+                            }
+                        ]
+                
+                    },{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "English Muffin"
+                            },
+                            {
+                                name: "Quiche"
+                            },
+                            {
+                                name: "Egg Sandwich"
+                            }
+                        ]
+                    }],
+                    Lunch: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Tuna Sandwich"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                        ]
+                    }],
+                    Dinner: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Burger and fries"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                            {
+                                name: "Caesar Salad"
+                            },
+                            {
+                                name: "Cheese Pizza"
+                            }
+                        ]
+                    },{
+                        category: "Desert",
+                        recipes: [
+                            {
+                                name: "Ice Cream"
+                            },
+                            {
+                                name: "Cake "
+                            }
+                        ]
+                
+                    }],
+                    LateNight: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Cookies"
+                            },
+                            {
+                                name: "Pretzels"
+                            }
+                        ]
+                    }],
+                }
+            }
+        ],
+        Hampshire_Dining_Commons: [
+            {
+                date: "1/1/1",
+                meals: {
+                    Breakfast: [{
+                        category: "Soups",
+                        recipes: [
+                            {
+                                name: "Cereal"
+                            },
+                            {
+                                name: "Oatmeal"
+                            }
+                        ]
+                
+                    },{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "English Muffin"
+                            },
+                            {
+                                name: "Quiche"
+                            },
+                            {
+                                name: "Egg Sandwich"
+                            }
+                        ]
+                    }],
+                    Lunch: [{
+                        category: "Soups",
+                        recipes: [
+                            {
+                                name: "Creamy Tomato Soup"
+                            },
+                            {
+                                name: "Chicken Noodle Soup"
+                            },
+                        ]
+                    },{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Burger and fries"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                        ]
+                    }],
+                    Dinner: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Rice & Beans"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                            {
+                                name: "Caesar Salad"
+                            },
+                            {
+                                name: "Cheese Pizza"
+                            }
+                        ]
+                    },{
+                        category: "Desert",
+                        recipes: [
+                            {
+                                name: "Ice Cream"
+                            },
+                            {
+                                name: "Cake "
+                            }
+                        ]
+                
+                    }],
+                    LateNight: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Cookies"
+                            },
+                            {
+                                name: "Pretzels"
+                            }
+                        ]
+                    }],
+                }
+            },
+            {
+                date: "4/19/2023",
+                meals: {
+                    Breakfast: [{
+                        category: "Soups",
+                        recipes: [
+                            {
+                                name: "Gritz"
+                            },
+                            {
+                                name: "Oatmeal"
+                            }
+                        ]
+                
+                    },{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "English Muffin"
+                            },
+                            {
+                                name: "Quiche"
+                            },
+                            {
+                                name: "Egg Sandwich"
+                            }
+                        ]
+                    }],
+                    Lunch: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Burger and fries"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                        ]
+                    }],
+                    Dinner: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Rice & Beans"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                            {
+                                name: "Caesar Salad"
+                            },
+                            {
+                                name: "Cheese Pizza"
+                            }
+                        ]
+                    },{
+                        category: "Desert",
+                        recipes: [
+                            {
+                                name: "Ice Cream"
+                            },
+                            {
+                                name: "Cake "
+                            }
+                        ]
+                
+                    }],
+                    LateNight: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Cookies"
+                            },
+                            {
+                                name: "Pretzels"
+                            }
+                        ]
+                    }],
+                }
+            }
+        ]
     }
-];
+
+
+;
+/*
+[
+    {
+
+        Berkshire: [
+            {
+                date: "1/1/1",
+                meals: {
+                    Breakfast: [{
+                        category: "Soups",
+                        recipes: [
+                            {
+                                name: "Cereal"
+                            },
+                            {
+                                name: "Oatmeal"
+                            }
+                        ]
+                
+                    },{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "French Toast"
+                            },
+                            {
+                                name: "Quiche"
+                            },
+                            {
+                                name: "Egg Sandwich"
+                            }
+                        ]
+                    }],
+                    Lunch: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Burger and fries"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                        ]
+                    }],
+                    Dinner: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Burger and fries"
+                            },
+                            {
+                                name: "Grilled Cheese"
+                            },
+                            {
+                                name: "Caesar Salad"
+                            },
+                            {
+                                name: "Cheese Pizza"
+                            }
+                        ]
+                    },{
+                        category: "Desert",
+                        recipes: [
+                            {
+                                name: "Ice Cream"
+                            },
+                            {
+                                name: "Cake "
+                            }
+                        ]
+                
+                    }],
+                    LateNight: [{
+                        category: "Entrees",
+                        recipes: [
+                            {
+                                name: "Cookies"
+                            },
+                            {
+                                name: "Pretzels"
+                            }
+                        ]
+                    }],
+                }
+            }
+        ]
+    }
+
+]
+*/
 
 export const MealItems = {
     "Chicken Noodle Soup" : {
