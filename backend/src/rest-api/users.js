@@ -20,7 +20,8 @@ async function createUser(username, useremail, userphone){
 
 app.get('/createUser', (req, res)=>{
   (async function createAndSend(){
-    let sendVal = await createUser(req.name, req.email, req.phone)
+    let req_val = JSON.parse(req.body)
+    let sendVal = await createUser(req_val.name, req_val.email, req_val.phone)
     res.end(sendVal)
   })();
 
@@ -40,20 +41,19 @@ async function fetchUserData(username){
         id: user.userID,
         name: user.name,
         email: user.eamil,
-        phone: user.phone
+        phone: user.phone,
       })
     });
   } catch(err){
     console.log("Username does not exist");
   }
-  return f_user;
+  return JSON.stringify(f_user);
 }
 
 app.get('/getUser', (req, res) =>{
   (async function getUser(){
-    let users = fetchUserData(req.name)
-    let str = JSON.stringify(users)
-    res.end(str)
+    let users = fetchUserData(JSON.parse(req.body).name)
+    res.end(users)
   })();
 })
 //fetch user restrictions
@@ -65,16 +65,20 @@ async function fetchUserRestrictions(userid){
         userID: userid,
       }
     });
-    user_rest.push(user_data.restriction)
+    user_data.forEach(restrict=>{
+      user_rest.push({
+        restriction: restrict.restriction,
+      })
+    });
   } catch(err){
     console.log("userId does not exist or has no restrictions")
   }
-  return user_rest;
+  return JSON.stringify(user_rest);
 }
 
 app.get('/getUserRestrictions', (req, res)=>{
   (async function getUserRestrictions(){
-    let restrict = await fetchUserRestrictions(req.userid)
+    let restrict = await fetchUserRestrictions(JSON.parse(req.body).userID)
     res.end(restrict)
   })();
 })
@@ -88,20 +92,34 @@ async function fetchFavoriteFoods(userid){
         userID: userid,
       }
     });
-    fav_foods.push(fav_food_list.foodID);
+    fav_food_list.forEach(f_food =>{
+      fav_foods.push(f_food.foodID)
+    });
   } catch{
     console.log("user has no favorites")
   }
-  return fav_foods;
+  return JSON.stringify(fav_foods);
 }
 app.get('/getFavoriteFoods', (req,res)=>{
   (async function getFavoriteFoods(){
-    let favs= await fetchFavoriteFoods(req.userID)
+    let favs= await fetchFavoriteFoods(JSON.parse(req.body).userID)
     res.end(favs)
   })();
 })
 //fetch meals
 async function fetchMeals(userid){
+  async function fetchFoodInMeal(mealid){
+    foods=[]
+    const food_in_meal = await MealFoodBridge.findAll({
+      where:{
+        mealID: mealid,
+      }
+    });
+    food_in_meal.forEach(food=>{
+      foods.push(food.foodID)
+    });
+  }
+
   let meals=[]
   try{
     const usermeal=await meals.findAll({
@@ -109,21 +127,28 @@ async function fetchMeals(userid){
         userID:userid,
       }
     });
-    const food_in_meal=await MealFoodBridge.findAll({
-      where:{
-        mealID: usermeal.meadId,
-      }
+
+    usermeal.forEach(meal=>{
+      let new_meal=[]
+      new_meal.push(meal.mealID)
+      meal_foods=fetchFoodInMeal(meal.mealID)
+      meal_foods.forEach(food=>{
+        new_meal.push({
+          foodID: food.foodID,
+
+        });
+      });
+      meals.push(new_meal)
     });
-    meals.push([meal, usermeal])
   }catch{
     console.log('user has no meals')
   }
-  return meals;
+  return JSON.stringify(meals);
 
 }
 app.get('/getmeals', (req, res)=>{
   (async function getmeals(){
-    let meal_ret=await fetchMeals(req.userID)
+    let meal_ret=await fetchMeals(JSON.parse(req.body).userID)
     res.end(meal_ret)
   })();
 })
@@ -142,11 +167,11 @@ async function fetchfavoritelocations(userid){
   } catch{
     console.log('user has no favorite locations')
   }
-  return fav_loc;
+  return JSON.stringify(fav_loc);
 }
 app.get('/getfavoritelocations', (req,res)=>{
   (async function getfavoriteLocations(){
-    let loc=await fetchfavoritelocations(req.userID)
+    let loc=await fetchfavoritelocations(JSON.parse(req.body).userID)
     res.end(loc)
   })();
 })
