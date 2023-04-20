@@ -11,6 +11,6 @@ import MenuData from "../components/MenuData"
 
 
 export default function Analysis(){
-    return <div><MenuData/></div>
+    return <h1>Analysis</h1>
         
 }

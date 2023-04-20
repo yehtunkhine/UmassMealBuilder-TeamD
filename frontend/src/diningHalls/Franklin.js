@@ -1,3 +1,5 @@
+import MenuData from "../components/MenuData";
+
 export default function Franklin(){
-    return <h1>Franklin</h1>
+    return <div><MenuData hall = "Franklin_Dining_Commons"/></div>
 }

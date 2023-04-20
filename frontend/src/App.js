@@ -9,7 +9,7 @@ import Home from "./pages/Home"
 import Worcester from "./diningHalls/Worcester"
 import Hampshire from "./diningHalls/Hampshire"
 import Franklin from "./diningHalls/Franklin"
-import Berkshire from "./diningHalls/Franklin"
+import Berkshire from "./diningHalls/Berkshire"
 import FactsTemplate from './components/FactsTemplate';
 
 import {Route, Routes} from "react-router-dom"
