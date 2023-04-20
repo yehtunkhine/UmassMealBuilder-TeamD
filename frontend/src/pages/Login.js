@@ -82,13 +82,19 @@ export default function Login() {
           DietaryRestrictions: "None"
         }
         
-        fetch(`http://localhost:3000/users/${user.uid}`, {
+        fetch(`http://localhost:3001/users/${user.uid}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(userObject),
-        })
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+          console.log(data);
+        }).catch(error => {
+          console.log(error);
+        });
 
 
         // User is signed in, see docs for a list of available properties

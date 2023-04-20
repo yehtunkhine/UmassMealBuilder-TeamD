@@ -46,7 +46,7 @@ function createTable (){
   });
 }
 
-createTable();
+// createTable();
 
 
 function createUser(newUser){
