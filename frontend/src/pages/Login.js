@@ -1,19 +1,13 @@
 import React from "react";
 import { useRef, useState } from 'react';
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail} from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth';
 import './loginstyles.css';
-import { Link, NavLink } from "react-router-dom";
 import { useContext } from 'react';
 import { FirebaseContext, AuthenticationContext } from './../App';
 import { useEffect} from 'react';
 import { GoogleButton } from 'react-google-button';
 import { useNavigate } from 'react-router-dom';
-
-
-// Import the functions you need from the SDKs you need
-import { 
-  GoogleAuthProvider, 
-  signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 
 
@@ -22,6 +16,8 @@ const Login = () => {
     const app = useContext(FirebaseContext);
     const auth = useContext(AuthenticationContext);
     const provider = new GoogleAuthProvider();
+
+    const navigate = useNavigate();
 
     const txtEmail = useRef(null);
     const txtPassword = useRef(null);
@@ -62,29 +58,20 @@ const Login = () => {
           });
     }
     
-    const sendPasswordReset = async (email) => {
-        try {
-          await sendPasswordResetEmail(auth, email);
-          alert("Password reset link sent!");
-        } catch (err) {
-          console.error(err);
-          alert(err.message);
-        }
-      };
 
     const login = async() => {
         //Get text values
         const loginEmail = txtEmail.current.value;
         const loginPassword = txtPassword.current.value;
-        //monitorAuthState();
+
         //Try signup
         try {
             await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
             .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
-                console.log(user);
               });
+            navigate("/")
             
         }
         //If error, then probably username/password invalid.
@@ -94,21 +81,19 @@ const Login = () => {
         }
     };
 
-   /*const logout = async() => {
-       // monitorAuthState();
-        signOut(auth);
-    }*/
-
     //Toggle password
     const hidePassword = () => {
-        var x = document.getElementById("password");
-        if (x.type === "password") {
-            x.type = "text";
-        } else {
-            x.type = "password";
-        }
+      var x = document.getElementById("password");
+      if (x.type === "password") {
+          x.type = "text";
+      } else {
+          x.type = "password";
+      }
     }
 
+    const resetPassword = () => {
+      navigate("/resetPasswordEmail")
+    }
 
     return (
         <div class = "outerBox" >
@@ -124,21 +109,14 @@ const Login = () => {
             <div>
                 <button class = "button" onClick={login}>Login</button>
             </div>
+            <div>
+              <a class = "forgotPasswordButton" onClick={resetPassword} >Forgot Password?</a>
+            </div>
             <div  class = 'max-w-[240px] m-auto py-4'>
                 <GoogleButton className='signUpButton ' onClick={handleGoogleSignIn} />
             </div>
         </div>
     );
 }
-
-/*
-<br></br> Singup button
-            <div>
-                <button class = "button" onClick={login}>Sign Up</button>
-            </div>
-<br></br> Logout button
-            <div>
-                <button class="button" onClick={logout}>Logout</button>
-            </div> */
 export default Login;
 

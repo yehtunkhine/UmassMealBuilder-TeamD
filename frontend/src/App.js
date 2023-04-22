@@ -11,6 +11,7 @@ import Hampshire from "./diningHalls/Hampshire"
 import Franklin from "./diningHalls/Franklin"
 import Berkshire from "./diningHalls/Franklin"
 import User from "./pages/User"
+import ResetPasswordEmail from './pages/resetPasswordEmail';
 import {Route, Routes} from "react-router-dom"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebaseInit from "./pages/firebaseInit";
@@ -74,6 +75,7 @@ function App(){
               <Route path ="/franklin" element={<Franklin />} />
               <Route path ="/berkshire" element={<Berkshire />} />
               <Route path = "/userPage" element = {<User />} />
+              <Route path = "/resetPasswordEmail" element = {<ResetPasswordEmail />} />
           </Routes>
       </div>
     </>
