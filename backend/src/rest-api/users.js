@@ -1,4 +1,9 @@
-import Sequelize from 'sequelize';
+
+import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes} from './models.js'
+import { Sequelize, Op } from 'sequelize';
+import express from 'express'
+const app=express()
+const port=3000
 
 const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb') // Example for postgres
 
@@ -12,16 +17,18 @@ async function testConnection() {
 }
  
 testConnection()
+app.use(express.json())
 //create user
 async function createUser(username, useremail, userphone){
-  const newUser=await User.create({userID: Date.now()+"", name: username, email: useremail, phone: userphone});
+  const newUser=await User.create({userId: Date.now() + '', name: username, email: useremail, phone: userphone});
+  console.log("here5")
   return JSON.stringify(newUser);
 }
 
-app.get('/createUser', (req, res)=>{
+app.post('/createUser', (req, res)=>{
   (async function createAndSend(){
-    let req_val = JSON.parse(req.body)
-    let sendVal = await createUser(req_val.name, req_val.email, req_val.phone)
+    let sendVal = await createUser(toString(req.body.name), toString(req.body.email), toString(req.body.phone))
+    console.log("here3")
     res.end(sendVal)
   })();
 
@@ -52,7 +59,7 @@ async function fetchUserData(username){
 
 app.get('/getUser', (req, res) =>{
   (async function getUser(){
-    let users = fetchUserData(JSON.parse(req.body).name)
+    let users = fetchUserData(toString(req.body.name))
     res.end(users)
   })();
 })
@@ -78,7 +85,7 @@ async function fetchUserRestrictions(userid){
 
 app.get('/getUserRestrictions', (req, res)=>{
   (async function getUserRestrictions(){
-    let restrict = await fetchUserRestrictions(JSON.parse(req.body).userID)
+    let restrict = await fetchUserRestrictions(toString(req.body.userId))
     res.end(restrict)
   })();
 })
@@ -102,7 +109,7 @@ async function fetchFavoriteFoods(userid){
 }
 app.get('/getFavoriteFoods', (req,res)=>{
   (async function getFavoriteFoods(){
-    let favs= await fetchFavoriteFoods(JSON.parse(req.body).userID)
+    let favs= await fetchFavoriteFoods(toString(req.body.userId))
     res.end(favs)
   })();
 })
@@ -148,7 +155,7 @@ async function fetchMeals(userid){
 }
 app.get('/getmeals', (req, res)=>{
   (async function getmeals(){
-    let meal_ret=await fetchMeals(JSON.parse(req.body).userID)
+    let meal_ret=await fetchMeals(toSting(req.body.userId))
     res.end(meal_ret)
   })();
 })
@@ -171,7 +178,7 @@ async function fetchfavoritelocations(userid){
 }
 app.get('/getfavoritelocations', (req,res)=>{
   (async function getfavoriteLocations(){
-    let loc=await fetchfavoritelocations(JSON.parse(req.body).userID)
+    let loc=await fetchfavoritelocations(toString(req.body.userId))
     res.end(loc)
   })();
 })
