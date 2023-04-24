@@ -18,23 +18,41 @@ async function testConnection() {
  
 testConnection()
 app.use(express.json())
-//create user
+//create user --works--fix userId issue
 async function createUser(username, useremail, userphone){
-  const newUser=await User.create({userId: Date.now() + '', name: username, email: useremail, phone: userphone});
-  console.log("here5")
+  const newUser=await User.create({userId: '3', name: username, email: useremail, phone: userphone});
   return JSON.stringify(newUser);
 }
 
 app.post('/createUser', (req, res)=>{
   (async function createAndSend(){
     let sendVal = await createUser(toString(req.body.name), toString(req.body.email), toString(req.body.phone))
-    console.log("here3")
     res.end(sendVal)
   })();
-
 })
 
-//retrieve user data
+
+
+//delete user    not working
+async function deleteuser(userId){
+  //let user_del=fetchUserData(name);
+  await User.destroy({
+    where:{
+      userId: userid,
+    }
+  });
+  
+}
+app.get('/deleteUser', (req,res)=>{
+  (async function delUser(){
+    let delVal=await deleteuser(toString(req.body.userId))
+    res.end(delval)
+  })
+})
+
+
+
+//retrieve user data -- works
 async function fetchUserData(username){
   let f_user =[];
   try{
@@ -43,13 +61,16 @@ async function fetchUserData(username){
         name: username,
       }
     });
+    console.log("users:")
+    console.log(users)
     users.forEach(user =>{
       f_user.push({
-        id: user.userID,
+        id: user.userId,
         name: user.name,
-        email: user.eamil,
+        email: user.email,
         phone: user.phone,
       })
+
     });
   } catch(err){
     console.log("Username does not exist");
@@ -59,10 +80,29 @@ async function fetchUserData(username){
 
 app.get('/getUser', (req, res) =>{
   (async function getUser(){
-    let users = fetchUserData(toString(req.body.name))
+    let users = await fetchUserData(toString(req.body.name))
     res.end(users)
   })();
 })
+
+
+
+
+//create user restriction--fix restrictions definition to include userid
+async function createUserRestriction(userid, restrictons){
+  const new_restrict= await UserRestriction.create({userId:userid, restriction:restrictions});
+  return JSON.stringify(new_restrict)
+}
+app.post('/createUR', (req,res)=>{
+  (async function createRestrict(){
+    console.log(req.body.userId)
+    let sendVal=await createUserRestriction(toString(req.body.userId), toString(req.body.restriction))
+    res.end(sendVal)
+  })
+})
+
+
+
 //fetch user restrictions
 async function fetchUserRestrictions(userid){
   let user_rest= []
@@ -90,6 +130,23 @@ app.get('/getUserRestrictions', (req, res)=>{
   })();
 })
 
+
+
+
+//create fav foods
+async function createFavoriteFood(userid, food){
+  const new_fav_food = await FavoriteFoodsBridge.create({userId:userid, Foods:food});
+  return JSON.stringify(new_fav_food)
+}
+app.post('createFavFood',(req,res)=>{
+  (async function createfav(){
+    let sendVal=await createFavoriteFood(toString(req.body.userId), toString(req.body.food))
+    res.end(sendVal)
+  })
+})
+
+
+
 //fetch favorite foods
 async function fetchFavoriteFoods(userid){
   let fav_foods=[]
@@ -113,6 +170,27 @@ app.get('/getFavoriteFoods', (req,res)=>{
     res.end(favs)
   })();
 })
+
+
+
+
+//create meal
+async function createMeal(userid, foods){
+  const new_meal= await Meal.create({mealId:'1', userId:userid})
+  foods.forEach(food=>{
+    MealFoodBridge.create({mealId:'1', food: food.foodId})
+  })
+  return JSON.stringify(new_meal)
+}
+app.post('createMeal', (req,res)=>{
+  (async function createM(){
+    let sendVal=await createMeal(toString(req.body.userId), toString(req.body.foods))
+    res.end(sendval)
+  })
+  
+})
+
+
 //fetch meals
 async function fetchMeals(userid){
   async function fetchFoodInMeal(mealid){
