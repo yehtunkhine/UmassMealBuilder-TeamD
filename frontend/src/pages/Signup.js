@@ -39,14 +39,14 @@ const Signup = () => {
             }
         }
         try{
-            if(password.localeCompare(password.toUpperCase()) == 0 || password.localeCompare(password.toLowerCase()) == 0 
+            if(password.localeCompare(password.toUpperCase()) === 0 || password.localeCompare(password.toLowerCase()) === 0 
                 || !/[0-9]/.test(password) || !strongPassword || len < 8){
                 throw new Error("Password is not strong enough, please have at least 1 number, 1 uppercase, 1 lowercase, 1 special character and at least 8 characters");
             }
-            if(password.localeCompare(confirmPassword) != 0){
+            if(password.localeCompare(confirmPassword) !== 0){
                 throw new Error("Passwords don't match");
             }
-            if(name.length == 0){
+            if(name.length === 0){
                 throw new Error("Please enter a display name");
             }
         }catch(error){
@@ -61,11 +61,7 @@ const Signup = () => {
             displayName: name
         })
         signOut(auth);
-        await signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed in 
-            const user = userCredential.user;
-        });
+        await signInWithEmailAndPassword(auth, email, password);
         navigate("/")
         }
         catch(error) {
@@ -80,22 +76,17 @@ const Signup = () => {
         signInWithPopup(auth, provider)
           .then((result) => {
             // This gives you a Google Access Token. You can use it to access the Google API.
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
-            // The signed-in user info.
-            const user = result.user;
-            // IdP data available using getAdditionalUserInfo(result)
-            console.log('user', user);
-            console.log('token', token);
-            console.log('credential', credential);
+            //const credential = GoogleAuthProvider.credentialFromResult(result);
+            //const token = credential.accessToken;
+
           }).catch((error) => {
-            // Handle Errors here.
+            /*// Handle Errors here.
             const errorCode = error.code;
             const errorMessage = error.message;
             // The email of the user's account used.
             const email = error.customData.email;
             // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
+            const credential = GoogleAuthProvider.credentialFromError(error);*/
           });
     }  
 
@@ -121,9 +112,9 @@ const Signup = () => {
                 <input class = "inputText" ref = {txtEmail} type = "text" id = "email" name = "emailInput" placeholder="Email"/>
 
                 <text class =  "labelText">Password:</text>
-                <input class = "inputText" ref = {txtPassword} type = "text" id = "password" name = "passwordInput" placeholder="Password" type = "password"/>
+                <input class = "inputText" ref = {txtPassword} id = "password" name = "passwordInput" placeholder="Password" type = "password"/>
                 <text class =  "labelText">Confirm Password:</text>
-                <input class = "inputText" ref = {txtConfirmPassword} type = "text" id = "confirmPassword" name = "confirmPasswordInput" placeholder="Confirm Password" type = "password"/>
+                <input class = "inputText" ref = {txtConfirmPassword} id = "confirmPassword" name = "confirmPasswordInput" placeholder="Confirm Password" type = "password"/>
                 <input type="checkbox" onClick = {hidePassword}/>
                 <text>   Show Password</text>
                 <br></br>
