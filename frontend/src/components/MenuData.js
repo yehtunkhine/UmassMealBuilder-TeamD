@@ -161,8 +161,10 @@ const ItemFacts = (item) => {
     )
 };
 
+const date = new Date();
+const datestring = date.toLocaleDateString();
 
-const MealCard = ({mtime, hall}) => {
+const MealCard = ({mdata}) => {
     // states
     const date = new Date();
     const datestring = date.toLocaleDateString();
@@ -170,6 +172,7 @@ const MealCard = ({mtime, hall}) => {
     Data[hall].forEach(x=> x.date === datestring? mealtime = x.meals : 0)
     const [isOpen, setIsOpen] = useState(false) 
     const mdata = mealtime[mtime];
+    const [openModal, setOpenModal] = useState(false) 
 
     return (
         <FContent >
@@ -214,7 +217,15 @@ const MenuData = ({hall}) => {
         }
         setClicked(index);
     }
-    const times = Object.keys(Data[hall][0].meals);
+    // json navigation
+    let times = Object.keys(Data[hall][0].meals);
+    let mealtime = Data[hall][0].meals;
+    Data[hall].forEach(x=>{
+        if (x.date === datestring){
+            times = Object.keys(x.meals)
+            mealtime = x.meals
+        }
+    })
 
   return (
     <Menu>
@@ -231,7 +242,7 @@ const MenuData = ({hall}) => {
                         {clicked === index ? (
                         <Dropdown>
                             
-                            <MealCard mtime = {times[index]} hall = {hall}/>
+                            <MealCard mdata = {mealtime[times[index]]} hall = {hall}/>
                         </Dropdown>
                         ) : null}
                         </>
