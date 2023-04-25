@@ -83,12 +83,24 @@ async function findAllLocationsServingFoodItems(foodItemIds){
     return locations;
 }
 
+async function getAllLocationsServingFoodItemsByNames(foodNameList){
+    const foodIds = await Food.findAll({
+        where: {name: {[Op.in]: foodNameList}},
+        attributes: ["foodId"]
+    });
+
+    const foodIdList = foodIds.map((food) => food.foodId);
+    
+    return await findAllLocationsServingFoodItems(foodIdList);
+}
+
+
 // TODO: TEST
-async function getAllLocationsServingFoodItemOnDate(foodItem, date){
+async function getAllLocationsServingFoodItemOnDate(foodItemId, date){
     let locations = await LocationFoodBridge.findAll({
         where: {
             [Op.and]: {
-                foodId: foodItem,
+                foodId: foodItemId,
                 Date: date
             }
         },
@@ -120,17 +132,6 @@ async function getAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time){
     });
     
     return locationObjects;
-}
-
-async function getAllLocationsServingFoodByNames(foodNameList){
-    const foodIds = await Food.findAll({
-        where: {name: {[Op.in]: foodNameList}},
-        attributes: ["foodId"]
-    });
-
-    const foodIdList = foodIds.map((food) => food.foodId);
-    
-    return await findAllLocationsServingFoodItems(foodIdList);
 }
 
 // User Favorite Location Functions
@@ -463,7 +464,7 @@ app.get('/getAllLocationsServingFoodByNames:jsonParams', (req, res) => {
 
     (async function anon(){
         try{
-            let locations = await getAllLocationsServingFoodByNames(foodNames);
+            let locations = await getAllLocationsServingFoodItemsByNames(foodNames);
             res.end(JSON.stringify(locations));
         }
         catch(e){
