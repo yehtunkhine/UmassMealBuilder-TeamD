@@ -1,11 +1,11 @@
-import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes} from './models.js'
+import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge} from './models.js'
 import { Sequelize, Op } from 'sequelize';
 import express from 'express'
 
 const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb');
 
 async function createFood(name, calories, fat, saturated_fat, carbs, ingredients, healthfulness, servingSize){ //create food with properties
-    const food = await Food.create({ foodId: '1', name: name, calories: calories, fat: fat, saturated_fat: saturated_fat, carbs: carbs, ingredients: ingredients, halthfulness: healthfulness, servingSize: servingSize});
+    const food = await Food.create({name: name, calories: calories, fat: fat, saturated_fat: saturated_fat, carbs: carbs, ingredients: ingredients, halthfulness: healthfulness, servingSize: servingSize});
     console.log('-----------Created ' + name + ' Object-----------------')
     console.log(food instanceof Food);
     console.log(food.foodId);
@@ -44,9 +44,7 @@ async function findFood(key, value) { //find food with given key and value
     }
 }
 
-
-
-async function findRestrictions(key, value) { //find restrictions with given key and value
+/*async function findRestrictions(key, value) { //find restrictions with given key and value
     let list = [];
     const restrictions = await FoodRestriction.findAll({
         where: {
@@ -62,16 +60,16 @@ async function findRestrictions(key, value) { //find restrictions with given key
     });
     
     return list;
-}
+}*/
 
-async function createFoodRestriction(name, restriction) { //add restriction to food
+/*async function createFoodRestriction(name, restriction) { //add restriction to food
     let food = findFood('name', name);
     await FoodRestriction.create({restriction: restriction, foodId: food.foodId});
 
     return 'Created ' + restriction + ' restriction for food: ' + name;
-}
+}*/
 
-async function findFoodsWithRestriction(restriction) { //find all foods with given restriction
+/*async function findFoodsWithRestriction(restriction) { //find all foods with given restriction
     const list = [];
     const restrictionList = findRestrictions('restriction', restriction);
     restrictionList.forEach(restriction => {
@@ -90,10 +88,10 @@ async function findFoodsWithRestriction(restriction) { //find all foods with giv
     });
 
     return list;
-}
+}*/
 
 async function findLocationFoodBridges(key, value) { //find restrictions with given key and value
-    let list = [];
+    const list = [];
     const bridges = await LocationFoodBridge.findAll({
         where: {
             [key]: value
@@ -103,31 +101,33 @@ async function findLocationFoodBridges(key, value) { //find restrictions with gi
     bridges.forEach(bridge => {
         list.push({
             Date: bridge.Date,
-            Time: bridge.TIme,
+            Time: bridge.Time,
             foodId: bridge.foodId,
             locationId: bridge.locationId
         });
     });
-    
     return list;
 }
 
-async function findFoodsAtLocationOnDate(locatiionId, date) {
-    const list = [];
-    const bridgeList = findLocationFoodBridges('locationId', locationId);
-    bridgeList.forEach(bridge => {
-        if (bridge.date === date) {
-            let food = findFood('foodId', bridge.foodId);
+async function findFoodsAtLocationOnDate(locationId, date) {
+    let bridgeList = await findLocationFoodBridges('locationId', locationId);
+    let retObj = {};
+    for (let i = 0; i<bridgeList.length; i++) {
+        let bridge = bridgeList[i];
+        if (bridge.Date === date) {
+            let food = await findFood('foodId', bridge.foodId);
+            if(retObj.hasOwnProperty(bridge.Time)) {
+                retObj[bridge.Time].push([{name: food.name, foodId: food.foodId}]);
+            }
+            else {
+                retObj[bridge.Time] = [{name: food.name, foodId: food.foodId}];
+            }
         }
-        list.push({
-            name: food.name,
-            foodId: food.foodId
-        });
-    });
+    }
+    return retObj;
 }
 
 async function deleteFood(name){
-    let food = findFood('name', name);
 
     /*await FoodRestriction.destroy({ //delete all associated FoodRestriction rows
         where: {
@@ -152,7 +152,7 @@ const port = 3000
 
 app.get('/createFood', (req, res) => {
     (async function createAndSend(){
-        let sendVal = await createFood('Chicken Soup', 1, 1, 1, 1, 'test', 1, 'test')
+        let sendVal = await createFood('Chicken Soup', 1, 1, 1, 1, 'ingredientsTest', 1, 'servingSizeTest')
         res.end(sendVal)
     })();
 });
@@ -164,20 +164,28 @@ app.get('/deleteFood', (req, res) => {
     })();
 });
 
-app.get('/createRestriction', (req, res) => {
+/*app.get('/createRestriction', (req, res) => {
     (async function createAndSend(){
         let sendVal = await createFoodRestriction('Chicken Soup', 'test restriction');
         res.end(sendVal);
     })();
-});
+});*/
 
 app.get('/analysis', (req, res) => {
+    console.log("analysis");
     (async function getAndSend() {
-        
+        const location = await Location.findOne({
+            where: {
+                locationName: req.query.diningHall
+            }
+        });
+        if (location === null) res.end(req.query.diningHall + 'is not a location!');
+        else {
+            let resultObj = await findFoodsAtLocationOnDate(location.locationId, req.query.date);
+            let str = JSON.stringify(resultObj);
+            res.end(str);
+        }
     })();
-
-    req.query.diningHall
-    req.query.date
 });
 
 app.get('/facts', (req, res) => {
