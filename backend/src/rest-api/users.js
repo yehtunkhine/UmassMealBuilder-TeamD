@@ -26,7 +26,7 @@ async function createUser(username, useremail, userphone){
 
 app.post('/createUser', (req, res)=>{
   (async function createAndSend(){
-    let sendVal = await createUser((req.body.name), (req.body.email), (req.body.phone))
+    let sendVal = await createUser((req.query.name), (req.query.email), (req.body.phone))
     res.end(sendVal)
   })();
 })
@@ -44,7 +44,7 @@ async function deleteuser(userid){
 }
 app.get('/deleteUser', (req,res)=>{
   (async function delUser(){
-    let delVal=await deleteuser(req.body.userId)
+    let delVal=await deleteuser(req.query.userId)
     res.end(delVal)
   })();
 })
@@ -64,7 +64,7 @@ async function fetchUserData(userid){
 
 app.get('/getUser', (req, res) =>{
   (async function getUser(){
-    let users = await fetchUserData((req.body.userId))
+    let users = await fetchUserData((req.query.userId))
     res.end(users)
   })();
 })
