@@ -1,8 +1,8 @@
 import React from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useContext } from 'react';
-import { useRef, useState } from 'react';
-import { FirebaseContext, AuthenticationContext } from './../App';
+import { useRef } from 'react';
+import { AuthenticationContext } from './../App';
 import { useNavigate } from 'react-router-dom';
 import './loginstyles.css';
 
@@ -17,7 +17,7 @@ export default function ResetPasswordEmail(){
     const sendPasswordReset = async () => {
         let email = txtEmail.current.value;
         try {
-            if(email.length == 0){
+            if(email.length === 0){
                 throw new Error("Please enter your email");
             }
           await sendPasswordResetEmail(auth, email);
