@@ -1,10 +1,10 @@
 import React from "react";
-import { useRef, useState } from 'react';
-import { signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth';
+import { useRef } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import './loginstyles.css';
 import { useContext } from 'react';
-import { FirebaseContext, AuthenticationContext } from './../App';
-import { useEffect} from 'react';
+import { AuthenticationContext } from './../App';
+//import { useEffect} from 'react';
 import { GoogleButton } from 'react-google-button';
 import { useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -13,7 +13,6 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 const Login = () => {
     //Initialize firebase
-    const app = useContext(FirebaseContext);
     const auth = useContext(AuthenticationContext);
     const provider = new GoogleAuthProvider();
 
@@ -22,40 +21,41 @@ const Login = () => {
     const txtEmail = useRef(null);
     const txtPassword = useRef(null);
 
-    const [user, setUser] = useState();
-    useEffect(() => {
+    //const [user, setUser] = useState();
+    /*useEffect(() => {
         onAuthStateChanged(auth, (user) => {
           if (user) {
-            setUser(user);
+            //setUser(user);
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/firebase.User
-            const uid = user.uid;
+            //const uid = user.uid;
           } 
         });
-      }, []);
+      }, []);*/
 
     const handleGoogleSignIn = async () => {
         console.log('signing in');
         signInWithPopup(auth, provider)
           .then((result) => {
             // This gives you a Google Access Token. You can use it to access the Google API.
-            const credential = GoogleAuthProvider.credentialFromResult(result);
+            /*const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential.accessToken;
             // The signed-in user info.
             const user = result.user;
             // IdP data available using getAdditionalUserInfo(result)
             console.log('user', user);
             console.log('token', token);
-            console.log('credential', credential);
+            console.log('credential', credential);*/
           }).catch((error) => {
-            // Handle Errors here.
+            /*// Handle Errors here.
             const errorCode = error.code;
             const errorMessage = error.message;
             // The email of the user's account used.
             const email = error.customData.email;
             // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
+            const credential = GoogleAuthProvider.credentialFromError(error);*/
           });
+          navigate("/");
     }
     
 
@@ -69,7 +69,7 @@ const Login = () => {
             await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
             .then((userCredential) => {
                 // Signed in 
-                const user = userCredential.user;
+                //const user = userCredential.user;
               });
             navigate("/")
             
@@ -101,7 +101,7 @@ const Login = () => {
             <input class = "inputText" ref = {txtEmail} type = "text" id = "username" name = "emailInput" placeholder="Email"/>
 
             <text class =  "labelText">Password:</text>
-            <input class = "inputText" ref = {txtPassword} type = "text" id = "password" name = "passwordInput" placeholder="Password" type = "password"/>
+            <input class = "inputText" ref = {txtPassword} id = "password" name = "passwordInput" placeholder="Password" type = "password"/>
             <input type="checkbox" onClick = {hidePassword}/>
             <text>   Show Password</text>
             
@@ -110,7 +110,7 @@ const Login = () => {
                 <button class = "button" onClick={login}>Login</button>
             </div>
             <div>
-              <a class = "forgotPasswordButton" onClick={resetPassword} >Forgot Password?</a>
+              <text class = "forgotPasswordButton" onClick={resetPassword} >Forgot Password?</text>
             </div>
             <div  class = 'max-w-[240px] m-auto py-4'>
                 <GoogleButton className='signUpButton ' onClick={handleGoogleSignIn} />
