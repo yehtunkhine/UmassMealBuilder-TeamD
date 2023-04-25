@@ -170,7 +170,7 @@ const LocationFoodBridge = sequelize.define("LocationFoodBridge", {
         primaryKey: true
     },
     Date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         primaryKey: true
     },
     Time: {
@@ -248,7 +248,7 @@ User.belongsToMany(Food, {through: "FavoriteFoodsBridge", foreignKey: "userId"})
 
 // A location can be favorited by many users, and many users can favorite the same location 
 Location.belongsToMany(User, {through: "FavoriteLocationsBridge", foreignKey: "locationId"});
-User.belongsToMany(Location, {through: "FavoriteLocationsBridge", foreignKey: "userId", onDelete: 'CASCADE'});
+User.belongsToMany(Location, {through: "FavoriteLocationsBridge", foreignKey: "userId"});
 
 // A food can be in many meals, and many meals can use the same food
 Food.belongsToMany(Meal, {through: "MealFoodBridge", foreignKey: "foodId"});
@@ -275,17 +275,18 @@ LocationTimes.removeAttribute('id')
 // Push to db
 // Change models above and then uncomment and run this file to make db changes
 // force option will wipe database before updating tables!!!
-await sequelize.sync({force: true})
+// await sequelize.sync({force: true})
 
 
-await User.create({userId: "123456789", email: "random@email.com", phone: "555-555-5555", name: "John Doe"});
-await Location.create({locationName: "Worcester"});
-let oreo_ingredient = "Unbleached Enriched Flour (Wheat Flour Niacin, Reduced Iron, Thiamine Mononitrate {Vitamin B1}," + 
-    "Riboflavin {Vitamin B2}, Folic Acid), Sugar, Palm and/or Canola Oil, Cocoa (Processed with Alkali), High Fructose" +
-    "Corn Syrup, Leavening (Baking Soda, and/or Calcium Phosphate), Salt, Soy Lecithin, Chocolate, Artificial Flavor.";
-await Food.create({name: "Oreos", category: "Candy", calories: 140, fat: 7, protein: 0, carbs: 21, saturated_fat: 2, 
-            ingredients: oreo_ingredient, servingSize: "2 Cookies"});
-await LocationFoodBridge.create({locationId: 1, foodId: 1, Time: "Breakfast", Date: "2022-06-23"});
+// await User.create({userId: "123456789", email: "random@email.com", phone: "555-555-5555", name: "John Doe"});
+// await Location.create({locationName: "Worcester"});
+// let oreo_ingredient = "Unbleached Enriched Flour (Wheat Flour Niacin, Reduced Iron, Thiamine Mononitrate {Vitamin B1}," + 
+//     "Riboflavin {Vitamin B2}, Folic Acid), Sugar, Palm and/or Canola Oil, Cocoa (Processed with Alkali), High Fructose" +
+//     "Corn Syrup, Leavening (Baking Soda, and/or Calcium Phosphate), Salt, Soy Lecithin, Chocolate, Artificial Flavor.";
+// await Food.create({name: "Oreos", category: "Candy", calories: 140, fat: 7, protein: 0, carbs: 21, saturated_fat: 2, 
+//             ingredients: oreo_ingredient, servingSize: "2 Cookies"});
+// await LocationFoodBridge.create({locationId: 1, foodId: 1, Time: "Breakfast", Date: "2022-06-23"});
+// await FavoriteLocationsBridge.create({userId: "123456789", locationId: 1});
 
 // Export Models For Other Files
-export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge};
+export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteLocationsBridge};
