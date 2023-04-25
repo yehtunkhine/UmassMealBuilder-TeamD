@@ -1,9 +1,9 @@
 import React from "react";
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { updateProfile, createUserWithEmailAndPassword, signOut, signInWithEmailAndPassword } from 'firebase/auth';
 import './loginstyles.css';
 import { useContext } from 'react';
-import { FirebaseContext, AuthenticationContext } from './../App';
+import { AuthenticationContext } from './../App';
 import { GoogleButton } from 'react-google-button';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 
 const Signup = () => {
-    const app = useContext(FirebaseContext);
     const auth = useContext(AuthenticationContext);
     const provider = new GoogleAuthProvider();
 
