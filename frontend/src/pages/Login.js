@@ -46,6 +46,7 @@ const Login = () => {
             console.log('user', user);
             console.log('token', token);
             console.log('credential', credential);*/
+            navigate("/");
           }).catch((error) => {
             /*// Handle Errors here.
             const errorCode = error.code;
@@ -54,8 +55,10 @@ const Login = () => {
             const email = error.customData.email;
             // The AuthCredential type that was used.
             const credential = GoogleAuthProvider.credentialFromError(error);*/
+            alert(error);
+            console.log(error);
           });
-          navigate("/");
+          
     }
     
 
