@@ -16,7 +16,7 @@ async function createLocation(name){
     return location;
 }
 
-async function deleteLocation(lid){
+async function deleteLocationById(lid){
     await Location.destroy({
         where: {
             locationId: lid
@@ -37,7 +37,7 @@ async function deleteLocationByName(name){
         }
     })).map((l) => l.locationId);
 
-    locations.forEach((id) => deleteLocation(id));
+    locations.forEach((id) => deleteLocationById(id));
 }
 
 async function findLocationByName(name){
@@ -52,7 +52,15 @@ async function findLocationByName(name){
     return locations;
 }
 
-async function getLocationIdsFromName(name){
+async function findLocationById(id){
+    const location = await Location.findOne({
+        where: {locationId: id}
+    });
+
+    return location;
+}
+
+async function findLocationIdsByName(name){
     if(name.length > 128){
         throw new Error("Location name '" + name + "' is longer than maximum allowed length of 128 characters.");
     }
@@ -67,7 +75,7 @@ async function getLocationIdsFromName(name){
 // Functions involving Food/FoodLocationBridge
 
 // TODO: TEST
-async function findAllLocationsServingFoodItems(foodItemIds){
+async function findAllLocationsServingFoodItemsById(foodItemIds){
     const locationIds = (await LocationFoodBridge.findAll({
             where: {
                 foodId: {[Op.in]: foodItemIds},
@@ -83,18 +91,18 @@ async function findAllLocationsServingFoodItems(foodItemIds){
     return locations;
 }
 
-async function getAllLocationsServingFoodItemsByNames(foodNameList){
+async function findAllLocationsServingFoodItemsByNames(foodNameList){
     const foodIds = (await Food.findAll({
         where: {name: {[Op.in]: foodNameList}},
         attributes: ["foodId"]
     })).map((f) => f.foodId);
     
-    return await findAllLocationsServingFoodItems(foodIds);
+    return await findAllLocationsServingFoodItemsById(foodIds);
 }
 
 
 // TODO: TEST
-async function getAllLocationsServingFoodItemOnDate(foodItem, date){
+async function findAllLocationsServingFoodItemOnDate(foodItem, date){
     let locations = (await LocationFoodBridge.findAll({
         where: {
             [Op.and]: [
@@ -114,7 +122,7 @@ async function getAllLocationsServingFoodItemOnDate(foodItem, date){
 }
 
 //TODO: TEST
-async function getAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time){
+async function findAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time){
     let locations = (await LocationFoodBridge.findAll({
         where: {
             [Op.and]: [
@@ -134,7 +142,7 @@ async function getAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time){
 }
 
 // User Favorite Location Functions
-async function getFavoriteLocationsForUser(uid){
+async function findFavoriteLocationsForUser(uid){
     const user = await User.findOne({
         where: {userId: uid}
     });
@@ -170,7 +178,7 @@ async function addNewFavoriteLocationForUser(uid, lid){
     }
 }
 
-async function removeFavoriteLocationFromUser(uid, lid){
+async function deleteFavoriteLocationFromUser(uid, lid){
     const user = await User.findOne({
         where: {userId: uid}
     });
@@ -189,7 +197,7 @@ async function removeFavoriteLocationFromUser(uid, lid){
 
 
 // Location Times Functions
-async function getAllTimesForLocation(lid){
+async function findAllTimesForLocation(lid){
     const location = await Location.findOne({
         where: {locationId: lid}
     });
@@ -205,7 +213,7 @@ async function getAllTimesForLocation(lid){
     return locationTimes;
 }
 
-async function getTimesForLocationOnDay(dayOfWeek, lid){
+async function findTimesForLocationOnDay(dayOfWeek, lid){
     const location = await Location.findOne({
         where: {locationId: lid}
     });
@@ -347,7 +355,7 @@ app.delete('/deleteLocationById', (req, res) => {
 
     (async function anon() {
         try{
-            deleteLocation(id)
+            deleteLocationById(id)
             res.end("Success");
         }catch(e){
             res.end(e.message);
@@ -369,7 +377,7 @@ app.delete('/deleteLocationByName', (req, res) => {
     })();
 });
 
-app.get('/getLocationByName', (req, res) => {
+app.get('/findLocationByName', (req, res) => {
     let name = req.query.locationName;
 
     (async function anon(){
@@ -383,12 +391,26 @@ app.get('/getLocationByName', (req, res) => {
     })();
 });
 
-app.get('/getLocationIdsByName', (req, res) => {
+app.get('/findLocationById', (req, res) => {
+    let id = req.query.locationId;
+
+    (async function anon(){
+        try{
+            let location = await findLocationById(id);
+            res.end(JSON.stringify(location));
+        }
+        catch(e){
+            res.end(e.message);
+        }
+    })();
+});
+
+app.get('/findLocationIdsByName', (req, res) => {
     let name = req.query.locationName;
 
     (async function anon(){
         try{
-            let locationIds = await getLocationIdsFromName(name);
+            let locationIds = await findLocationIdsByName(name);
             res.end(JSON.stringify(locationIds));
         }
         catch(e){
@@ -397,12 +419,12 @@ app.get('/getLocationIdsByName', (req, res) => {
     })();
 });
 
-app.get('/findAllLocationsServingFoodItems', (req, res) => {
-    let foodItems = req.query.foodId;
+app.get('/findAllLocationsServingFoodItemsById', (req, res) => {
+    let foodItems = req.query.foodIds;
 
     (async function anon(){
         try{
-            let locations = await findAllLocationsServingFoodItems(foodItems);
+            let locations = await findAllLocationsServingFoodItemsById(foodItems);
             res.end(JSON.stringify(locations));
         }
         catch(e){
@@ -411,8 +433,21 @@ app.get('/findAllLocationsServingFoodItems', (req, res) => {
     })();
 });
 
+app.get('/findAllLocationsServingFoodItemsByNames', (req, res) => {
+    let foodNames = req.query.foodNames;
 
-app.get('/getAllLocationsServingFoodItemOnDate', (req, res) => {
+    (async function anon(){
+        try{
+            let locations = await findAllLocationsServingFoodItemsByNames(foodNames);
+            res.end(JSON.stringify(locations));
+        }
+        catch(e){
+            res.end(e.message);
+        }
+    })();
+});
+
+app.get('/findAllLocationsServingFoodItemOnDate', (req, res) => {
     let foodId = req.query.foodId;
     let date = moment(req.query.date).format('YYYY-MM-DD');
 
@@ -421,7 +456,7 @@ app.get('/getAllLocationsServingFoodItemOnDate', (req, res) => {
     
     (async function anon(){
         try{
-            let locations = await getAllLocationsServingFoodItemOnDate(foodId, date);
+            let locations = await findAllLocationsServingFoodItemOnDate(foodId, date);
             res.end(JSON.stringify(locations));
         }
         catch(e){
@@ -430,14 +465,14 @@ app.get('/getAllLocationsServingFoodItemOnDate', (req, res) => {
     })();
 });
 
-app.get('/getAllLocationsServingFoodItemOnDateAtTime', (req, res) => {    
+app.get('/findAllLocationsServingFoodItemOnDateAtTime', (req, res) => {    
     let foodItem = req.query.foodId;
     let date = req.query.date;
     let time = req.query.time;
 
     (async function anon(){
         try{
-            let locations = await getAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time);
+            let locations = await findAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time);
             res.end(JSON.stringify(locations));
         }
         catch(e){
@@ -446,26 +481,11 @@ app.get('/getAllLocationsServingFoodItemOnDateAtTime', (req, res) => {
     })();
 });
 
-app.get('/getAllLocationsServingFoodByNames', (req, res) => {
-    let foodNames = req.query.foodNames
-
-    (async function anon(){
-        try{
-            let locations = await getAllLocationsServingFoodItemsByNames(foodNames);
-            res.end(JSON.stringify(locations));
-        }
-        catch(e){
-            res.end(e.message);
-        }
-    })();
-});
-
-app.get('/getFavoriteLocationsForUser', (req, res) => {
+app.get('/findFavoriteLocationsForUser', (req, res) => {
     let uid = req.query.userId;
-    console.log(uid);
     (async function anon(){
         try{
-            let locations = await getFavoriteLocationsForUser(uid);
+            let locations = await findFavoriteLocationsForUser(uid);
             res.end(JSON.stringify(locations));
         }
         catch(e){
@@ -489,13 +509,13 @@ app.post('/addNewFavoriteLocationForUser', (req, res) => {
     })();
 });
 
-app.delete('/removeFavoriteLocationFromUser', (req, res) => {
+app.delete('/deleteFavoriteLocationFromUser', (req, res) => {
     let uid = req.query.userId;
     let lid = req.query.locationId;
 
     (async function anon(){
         try{
-            await removeFavoriteLocationFromUser(uid, lid);
+            await deleteFavoriteLocationFromUser(uid, lid);
             res.end("Success");
         }
         catch(e){
@@ -504,12 +524,12 @@ app.delete('/removeFavoriteLocationFromUser', (req, res) => {
     })();
 });
 
-app.get('/getAllTimesForLocation', (req, res) => {
+app.get('/findAllTimesForLocation', (req, res) => {
     let lid = req.query.locationId;
 
     (async function anon(){
         try{
-            let times = await getAllTimesForLocation(lid);
+            let times = await findAllTimesForLocation(lid);
             res.end(JSON.stringify(times));
         }
         catch(e){
@@ -518,13 +538,13 @@ app.get('/getAllTimesForLocation', (req, res) => {
     })();
 });
 
-app.get('/getTimesForLocationOnDay', (req, res) => {
+app.get('/findTimesForLocationOnDay', (req, res) => {
     let lid = req.query.locationId;
     let day = req.query.day;
 
     (async function anon(){
         try{
-            let time = await getTimesForLocationOnDay(day, lid);
+            let time = await findTimesForLocationOnDay(day, lid);
             res.end(JSON.stringify(time));
         }
         catch(e){
@@ -533,7 +553,7 @@ app.get('/getTimesForLocationOnDay', (req, res) => {
     })();
 });
 
-app.get('/createLocationTimesForDay', (req, res) => {
+app.post('/createLocationTimesForDay', (req, res) => {
     let lid = req.query.locationId;
     let day = req.query.day;
     let open = req.query.openTime;
@@ -550,7 +570,7 @@ app.get('/createLocationTimesForDay', (req, res) => {
     })();
 });
 
-app.get('/createTimesForEveryDayOfWeekForLocation', (req, res) => {
+app.post('/createTimesForEveryDayOfWeekForLocation', (req, res) => {
     let lid = req.query.locationId;
     let open = req.query.openTime;
     let close = req.query.closeTime;
@@ -566,7 +586,7 @@ app.get('/createTimesForEveryDayOfWeekForLocation', (req, res) => {
     })();
 });
 
-app.get('/setMealTimeForLocationOnDay', (req, res) => {
+app.update('/setMealTimeForLocationOnDay', (req, res) => {
     let lid = req.query.locationId;
     let timeLabel = req.query.timeLabel;
     let time = req.query.time;
@@ -583,7 +603,7 @@ app.get('/setMealTimeForLocationOnDay', (req, res) => {
     })();
 });
 
-app.get('/deleteLocationTimeRowForDay', (req, res) => {
+app.delete('/deleteLocationTimeRowForDay', (req, res) => {
     let lid = req.query.locationId;
     let day = req.query.day;
 
