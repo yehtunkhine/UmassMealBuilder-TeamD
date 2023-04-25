@@ -4,8 +4,8 @@ import express from 'express'
 
 const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb');
 
-async function createFood(name, calories, fat, saturated_fat, carbs, ingredients, healthfulness, servingSize){ //create food with properties
-    const food = await Food.create({name: name, calories: calories, fat: fat, saturated_fat: saturated_fat, carbs: carbs, ingredients: ingredients, halthfulness: healthfulness, servingSize: servingSize});
+async function createFood(name, calories, fat, saturated_fat, carbs, category, ingredients, healthfulness, servingSize){ //create food with properties
+    const food = await Food.create({name: name, calories: calories, fat: fat, saturated_fat: saturated_fat, carbs: carbs, category: category, ingredients: ingredients, halthfulness: healthfulness, servingSize: servingSize});
     console.log('-----------Created ' + name + ' Object-----------------')
     console.log(food instanceof Food);
     console.log(food.foodId);
@@ -14,6 +14,7 @@ async function createFood(name, calories, fat, saturated_fat, carbs, ingredients
     console.log(food.fat);
     console.log(food.saturated_fat);
     console.log(food.carbs);
+    console.log(food.category);
     console.log(food.ingredients);
     console.log(food.halthfulness);
     console.log(food.servingSize);
@@ -37,6 +38,7 @@ async function findFood(key, value) { //find food with given key and value
             fat: food.fat,
             saturated_fat: food.saturated_fat,
             carbs: food.carbs,
+            category: food.category,
             ingredients: food.ingredients,
             halthfulness: food.halthfulness,
             servingSize: food.servingSize
@@ -111,16 +113,27 @@ async function findLocationFoodBridges(key, value) { //find restrictions with gi
 
 async function findFoodsAtLocationOnDate(locationId, date) {
     let bridgeList = await findLocationFoodBridges('locationId', locationId);
-    let retObj = {};
-    for (let i = 0; i<bridgeList.length; i++) {
-        let bridge = bridgeList[i];
-        if (bridge.Date === date) {
-            let food = await findFood('foodId', bridge.foodId);
-            if(retObj.hasOwnProperty(bridge.Time)) {
-                retObj[bridge.Time].push([{name: food.name, foodId: food.foodId}]);
-            }
-            else {
-                retObj[bridge.Time] = [{name: food.name, foodId: food.foodId}];
+    let retObj = {'Breakfast': [], 'Lunch': [], 'Dinner': [], 'Late Night': []};
+    for (let i = 0; i<bridgeList.length; i++) { //loop through all bridges
+        let bridge = bridgeList[i]; //current bridge
+        if (bridge.Date === date) { //if date matches
+            let food = await findFood('foodId', bridge.foodId); //find food of bridge
+            if(retObj.hasOwnProperty(bridge.Time)) { //if in current time
+                let categoryFound = false; //cateogry exists flag
+                retObj[bridge.Time].forEach(categoryObj => { //loop through category objects
+                    if (categoryObj.category === food.category) { //if category is a match with current food, add to list
+                        categoryFound = true;
+                        (categoryObj.recipes).push(
+                            {name: food.name, foodId: food.foodId}
+                        )
+                    }
+                });
+                if (!categoryFound) { //if no category objects matched, create new category object
+                    retObj[bridge.Time].push({
+                        'category': food.category,
+                        'recipes': [{name: food.name, foodId: food.foodId}]
+                    });
+                }
             }
         }
     }
@@ -152,7 +165,7 @@ const port = 3000
 
 app.get('/createFood', (req, res) => {
     (async function createAndSend(){
-        let sendVal = await createFood('Chicken Soup', 1, 1, 1, 1, 'ingredientsTest', 1, 'servingSizeTest')
+        let sendVal = await createFood('Chicken Soup', 1, 1, 1, 1, 'Soups', 'ingredientsTest', 1, 'servingSizeTest')
         res.end(sendVal)
     })();
 });
@@ -172,14 +185,13 @@ app.get('/deleteFood', (req, res) => {
 });*/
 
 app.get('/analysis', (req, res) => {
-    console.log("analysis");
     (async function getAndSend() {
         const location = await Location.findOne({
             where: {
                 locationName: req.query.diningHall
             }
         });
-        if (location === null) res.end(req.query.diningHall + 'is not a location!');
+        if (location === null) res.end(req.query.diningHall + ' is not a location!');
         else {
             let resultObj = await findFoodsAtLocationOnDate(location.locationId, req.query.date);
             let str = JSON.stringify(resultObj);
