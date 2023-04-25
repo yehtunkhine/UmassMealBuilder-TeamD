@@ -70,18 +70,23 @@ const Food = sequelize.define("Food",{
         type: DataTypes.DECIMAL(9,3).UNSIGNED,
         defaultValue: 0
     },
-    ingredients: {
-        type: DataTypes.STRING(2048),
+    category: {
+        type: DataTypes.STRING,
         defaultValue: "N/A",
         allowNull: false
     },
-    halthfulness: {
-        type: DataTypes.SMALLINT.UNSIGNED,
+    healthfulness: {
+        type: DataTypes.SMALLINT,
         defaultValue: "0",
         allowNull: false
     },
     servingSize: {
         type: DataTypes.STRING(255),
+        defaultValue: "N/A",
+        allowNull: false
+    },
+    ingredients: {
+        type: DataTypes.STRING(2048),
         defaultValue: "N/A",
         allowNull: false
     }
@@ -154,12 +159,28 @@ const Meal = sequelize.define("Meal", {
 
 //LocationFoodBridge
 const LocationFoodBridge = sequelize.define("LocationFoodBridge", {
-    Date: DataTypes.STRING,
-    Time: DataTypes.TIME,
+    foodId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true
+    },
+    locationId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true
+    },
+    Date: {
+        type: DataTypes.DATE,
+        primaryKey: true
+    },
+    Time: {
+        type: DataTypes.STRING,
+        primaryKey: true
+    },
 },
 {
     freezeTableName: true,
-    timestamps: false
+    timestamps: false,
 });
 
 //Location
@@ -202,14 +223,12 @@ const LocationTimes = sequelize.define("LocationTimes", {
     timestamps: false
 });
 
-// 1 to Many Relationships
-
 // 1 user can have many meals, but each meal belongs to only one user
 User.hasMany(Meal, {foreignKey: "userId"})
 Meal.belongsTo(User, {foreignKey: "userId"});
 
 // 1 location can have sevaral time, but each listed time is for only one location
-Location.hasMany(LocationTimes, {foreignKey: "locationId"});
+Location.hasMany(LocationTimes, {foreignKey: "locationId", onDelete: 'CASCADE'});
 LocationTimes.belongsTo(Location, {foreignKey: "locationId"});
 
 // one food item can have many restrictions, but each instance of there being
@@ -229,15 +248,20 @@ User.belongsToMany(Food, {through: "FavoriteFoodsBridge", foreignKey: "userId"})
 
 // A location can be favorited by many users, and many users can favorite the same location 
 Location.belongsToMany(User, {through: "FavoriteLocationsBridge", foreignKey: "locationId"});
-User.belongsToMany(Location, {through: "FavoriteLocationsBridge", foreignKey: "userId"});
+User.belongsToMany(Location, {through: "FavoriteLocationsBridge", foreignKey: "userId", onDelete: 'CASCADE'});
 
 // A food can be in many meals, and many meals can use the same food
 Food.belongsToMany(Meal, {through: "MealFoodBridge", foreignKey: "foodId"});
 Meal.belongsToMany(Food, {through: "MealFoodBridge", foreignKey: "mealId"});
 
 // A food can be served in many locations and many locations can serve many foods
-Food.belongsToMany(Location, {through: "LocationFoodBridge", foreignKey: "foodId"});
-Location.belongsToMany(Food, {through: "LocationFoodBridge", foreignKey: "locationId"});
+// ----------------------------------------------------------------------------------------------------------------
+// Removed Association because sequelize uses (foodId, locationId) as a composite primary key
+// This means that sequelize will not allow any two rows to have the same foodId and locationId 
+// Which is undesired, this is fixed by manually defining the foodId and locationId columns in LocationFoodBridge
+// ---------------------------------------------------------------------------------------------------------------- 
+// Food.belongsToMany(Location, {through: {model:'LocationFoodBridge', unique: false}, foreignKey: 'foodId'});
+// Location.belongsToMany(Food, {through: {model: 'LocationFoodBridge', unique: false}, foreignKey: 'locationId'});
 
 // remove automatically generated PK's
 FavoriteFoodsBridge.removeAttribute('id')
@@ -251,7 +275,17 @@ LocationTimes.removeAttribute('id')
 // Push to db
 // Change models above and then uncomment and run this file to make db changes
 // force option will wipe database before updating tables!!!
-// sequelize.sync({force: true})
+await sequelize.sync({force: true})
+
+
+await User.create({userId: "123456789", email: "random@email.com", phone: "555-555-5555", name: "John Doe"});
+await Location.create({locationName: "Worcester"});
+let oreo_ingredient = "Unbleached Enriched Flour (Wheat Flour Niacin, Reduced Iron, Thiamine Mononitrate {Vitamin B1}," + 
+    "Riboflavin {Vitamin B2}, Folic Acid), Sugar, Palm and/or Canola Oil, Cocoa (Processed with Alkali), High Fructose" +
+    "Corn Syrup, Leavening (Baking Soda, and/or Calcium Phosphate), Salt, Soy Lecithin, Chocolate, Artificial Flavor.";
+await Food.create({name: "Oreos", category: "Candy", calories: 140, fat: 7, protein: 0, carbs: 21, saturated_fat: 2, 
+            ingredients: oreo_ingredient, servingSize: "2 Cookies"});
+await LocationFoodBridge.create({locationId: 1, foodId: 1, Time: "Breakfast", Date: "2022-06-23"});
 
 // Export Models For Other Files
-export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes};
+export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge};

@@ -27,19 +27,24 @@ async function findFood(key, value) { //find food with given key and value
             [key]: value
         }
     });
-    
-    return {
-        foodId: food.foodId,
-        name: food.name,
-        calories: food.calories,
-        fat: food.fat,
-        saturated_fat: food.saturated_fat,
-        carbs: food.carbs,
-        ingredients: food.ingredients,
-        halthfulness: food.halthfulness,
-        servingSize: food.servingSize
-    };
+   
+    if (food === null) return null;
+    else {
+        return {
+            foodId: food.foodId,
+            name: food.name,
+            calories: food.calories,
+            fat: food.fat,
+            saturated_fat: food.saturated_fat,
+            carbs: food.carbs,
+            ingredients: food.ingredients,
+            halthfulness: food.halthfulness,
+            servingSize: food.servingSize
+        };
+    }
 }
+
+
 
 async function findRestrictions(key, value) { //find restrictions with given key and value
     let list = [];
@@ -107,25 +112,18 @@ async function findLocationFoodBridges(key, value) { //find restrictions with gi
     return list;
 }
 
-async function findFoodsAtLocation(locatiionId) {
+async function findFoodsAtLocationOnDate(locatiionId, date) {
     const list = [];
     const bridgeList = findLocationFoodBridges('locationId', locationId);
     bridgeList.forEach(bridge => {
-        let food = findFood('foodId', bridge.foodId);
+        if (bridge.date === date) {
+            let food = findFood('foodId', bridge.foodId);
+        }
         list.push({
-            foodId: food.foodId,
             name: food.name,
-            calories: food.calories,
-            fat: food.fat,
-            saturated_fat: food.saturated_fat,
-            carbs: food.carbs,
-            ingredients: food.ingredients,
-            halthfulness: food.halthfulness,
-            servingSize: food.servingSize
+            foodId: food.foodId
         });
     });
-
-    return list;
 }
 
 async function deleteFood(name){
@@ -166,18 +164,31 @@ app.get('/deleteFood', (req, res) => {
     })();
 });
 
-app.get('/findFood', (req, res) => {
-    (async function getAndSend() {
-        let foods = await findFood('name', 'Chicken Soup')
-        let str = JSON.stringify(foods)
-        res.end(str);
-    })();
-});
-
 app.get('/createRestriction', (req, res) => {
     (async function createAndSend(){
         let sendVal = await createFoodRestriction('Chicken Soup', 'test restriction');
         res.end(sendVal);
+    })();
+});
+
+app.get('/analysis', (req, res) => {
+    (async function getAndSend() {
+        
+    })();
+
+    req.query.diningHall
+    req.query.date
+});
+
+app.get('/facts', (req, res) => {
+    (async function getAndSend() {
+        let food = await findFood('foodId', req.query.item);
+        if (food === null) res.end('No such item exists!');
+        else {
+            delete food.name;
+            let str = JSON.stringify(food);
+            res.end(str);
+        }
     })();
 });
 
