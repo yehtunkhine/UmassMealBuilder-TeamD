@@ -79,7 +79,7 @@ async function createUserRestriction(userid, restrictons){
 }
 app.post('/createUserRestriction', (req,res)=>{
   (async function createRestrict(){
-    let sendVal=await createUserRestriction((req.body.userId), (req.body.restriction))
+    let sendVal=await createUserRestriction((req.query.userId), (req.query.restriction))
     res.end(sendVal)
   })();
 })
@@ -98,7 +98,7 @@ async function fetchUserRestrictions(userid){
 
 app.get('/getUserRestrictions', (req, res)=>{
   (async function getUserRestrictions(){
-    let restrict = await fetchUserRestrictions((req.body.userId))
+    let restrict = await fetchUserRestrictions((req.query.userId))
     res.end(restrict)
   })();
 })
@@ -113,7 +113,7 @@ async function createFavoriteFood(userid, foodid){
 }
 app.post('createFavFood',(req,res)=>{
   (async function createfav(){
-    let sendVal=await createFavoriteFood((req.body.userId), (req.body.foodId))
+    let sendVal=await createFavoriteFood((req.query.userId), (req.query.foodId))
     res.end(sendVal)
   })();
 })
@@ -132,7 +132,7 @@ async function fetchFavoriteFoods(userid){
 }
 app.get('/getFavoriteFoods', (req,res)=>{
   (async function getFavoriteFoods(){
-    let favs= await fetchFavoriteFoods((req.body.userId))
+    let favs= await fetchFavoriteFoods((req.query.userId))
     res.end(favs)
   })();
 })
@@ -150,7 +150,7 @@ async function createMeal(userid, foods){
 }
 app.post('createMeal', (req,res)=>{
   (async function createM(){
-    let sendVal=await createMeal((req.body.userId), (req.body.foods))
+    let sendVal=await createMeal((req.query.userId), (req.query.foods))
     res.end(sendval)
   })();
   
@@ -182,7 +182,7 @@ async function fetchMeals(userid){
 }
 app.get('/getmeals', (req, res)=>{
   (async function getmeals(){
-    let meal_ret=await fetchMeals((req.body.userId))
+    let meal_ret=await fetchMeals((req.query.userId))
     res.end(meal_ret)
   })();
 })
@@ -199,7 +199,7 @@ async function fetchfavoritelocations(userid){
 }
 app.get('/getfavoritelocations', (req,res)=>{
   (async function getfavoriteLocations(){
-    let loc=await fetchfavoritelocations((req.body.userId))
+    let loc=await fetchfavoritelocations((req.query.userId))
     res.end(loc)
   })();
 })
