@@ -4,7 +4,10 @@ import React, {useState} from 'react'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
+import { MealItems } from "./AccData";
+import Modal from './Modal'
 let Data = require('./database.json');
+
 
 const AccordionSection = styled.div`
 display: flex;
@@ -112,6 +115,52 @@ const Popup = ({closeModal}) => {
     )
 }
 
+const BUTTON_WRAPPER_STYLES={
+    position: 'relative',
+    zIndex: 1
+}
+
+const OTHER_CONTENT_STYLES = {
+    position: 'relative',
+    zIndex: 2,
+    backgroundColor: 'red',
+    padding: '10px'
+}
+
+// export default function FactsTemplate(){
+//     const location = useLocation()
+//     const { name } = location.state
+//     const mealItem = MealItems[name];
+//     return (<div>
+//         <ItemFacts item = {mealItem}/>
+//         </div>)
+// }
+
+const ItemProps = styled.div`
+
+
+
+
+`;
+
+
+const ItemFacts = (item) => {
+    return (
+        <ItemProps>
+            <h1>{item.name}</h1>
+            <h1>Ingredients : {item.ingredients}</h1>
+            <h1>Allerges: {item.allergens}</h1>
+            <h1>Recipe Lables : {item.recipeLables}</h1>
+            <h1>Healthfulness : {item.healthfulness}</h1>
+            <h1>Serving Size : {item.servingSize}</h1>
+            
+        </ItemProps>
+
+
+
+    )
+};
+
 
 const MealCard = ({mtime, hall}) => {
     // states
@@ -119,7 +168,7 @@ const MealCard = ({mtime, hall}) => {
     const datestring = date.toLocaleDateString();
     let mealtime = Data[hall][0].meals
     Data[hall].forEach(x=> x.date === datestring? mealtime = x.meals : 0)
-    const [openModal, setOpenModal] = useState(false) 
+    const [isOpen, setIsOpen] = useState(false) 
     const mdata = mealtime[mtime];
 
     return (
@@ -134,14 +183,17 @@ const MealCard = ({mtime, hall}) => {
                             <h1>{item.name}</h1>
                         </Link>
                         
-                        {/* how to make above part into a button???? */}
-                        <button 
-                            onClick={()=>{
-                                setOpenModal(true);
-                            }}
-                        >
-                        </button>
-                        {openModal && <Popup closeModal={setOpenModal}/>}
+                        <div style={BUTTON_WRAPPER_STYLES}>
+                            <button 
+                                onClick={()=>setIsOpen(true)}
+                                >
+                                    {item.name}
+                            </button>
+                            <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
+                                {ItemFacts(item)}
+                            </Modal>
+                        </div>
+                        {/* <div style={OTHER_CONTENT_STYLES}>Other content</div> */}
                     </Recipe>
                 ))}
             </RecipeContent>
