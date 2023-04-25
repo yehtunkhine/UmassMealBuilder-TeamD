@@ -586,7 +586,7 @@ app.post('/createTimesForEveryDayOfWeekForLocation', (req, res) => {
     })();
 });
 
-app.update('/setMealTimeForLocationOnDay', (req, res) => {
+app.put('/setMealTimeForLocationOnDay', (req, res) => {
     let lid = req.query.locationId;
     let timeLabel = req.query.timeLabel;
     let time = req.query.time;
