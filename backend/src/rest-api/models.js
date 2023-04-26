@@ -10,7 +10,7 @@ async function testConnection() {
     console.error('Unable to connect to the database:', error);
   }
 }
- 
+
 testConnection()
 
 //models
@@ -32,7 +32,7 @@ const UserRestriction = sequelize.define("UserRestriction",{
         type: DataTypes.STRING,
         allowNull: false
     }
-}, 
+},
 {
     noPrimaryKey: true,
     timestamps: false
@@ -75,7 +75,7 @@ const Food = sequelize.define("Food",{
         defaultValue: "N/A",
         allowNull: false
     },
-    halthfulness: {
+    healthfulness: {
         type: DataTypes.SMALLINT.UNSIGNED,
         defaultValue: "0",
         allowNull: false
@@ -119,7 +119,7 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: true,
     },
-}, 
+},
 {
     timestamps: false
 });
@@ -227,7 +227,7 @@ UserRestriction.belongsTo(User, {foreignKey: "userId"});
 Food.belongsToMany(User, {through: "FavoriteFoodsBridge", foreignKey: "foodId"});
 User.belongsToMany(Food, {through: "FavoriteFoodsBridge", foreignKey: "userId"});
 
-// A location can be favorited by many users, and many users can favorite the same location 
+// A location can be favorited by many users, and many users can favorite the same location
 Location.belongsToMany(User, {through: "FavoriteLocationsBridge", foreignKey: "locationId"});
 User.belongsToMany(Location, {through: "FavoriteLocationsBridge", foreignKey: "userId"});
 

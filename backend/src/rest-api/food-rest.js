@@ -5,7 +5,7 @@ import express from 'express'
 const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb');
 
 async function createFood(name, calories, fat, saturated_fat, carbs, ingredients, healthfulness, servingSize){ //create food with properties
-    const food = await Food.create({ foodId: '1', name: name, calories: calories, fat: fat, saturated_fat: saturated_fat, carbs: carbs, ingredients: ingredients, halthfulness: healthfulness, servingSize: servingSize});
+    const food = await Food.create({ foodId: '2', name: name, calories: calories, fat: fat, saturated_fat: saturated_fat, carbs: carbs, ingredients: ingredients, healthfulness: healthfulness, servingSize: servingSize});
     console.log('-----------Created ' + name + ' Object-----------------')
     console.log(food instanceof Food);
     console.log(food.foodId);
@@ -15,7 +15,7 @@ async function createFood(name, calories, fat, saturated_fat, carbs, ingredients
     console.log(food.saturated_fat);
     console.log(food.carbs);
     console.log(food.ingredients);
-    console.log(food.halthfulness);
+    console.log(food.healthfulness);
     console.log(food.servingSize);
     console.log('Saved ' + name);
     return 'Created ' + JSON.stringify(food)
@@ -27,7 +27,7 @@ async function findFood(key, value) { //find food with given key and value
             [key]: value
         }
     });
-    
+
     return {
         foodId: food.foodId,
         name: food.name,
@@ -48,14 +48,14 @@ async function findRestrictions(key, value) { //find restrictions with given key
             [key]: value
         }
     });
-    
+
     restrictions.forEach(restriction => {
         list.push({
             restriction: restriction.restriction,
             foodId: restriction.foodId,
         });
     });
-    
+
     return list;
 }
 
@@ -94,7 +94,7 @@ async function findLocationFoodBridges(key, value) { //find restrictions with gi
             [key]: value
         }
     });
-    
+
     bridges.forEach(bridge => {
         list.push({
             Date: bridge.Date,
@@ -103,7 +103,7 @@ async function findLocationFoodBridges(key, value) { //find restrictions with gi
             locationId: bridge.locationId
         });
     });
-    
+
     return list;
 }
 
@@ -136,13 +136,13 @@ async function deleteFood(name){
             foodId: food.foodId
         }
     });*/
-    
+
     await Food.destroy({ //delete all rows with given name
         where: {
           name: name
         }
     });
-    
+
     return 'Deleted ' + name + 's and associated restrictions';
 }
 
