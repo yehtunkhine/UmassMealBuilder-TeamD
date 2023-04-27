@@ -10,6 +10,8 @@ import Worcester from "./diningHalls/Worcester"
 import Hampshire from "./diningHalls/Hampshire"
 import Franklin from "./diningHalls/Franklin"
 import Berkshire from "./diningHalls/Franklin"
+// import MenuData from "./components/Fran"
+
 import User from "./pages/User"
 import ResetPasswordEmail from './pages/resetPasswordEmail';
 import {Route, Routes} from "react-router-dom"
@@ -34,12 +36,11 @@ export const AuthenticationContext = createContext(auth);
 
 
 function App(){
-  
+
 
   return (
     <>
     <NavBar/>
-      <div className = "container">
           <Routes>
               <Route path ="/" element={<Home />} />
               <Route path ="/analysis" element={<Analysis />} />
@@ -54,7 +55,6 @@ function App(){
               <Route path = "/userPage" element = {<User />} />
               <Route path = "/resetPasswordEmail" element = {<ResetPasswordEmail />} />
           </Routes>
-      </div>
       <Footer/>
     </>
     );
