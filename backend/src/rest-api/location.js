@@ -1,4 +1,4 @@
-import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge} from './models.js'
+import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteLocationsBridge} from './models.js'
 import { Sequelize, Op } from 'sequelize';
 import moment from 'moment-timezone'
 import express from 'express'
@@ -8,7 +8,7 @@ const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.
 // Basic Find, Deletes
 async function createLocation(name){
     if(name.length > 128){
-        throw console.error("Location name '" + name + "' is longer than maximum allowed length of 128 characters.");
+        throw new Error("Location name '" + name + "' is longer than maximum allowed length of 128 characters.");
     }
 
     const location = await Location.create({locationName: name});
@@ -16,7 +16,7 @@ async function createLocation(name){
     return location;
 }
 
-async function deleteLocation(lid){
+async function deleteLocationById(lid){
     await Location.destroy({
         where: {
             locationId: lid
@@ -37,12 +37,12 @@ async function deleteLocationByName(name){
         }
     })).map((l) => l.locationId);
 
-    locations.forEach((id) => deleteLocation(id));
+    locations.forEach((id) => deleteLocationById(id));
 }
 
 async function findLocationByName(name){
     if(name.length > 128){
-        throw console.error("Location name '" + name + "' is longer than maximum allowed length of 128 characters.");
+        throw new Error("Location name '" + name + "' is longer than maximum allowed length of 128 characters.");
     }
 
     const locations = await Location.findAll({
@@ -52,90 +52,97 @@ async function findLocationByName(name){
     return locations;
 }
 
-async function getLocationIdsFromName(name){
-    if(name.length > 128){
-        throw console.error("Location name '" + name + "' is longer than maximum allowed length of 128 characters.");
-    }
-
-    const locations = await Location.findAll({
-        where: {locationName: name}
+async function findLocationById(id){
+    const location = await Location.findOne({
+        where: {locationId: id}
     });
 
-    return locations.map((location) => {location.locationId});
+    return location;
+}
+
+async function findLocationIdsByName(name){
+    if(name.length > 128){
+        throw new Error("Location name '" + name + "' is longer than maximum allowed length of 128 characters.");
+    }
+
+    const locations = (await Location.findAll({
+        where: {locationName: name}
+    })).map((l) => l.locationId);
+
+    return locations;
 }
 
 // Functions involving Food/FoodLocationBridge
 
 // TODO: TEST
-async function findAllLocationsServingFoodItems(foodItemIds){
-    const locationIds = await LocationFoodBridge.findAll({
+async function findAllLocationsServingFoodItemsById(foodItemIds){
+    const locationIds = (await LocationFoodBridge.findAll({
             where: {
                 foodId: {[Op.in]: foodItemIds},
-                Date: {[Op.gte]: 1}
+                Date: {[Op.gte]: moment().tz("America/New_York").format('YYYY-MM-DD')}
             },
             attributes: ['locationId']
-    });
+    })).map((l) => l.locationId);
 
     const locations = await Location.findAll({
-        where: {[Op.in]: locationIds}
+        where: {locationId: {[Op.in]: locationIds}}
     });
 
     return locations;
 }
 
-async function getAllLocationsServingFoodItemsByNames(foodNameList){
-    const foodIds = await Food.findAll({
+async function findAllLocationsServingFoodItemsByNames(foodNameList){
+    const foodIds = (await Food.findAll({
         where: {name: {[Op.in]: foodNameList}},
         attributes: ["foodId"]
-    });
-
-    const foodIdList = foodIds.map((food) => food.foodId);
+    })).map((f) => f.foodId);
     
-    return await findAllLocationsServingFoodItems(foodIdList);
+    return await findAllLocationsServingFoodItemsById(foodIds);
 }
 
 
 // TODO: TEST
-async function getAllLocationsServingFoodItemOnDate(foodItemId, date){
-    let locations = await LocationFoodBridge.findAll({
+async function findAllLocationsServingFoodItemOnDate(foodItem, date){
+    let locations = (await LocationFoodBridge.findAll({
         where: {
-            [Op.and]: {
-                foodId: foodItemId,
-                Date: date
-            }
+            [Op.and]: [
+                {foodId: foodItem},
+                {Date: date}
+            ]
         },
         attributes: ["locationId"]
-    });
+    })).map((location) => location.locationId);
 
     let locationObjects = await Location.findAll({
-        where: {[Op.in]: {locationId: locations}}
+        where: {
+            locationId: {[Op.in]: locations}}
     });    
 
     return locationObjects;
 }
 
 //TODO: TEST
-async function getAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time){
-    let locations = await LocationFoodBridge.findAll({
+async function findAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time){
+    let locations = (await LocationFoodBridge.findAll({
         where: {
-            [Op.and]: {
-                foodId: foodItem,
-                Date: date,
-                Time: time
-            }
+            [Op.and]: [
+                {foodId: foodItem},
+                {Date: date},
+                {Time: time}
+            ]
         },
         attributes: ["locationId"]
-    });
+    })).map((location) => location.locationId);
 
     let locationObjects = await Location.findAll({
-        where: {[Op.in]: {locationId: locations}}
+        where: {locationId: {[Op.in]: locations}}
     });
     
     return locationObjects;
 }
 
 // User Favorite Location Functions
-async function getFavoriteLocationsForUser(uid){
+async function findFavoriteLocationsForUser(uid){
     const user = await User.findOne({
         where: {userId: uid}
     });
@@ -144,17 +151,7 @@ async function getFavoriteLocationsForUser(uid){
         throw new Error("No such user exists");
     }
 
-    const favoriteLocations = await Location.findAll({
-        include: {
-            model: User,
-            where: {
-                userId: {[Op.eq]: uid}
-            },
-            through: {attributes: []}
-        }
-    });
-
-    return favoriteLocations;
+    return (await user.getLocations()).map((l) => {return {locationId: l.locationId, locationName: l.locationName, }});
 }
 
 async function addNewFavoriteLocationForUser(uid, lid){
@@ -181,7 +178,7 @@ async function addNewFavoriteLocationForUser(uid, lid){
     }
 }
 
-async function removeFavoriteLocationFromUser(uid, lid){
+async function deleteFavoriteLocationFromUser(uid, lid){
     const user = await User.findOne({
         where: {userId: uid}
     });
@@ -200,7 +197,7 @@ async function removeFavoriteLocationFromUser(uid, lid){
 
 
 // Location Times Functions
-async function getAllTimesForLocation(lid){
+async function findAllTimesForLocation(lid){
     const location = await Location.findOne({
         where: {locationId: lid}
     });
@@ -216,7 +213,7 @@ async function getAllTimesForLocation(lid){
     return locationTimes;
 }
 
-async function getTimesForLocationOnDay(dayOfWeek, lid){
+async function findTimesForLocationOnDay(dayOfWeek, lid){
     const location = await Location.findOne({
         where: {locationId: lid}
     });
@@ -345,26 +342,29 @@ app.use(express.json())
 const port = 3000
 
 app.post('/createLocation', (req, res) => {
-    let name = toString(req.body.name);
+    let name = req.query.locationName;
 
     (async function anon(){
         let sendVal = await createLocation(name);
-        res.end(sendVal)
+        res.end(JSON.stringify(sendVal))
     })();
 });
 
 app.delete('/deleteLocationById', (req, res) => {
-    let id = Number(req.body.locationId);
+    let id = req.query.locationId;
 
     (async function anon() {
-        deleteLocation(id)
-            .then(() => {res.end("Succes");})
-            .catch(() => {res.end("Failure")});
+        try{
+            deleteLocationById(id)
+            res.end("Success");
+        }catch(e){
+            res.end(e.message);
+        }
     })();
 });
 
 app.delete('/deleteLocationByName', (req, res) => {
-    let name = req.body.locationName;
+    let name = req.query.locationName;
 
     (async function anon(){
         try{
@@ -377,9 +377,8 @@ app.delete('/deleteLocationByName', (req, res) => {
     })();
 });
 
-app.get('/getLocationByName:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-    let name = jsonParams.name;
+app.get('/findLocationByName', (req, res) => {
+    let name = req.query.locationName;
 
     (async function anon(){
         try{
@@ -392,13 +391,26 @@ app.get('/getLocationByName:jsonParams', (req, res) => {
     })();
 });
 
-app.get('/getLocationIdsByName:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-    let name = jsonParams.name;
+app.get('/findLocationById', (req, res) => {
+    let id = req.query.locationId;
 
     (async function anon(){
         try{
-            let locationIds = await getLocationIdsFromName(name);
+            let location = await findLocationById(id);
+            res.end(JSON.stringify(location));
+        }
+        catch(e){
+            res.end(e.message);
+        }
+    })();
+});
+
+app.get('/findLocationIdsByName', (req, res) => {
+    let name = req.query.locationName;
+
+    (async function anon(){
+        try{
+            let locationIds = await findLocationIdsByName(name);
             res.end(JSON.stringify(locationIds));
         }
         catch(e){
@@ -407,30 +419,12 @@ app.get('/getLocationIdsByName:jsonParams', (req, res) => {
     })();
 });
 
-app.get('/findAllLocationsServingFoodItems:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-    let foodItems = jsonParams.foodItems;
+app.get('/findAllLocationsServingFoodItemsById', (req, res) => {
+    let foodItems = req.query.foodIds;
 
     (async function anon(){
         try{
-            let locations = await findAllLocationsServingFoodItems(foodItems);
-            res.end(JSON.stringify(locationIds));
-        }
-        catch(e){
-            res.end(e.message);
-        }
-    })();
-});
-
-
-app.get('/getAllLocationsServingFoodItemOnDate:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-    let foodId = jsonParams.foodItemId;
-    let date = jsonParams.date;
-
-    (async function anon(){
-        try{
-            let locations = await getAllLocationsServingFoodItemOnDate(foodId, date);
+            let locations = await findAllLocationsServingFoodItemsById(foodItems);
             res.end(JSON.stringify(locations));
         }
         catch(e){
@@ -439,16 +433,12 @@ app.get('/getAllLocationsServingFoodItemOnDate:jsonParams', (req, res) => {
     })();
 });
 
-app.get('/getAllLocationsServingFoodItemOnDateAtTime:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-
-    let foodItem = jsonParams.foodItemId;
-    let date = jsonParams.date;
-    let time = jsonParams.time;
+app.get('/findAllLocationsServingFoodItemsByNames', (req, res) => {
+    let foodNames = req.query.foodNames;
 
     (async function anon(){
         try{
-            let locations = await getAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time);
+            let locations = await findAllLocationsServingFoodItemsByNames(foodNames);
             res.end(JSON.stringify(locations));
         }
         catch(e){
@@ -457,14 +447,16 @@ app.get('/getAllLocationsServingFoodItemOnDateAtTime:jsonParams', (req, res) => 
     })();
 });
 
-app.get('/getAllLocationsServingFoodByNames:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
+app.get('/findAllLocationsServingFoodItemOnDate', (req, res) => {
+    let foodId = req.query.foodId;
+    let date = moment(req.query.date).format('YYYY-MM-DD');
 
-    let foodNames = jsonParams.foodNames;
-
+    console.log(foodId);
+    console.log(date);
+    
     (async function anon(){
         try{
-            let locations = await getAllLocationsServingFoodItemsByNames(foodNames);
+            let locations = await findAllLocationsServingFoodItemOnDate(foodId, date);
             res.end(JSON.stringify(locations));
         }
         catch(e){
@@ -473,14 +465,27 @@ app.get('/getAllLocationsServingFoodByNames:jsonParams', (req, res) => {
     })();
 });
 
-app.get('/getFavoriteLocationsForUser:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-
-    let uid = jsonParams.userId;
+app.get('/findAllLocationsServingFoodItemOnDateAtTime', (req, res) => {    
+    let foodItem = req.query.foodId;
+    let date = req.query.date;
+    let time = req.query.time;
 
     (async function anon(){
         try{
-            let locations = await getFavoriteLocationsForUser(uid);
+            let locations = await findAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time);
+            res.end(JSON.stringify(locations));
+        }
+        catch(e){
+            res.end(e.message);
+        }
+    })();
+});
+
+app.get('/findFavoriteLocationsForUser', (req, res) => {
+    let uid = req.query.userId;
+    (async function anon(){
+        try{
+            let locations = await findFavoriteLocationsForUser(uid);
             res.end(JSON.stringify(locations));
         }
         catch(e){
@@ -490,9 +495,8 @@ app.get('/getFavoriteLocationsForUser:jsonParams', (req, res) => {
 });
 
 app.post('/addNewFavoriteLocationForUser', (req, res) => {
-
-    let uid = req.body.userId;
-    let lid = req.body.locationId;
+    let uid = req.query.userId;
+    let lid = req.query.locationId;
 
     (async function anon(){
         try{
@@ -505,13 +509,13 @@ app.post('/addNewFavoriteLocationForUser', (req, res) => {
     })();
 });
 
-app.delete('/removeFavoriteLocationFromUser', (req, res) => {
-    let uid = req.body.userId;
-    let lid = req.body.locationId;
+app.delete('/deleteFavoriteLocationFromUser', (req, res) => {
+    let uid = req.query.userId;
+    let lid = req.query.locationId;
 
     (async function anon(){
         try{
-            await removeFavoriteLocationFromUser(uid, lid);
+            await deleteFavoriteLocationFromUser(uid, lid);
             res.end("Success");
         }
         catch(e){
@@ -520,14 +524,12 @@ app.delete('/removeFavoriteLocationFromUser', (req, res) => {
     })();
 });
 
-app.get('/getAllTimesForLocation:lid', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-
-    let lid = jsonParams.locationId;
+app.get('/findAllTimesForLocation', (req, res) => {
+    let lid = req.query.locationId;
 
     (async function anon(){
         try{
-            let times = await getAllTimesForLocation(lid);
+            let times = await findAllTimesForLocation(lid);
             res.end(JSON.stringify(times));
         }
         catch(e){
@@ -536,15 +538,13 @@ app.get('/getAllTimesForLocation:lid', (req, res) => {
     })();
 });
 
-app.get('/getTimesForLocationOnDay:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-
-    let lid = jsonParams.locationId;
-    let day = jsonParams.day;
+app.get('/findTimesForLocationOnDay', (req, res) => {
+    let lid = req.query.locationId;
+    let day = req.query.day;
 
     (async function anon(){
         try{
-            let time = await getTimesForLocationOnDay(day, lid);
+            let time = await findTimesForLocationOnDay(day, lid);
             res.end(JSON.stringify(time));
         }
         catch(e){
@@ -553,13 +553,11 @@ app.get('/getTimesForLocationOnDay:jsonParams', (req, res) => {
     })();
 });
 
-app.get('/createLocationTimesForDay:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-
-    let lid = jsonParams.locationId;
-    let day = jsonParams.day;
-    let open = jsonParams.openTime;
-    let close = jsonParams.closeTime;
+app.post('/createLocationTimesForDay', (req, res) => {
+    let lid = req.query.locationId;
+    let day = req.query.day;
+    let open = req.query.openTime;
+    let close = req.query.closeTime;
 
     (async function anon(){
         try{
@@ -572,12 +570,10 @@ app.get('/createLocationTimesForDay:jsonParams', (req, res) => {
     })();
 });
 
-app.get('/createTimesForEveryDayOfWeekForLocation:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-
-    let lid = jsonParams.locationId;
-    let open = JjsonParams.openTime;
-    let close = jsonParams.closeTime;
+app.post('/createTimesForEveryDayOfWeekForLocation', (req, res) => {
+    let lid = req.query.locationId;
+    let open = req.query.openTime;
+    let close = req.query.closeTime;
 
     (async function anon(){
         try{
@@ -590,13 +586,11 @@ app.get('/createTimesForEveryDayOfWeekForLocation:jsonParams', (req, res) => {
     })();
 });
 
-app.get('/setMealTimeForLocationOnDay:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-
-    let lid = jsonParams.locationId;
-    let timeLabel = jsonParams.timeLabel;
-    let time = jsonParams.time;
-    let day = jsonParams.day;
+app.put('/setMealTimeForLocationOnDay', (req, res) => {
+    let lid = req.query.locationId;
+    let timeLabel = req.query.timeLabel;
+    let time = req.query.time;
+    let day = req.query.day;
 
     (async function anon(){
         try{
@@ -609,11 +603,9 @@ app.get('/setMealTimeForLocationOnDay:jsonParams', (req, res) => {
     })();
 });
 
-app.get('/deleteLocationTimeRowForDay:jsonParams', (req, res) => {
-    let jsonParams = JSON.parse(req.params.jsonParams);
-
-    let lid = jsonParams.locationId;
-    let day = jsonParams.day;
+app.delete('/deleteLocationTimeRowForDay', (req, res) => {
+    let lid = req.query.locationId;
+    let day = req.query.day;
 
     (async function anon(){
         try{
@@ -627,7 +619,7 @@ app.get('/deleteLocationTimeRowForDay:jsonParams', (req, res) => {
 });
 
 app.delete('/deleteAllLocationTimes', (req, res) => {
-    let lid = req.body.locationId;
+    let lid = req.query.locationId;
 
     (async function anon(){
         try{
