@@ -36,12 +36,11 @@ export const AuthenticationContext = createContext(auth);
 
 
 function App(){
-  
+
 
   return (
     <>
     <NavBar/>
-    <div className = "container">
           <Routes>
               <Route path ="/" element={<Home />} />
               <Route path ="/analysis" element={<Analysis />} />
@@ -56,7 +55,6 @@ function App(){
               <Route path = "/userPage" element = {<User />} />
               <Route path = "/resetPasswordEmail" element = {<ResetPasswordEmail />} />
           </Routes>
-      </div>
       <Footer/>
     </>
     );
