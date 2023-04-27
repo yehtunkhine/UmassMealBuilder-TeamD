@@ -18,6 +18,12 @@
   text-align: left;
 }
 
+.description{
+  text-align: left;
+  font-weight: bold;
+  font-size: medium;
+}
+
 .input {
   width: 100%;
   padding: 12px 20px;
@@ -57,4 +63,10 @@
   align-items: center;
   margin: auto;
   width: 60%;
+}
+
+.forgotPasswordButton{
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
 }
