@@ -16,7 +16,7 @@ async function createFood(name, calories, fat, saturated_fat, carbs, category, i
     console.log(food.carbs);
     console.log(food.category);
     console.log(food.ingredients);
-    console.log(food.halthfulness);
+    console.log(food.healthfulness);
     console.log(food.servingSize);
     console.log('Saved ' + name);
     return 'Created ' + JSON.stringify(food)
@@ -28,7 +28,6 @@ async function findFood(key, value) { //find food with given key and value
             [key]: value
         }
     });
-   
     if (food === null) return null;
     else {
         return {
@@ -53,14 +52,14 @@ async function findFood(key, value) { //find food with given key and value
             [key]: value
         }
     });
-    
+
     restrictions.forEach(restriction => {
         list.push({
             restriction: restriction.restriction,
             foodId: restriction.foodId,
         });
     });
-    
+
     return list;
 }*/
 
@@ -99,7 +98,7 @@ async function findLocationFoodBridges(key, value) { //find restrictions with gi
             [key]: value
         }
     });
-    
+
     bridges.forEach(bridge => {
         list.push({
             Date: bridge.Date,
@@ -152,13 +151,13 @@ async function deleteFood(name){
             foodId: food.foodId
         }
     });*/
-    
+
     await Food.destroy({ //delete all rows with given name
         where: {
           name: name
         }
     });
-    
+
     return 'Deleted ' + name + 's and associated restrictions';
 }
 

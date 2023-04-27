@@ -10,7 +10,7 @@ async function testConnection() {
     console.error('Unable to connect to the database:', error);
   }
 }
- 
+
 testConnection()
 
 //models
@@ -32,7 +32,7 @@ const UserRestriction = sequelize.define("UserRestriction",{
         type: DataTypes.STRING,
         allowNull: false
     }
-}, 
+},
 {
     noPrimaryKey: true,
     timestamps: false
@@ -124,7 +124,7 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: true,
     },
-}, 
+},
 {
     timestamps: false
 });
@@ -246,7 +246,7 @@ UserRestriction.belongsTo(User, {foreignKey: "userId"});
 Food.belongsToMany(User, {through: "FavoriteFoodsBridge", foreignKey: "foodId"});
 User.belongsToMany(Food, {through: "FavoriteFoodsBridge", foreignKey: "userId"});
 
-// A location can be favorited by many users, and many users can favorite the same location 
+// A location can be favorited by many users, and many users can favorite the same location
 Location.belongsToMany(User, {through: "FavoriteLocationsBridge", foreignKey: "locationId"});
 User.belongsToMany(Location, {through: "FavoriteLocationsBridge", foreignKey: "userId"});
 
@@ -257,9 +257,9 @@ Meal.belongsToMany(Food, {through: "MealFoodBridge", foreignKey: "mealId"});
 // A food can be served in many locations and many locations can serve many foods
 // ----------------------------------------------------------------------------------------------------------------
 // Removed Association because sequelize uses (foodId, locationId) as a composite primary key
-// This means that sequelize will not allow any two rows to have the same foodId and locationId 
+// This means that sequelize will not allow any two rows to have the same foodId and locationId
 // Which is undesired, this is fixed by manually defining the foodId and locationId columns in LocationFoodBridge
-// ---------------------------------------------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------------------------------------------
 // Food.belongsToMany(Location, {through: {model:'LocationFoodBridge', unique: false}, foreignKey: 'foodId'});
 // Location.belongsToMany(Food, {through: {model: 'LocationFoodBridge', unique: false}, foreignKey: 'locationId'});
 
@@ -280,10 +280,10 @@ LocationTimes.removeAttribute('id')
 
 // await User.create({userId: "123456789", email: "random@email.com", phone: "555-555-5555", name: "John Doe"});
 // await Location.create({locationName: "Worcester"});
-// let oreo_ingredient = "Unbleached Enriched Flour (Wheat Flour Niacin, Reduced Iron, Thiamine Mononitrate {Vitamin B1}," + 
+// let oreo_ingredient = "Unbleached Enriched Flour (Wheat Flour Niacin, Reduced Iron, Thiamine Mononitrate {Vitamin B1}," +
 //     "Riboflavin {Vitamin B2}, Folic Acid), Sugar, Palm and/or Canola Oil, Cocoa (Processed with Alkali), High Fructose" +
 //     "Corn Syrup, Leavening (Baking Soda, and/or Calcium Phosphate), Salt, Soy Lecithin, Chocolate, Artificial Flavor.";
-// await Food.create({name: "Oreos", category: "Candy", calories: 140, fat: 7, protein: 0, carbs: 21, saturated_fat: 2, 
+// await Food.create({name: "Oreos", category: "Candy", calories: 140, fat: 7, protein: 0, carbs: 21, saturated_fat: 2,
 //             ingredients: oreo_ingredient, servingSize: "2 Cookies"});
 // await LocationFoodBridge.create({locationId: 1, foodId: 1, Time: "Breakfast", Date: "2022-06-23"});
 // await FavoriteLocationsBridge.create({userId: "123456789", locationId: 1});
