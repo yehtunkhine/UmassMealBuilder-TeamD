@@ -259,6 +259,8 @@ User.belongsToMany(Location, {through: "FavoriteLocationsBridge", foreignKey: "u
 Food.belongsToMany(Meal, {through: "MealFoodBridge", foreignKey: "foodId"});
 Meal.belongsToMany(Food, {through: "MealFoodBridge", foreignKey: "mealId"});
 
+
+
 // A food can be served in many locations and many locations can serve many foods
 // ----------------------------------------------------------------------------------------------------------------
 // Removed Association because sequelize uses (foodId, locationId) as a composite primary key
@@ -302,4 +304,4 @@ LocationTimes.removeAttribute('id')
 // user.addFood(food);
 
 // Export Models For Other Files
-export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteLocationsBridge};
+export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteFoodsBridge, MealFoodBridge};
