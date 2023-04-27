@@ -140,6 +140,11 @@ async function findFoodsAtLocationOnDate(locationId, date) {
     return retObj;
 }
 
+async function addFoodsToDatabase(inputObjStr) {
+    let inputObj = JSON.parse(inputObjStr);
+    
+}
+
 async function deleteFood(name){
 
     /*await FoodRestriction.destroy({ //delete all associated FoodRestriction rows
@@ -163,17 +168,30 @@ async function deleteFood(name){
 const app = express()
 const port = 3000
 
-app.get('/createFood', (req, res) => {
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.post('/createFood', (req, res) => {
     (async function createAndSend(){
-        let sendVal = await createFood('Chicken Soup', 1, 1, 1, 1, 'Soups', 'ingredientsTest', 1, 'servingSizeTest')
-        res.end(sendVal)
+        const data = req.body;
+        await createFood(
+            data.name,
+            data.calories,
+            data.fat,
+            0,
+            data.carbs,
+            'N/A',
+            data.ingredients,
+            data.healthfulness,
+            data.servingSize);
+        res.send(data.name + ' Successfully Created');
     })();
 });
 
-app.get('/deleteFood', (req, res) => {
+app.post('/deleteFood', (req, res) => {
     (async function createAndSend(){
-        let delVal = await deleteFood('Chicken Soup')
-        res.end(delVal)
+        await deleteFood(req.body.name)
+        res.send(data.name + ' Successfully Deleted')
     })();
 });
 
