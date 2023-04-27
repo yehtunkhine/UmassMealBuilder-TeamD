@@ -99,6 +99,7 @@ const Login = () => {
     }
 
     return (
+      <div class = "container">
         <div class = "outerBox" >
             <text class = "labelText">Email:</text>
             <input class = "inputText" ref = {txtEmail} type = "text" id = "username" name = "emailInput" placeholder="Email"/>
@@ -119,6 +120,7 @@ const Login = () => {
                 <GoogleButton className='signUpButton ' onClick={handleGoogleSignIn} />
             </div>
         </div>
+      </div>
     );
 }
 export default Login;
