@@ -178,9 +178,10 @@ const datestring = date.toLocaleDateString();
 let currentItems = {};
 const MealCard = ({mdata, afunc, dfunc}) => {
     // states
-    
+    const [checked, setChecked] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [openModal, setOpenModal] = useState(false);
-   
+
     return (
         <FContent >
     { mdata.map((_, i) => {
@@ -191,7 +192,20 @@ const MealCard = ({mdata, afunc, dfunc}) => {
                 {_.recipes.map((item,i) => (  
                     <Recipe>     
                             <h1>{item.name}</h1>
-                       
+                            <button onClick = {() => afunc(i,item)} >{'add'}</button>
+                            <button onClick = {() => dfunc(i,item)} >{'del'}</button>
+                                               
+                        <div style={BUTTON_WRAPPER_STYLES}>
+                            <button 
+                                onClick={()=>setIsOpen(true)}
+                                >
+                                    {item.name}
+                            </button>
+                            <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
+                                {ItemFacts(item)}
+                            </Modal>
+                        </div>
+                        {/* <div style={OTHER_CONTENT_STYLES}>Other content</div> */}
                     </Recipe>
                 ))}
             </RecipeContent>
