@@ -4,7 +4,10 @@ import React, {useState} from 'react'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
+import { MealItems } from "./AccData";
+import Modal from './Modal'
 let Data = require('./database.json');
+
 
 const AccordionSection = styled.div`
 display: flex;
@@ -124,13 +127,59 @@ const Popup = ({closeModal}) => {
     )
 }
 
+const BUTTON_WRAPPER_STYLES={
+    position: 'relative',
+    zIndex: 1
+}
+
+const OTHER_CONTENT_STYLES = {
+    position: 'relative',
+    zIndex: 2,
+    backgroundColor: 'red',
+    padding: '10px'
+}
+
+// export default function FactsTemplate(){
+//     const location = useLocation()
+//     const { name } = location.state
+//     const mealItem = MealItems[name];
+//     return (<div>
+//         <ItemFacts item = {mealItem}/>
+//         </div>)
+// }
+
+const ItemProps = styled.div`
+
+
+
+
+`;
+
+
+const ItemFacts = (item) => {
+    return (
+        <ItemProps>
+            <h1>{item.name}</h1>
+            <h1>Ingredients : {item.ingredients}</h1>
+            <h1>Allerges: {item.allergens}</h1>
+            <h1>Recipe Lables : {item.recipeLables}</h1>
+            <h1>Healthfulness : {item.healthfulness}</h1>
+            <h1>Serving Size : {item.servingSize}</h1>
+            
+        </ItemProps>
+
+
+
+    )
+};
+
 const date = new Date();
 const datestring = date.toLocaleDateString();
 let currentItems = {};
 const MealCard = ({mdata, afunc, dfunc}) => {
     // states
+    
     const [openModal, setOpenModal] = useState(false);
-    const [checked, setChecked] = useState(false);
    
     return (
         <FContent >
@@ -142,16 +191,7 @@ const MealCard = ({mdata, afunc, dfunc}) => {
                 {_.recipes.map((item,i) => (  
                     <Recipe>     
                             <h1>{item.name}</h1>
-                            <button onClick = {() => afunc(i,item)} >{'add'}</button>
-                            <button onClick = {() => dfunc(i,item)} >{'del'}</button>
-                        {/* how to make above part into a button???? */}
-                        <button 
-                            onClick={()=>{
-                                setOpenModal(!openModal);
-                            }}
-                        >
-                        </button>
-                        {openModal && <Popup closeModal={setOpenModal}/>}
+                       
                     </Recipe>
                 ))}
             </RecipeContent>
