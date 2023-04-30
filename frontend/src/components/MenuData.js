@@ -76,6 +76,9 @@ const RecipeContent = styled.div`
 `;
 
 const Recipe = styled.div`
+display: flex;
+justify-content: center;
+align-items: center;
 color: black;
 margin:30px;
 `;
@@ -104,6 +107,15 @@ window.onclick = function(event) {
     }
 }
 */
+
+const Checkbox = ({ label, value, onChange }) => {
+    return (
+      <label>
+        <input type="checkbox" checked={value} onChange={onChange} />
+        {label}
+      </label>
+    );
+  };
 
 const Popup = ({closeModal}) => {
     return (
@@ -168,29 +180,26 @@ const ItemFacts = (item) => {
 
 const date = new Date();
 const datestring = date.toLocaleDateString();
-
-const MealCard = ({mdata}) => {
+let currentItems = {};
+const MealCard = ({mdata, afunc, dfunc}) => {
     // states
-    const date = new Date();
-    const datestring = date.toLocaleDateString();
-    let mealtime = Data[hall][0].meals
-    Data[hall].forEach(x=> x.date === datestring? mealtime = x.meals : 0)
-    const [isOpen, setIsOpen] = useState(false) 
-    const mdata = mealtime[mtime];
-    const [openModal, setOpenModal] = useState(false) 
+    const [checked, setChecked] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
 
     return (
         <FContent >
-    { mdata.map((_, i) => (
+    { mdata.map((_, i) => {
+        return (
         <FCard key={i}>
             <Category><u>{_.category}</u></Category>
             <RecipeContent>
                 {_.recipes.map((item,i) => (  
                     <Recipe>     
-                        <Link to={{pathname: "/FactsTemplate"}} state={{name: item.name}} style={{ textDecoration: 'none',color: 'black'}} >
                             <h1>{item.name}</h1>
-                        </Link>
-                        
+                            <button onClick = {() => afunc(i,item)} >{'add'}</button>
+                            <button onClick = {() => dfunc(i,item)} >{'del'}</button>
+                                               
                         <div style={BUTTON_WRAPPER_STYLES}>
                             <button 
                                 onClick={()=>setIsOpen(true)}
@@ -206,7 +215,7 @@ const MealCard = ({mdata}) => {
                 ))}
             </RecipeContent>
         </FCard>
-      ))
+      )})
     }
      </FContent>
     )
@@ -215,12 +224,23 @@ const MealCard = ({mdata}) => {
 
 const MenuData = ({hall}) => {
     const [clicked, setClicked] = useState(false);
+    const [mclicked, msetClicked] = useState(false);
+
+
     const toggle = index => {
         if(clicked === index) {
             // if clicked question is already active, then close
             return setClicked(null)
         }
         setClicked(index);
+    }
+    const addItem = (index, item) => {
+        currentItems[item.name] = null;
+        msetClicked()
+
+    }
+    const delItem = (index, item) => {
+        delete currentItems[item.name];
     }
     // json navigation
     let times = Object.keys(Data[hall][0].meals);
@@ -234,6 +254,10 @@ const MenuData = ({hall}) => {
 
   return (
     <Menu>
+        {'' +Object.keys(currentItems)}
+        <Link to={{pathname: "/Analysis"}} state={{foods : Object.keys(currentItems)}}>
+        <button>Build Plate</button>
+        </Link>
       <IconContext.Provider value={{color: 'white', size: '30px'}}>
           <AccordionSection>
             <Container>
@@ -245,9 +269,8 @@ const MenuData = ({hall}) => {
                         <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
                         </Wrap>
                         {clicked === index ? (
-                        <Dropdown>
-                            
-                            <MealCard mdata = {mealtime[times[index]]} hall = {hall}/>
+                        <Dropdown>    
+                            <MealCard mdata = {mealtime[times[index]]} afunc = {addItem} dfunc = {delItem}/>
                         </Dropdown>
                         ) : null}
                         </>
