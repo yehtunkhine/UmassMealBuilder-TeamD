@@ -1,8 +1,8 @@
 import { Link, useMatch, useResolvedPath} from "react-router-dom"
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { AuthenticationContext } from './App';
-import { useContext, shouldComponentUpdate } from "react";
+import { useContext } from "react";
 import { signOut } from "firebase/auth";
 
 let loggedIn = false;
@@ -20,9 +20,9 @@ export default function Navbar(){
     const [logInOrUserLink, setLogInOrUserLink] = useState("/login");
     const [signUpOrLogOut, setSignUpOrLogOut] = useState("Sign Up");
     const [signUpOrLogOutLink, setSignUpOrLogOutLink] = useState("/signup");
-    shouldComponentUpdate = (nextProps, nextState) => {
-        return signUpOrLogOutLink != nextState.value;
-    }
+    /*shouldComponentUpdate = (nextProps, nextState) => {
+        return signUpOrLogOutLink !== nextState.value;
+    }*/
     const changeLogIn = () => {
         if(loggedIn){
             setLogInOrUser(userName);
@@ -38,37 +38,31 @@ export default function Navbar(){
         }
     }
     
-
-    const monitorLogIn = async(loggedIn) => {
-        if(loggedIn){
-            changeLogIn();
-        }else{
-            changeLogIn();
-        }
-    };
-      
     const auth = useContext(AuthenticationContext);
     const monitorAuthState = async () => {
         onAuthStateChanged(auth, user => {
             if (user) {
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/firebase.User
-            userName = user.uid;
-            loggedIn = true;
-            
+            if(user.displayName !== null){
+                userName = user.displayName;
+                if(userName.length > 10){
+                    userName = userName.substring(0,10) + "..."
+                }
+                loggedIn = true;
+            }
             // ...
             } else {
             // User is signed out
             userName = null;
             loggedIn = false;
             }
-            monitorLogIn(loggedIn, userName);
+            changeLogIn();
         });
       }
       monitorAuthState();
 
     const logout = async() => {
-    // monitorAuthState();
         if(loggedIn)
             signOut(auth);
     }

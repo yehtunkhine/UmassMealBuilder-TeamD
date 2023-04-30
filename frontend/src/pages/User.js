@@ -1,3 +1,8 @@
+import { useContext } from 'react';
+import { AuthenticationContext } from './../App';
+
 export default function User(){
-    return <h1>User Page</h1>
+    let auth= useContext(AuthenticationContext);
+    let user = auth.currentUser;
+    return <h1>{user.displayName}</h1>
 }

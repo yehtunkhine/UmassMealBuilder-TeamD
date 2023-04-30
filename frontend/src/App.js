@@ -11,12 +11,12 @@ import Hampshire from "./diningHalls/Hampshire"
 import Franklin from "./diningHalls/Franklin"
 import Berkshire from "./diningHalls/Berkshire"
 import FactsTemplate from './components/FactsTemplate';
-
 import User from "./pages/User"
+import ResetPasswordEmail from './pages/resetPasswordEmail';
 import {Route, Routes} from "react-router-dom"
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import firebaseInit from "./pages/firebaseInit";
-import { createContext, setState, toggleIsActive } from 'react';//To pass getAuth for user data
+import { createContext } from 'react';//To pass getAuth for user data
 import Footer from './components/Footer';
 
 
@@ -33,38 +33,13 @@ const auth = getAuth(app);
 export const FirebaseContext = createContext(app);
 export const AuthenticationContext = createContext(auth);
 
-let loggedIn = false;
-let uid;
-
-
-const monitorAuthState = async () => {
-  onAuthStateChanged(auth, user => {
-      if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
-      uid = user.uid;
-      loggedIn = true;
-      
-      // ...
-      } else {
-      // User is signed out
-      // ...
-      const uid = null;
-      loggedIn = false;
-      //this.setState({ log: loggedIn });
-      }
-  });
-}
-monitorAuthState();
-
 
 function App(){
-  
+
 
   return (
     <>
     <NavBar/>
-      <div className = "container">
           <Routes>
               <Route path ="/" element={<Home />} />
               <Route path ="/analysis" element={<Analysis />} />
@@ -78,8 +53,8 @@ function App(){
               <Route path ="/berkshire" element={<Berkshire />} />
               <Route path ="/FactsTemplate" element={<FactsTemplate />} />
               <Route path = "/userPage" element = {<User />} />
+              <Route path = "/resetPasswordEmail" element = {<ResetPasswordEmail />} />
           </Routes>
-      </div>
       <Footer/>
     </>
     );
