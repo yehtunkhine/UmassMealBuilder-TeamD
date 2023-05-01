@@ -81,13 +81,15 @@ export default function Login() {
           Allergens: "None",
           DietaryRestrictions: "None"
         }
+
+        let userObject2 = JSON.stringify(userObject);
+        console.log("suer object", userObject2);
         
-        fetch(`http://localhost:3001/users/${user.uid}`, {
-          method: 'POST',
+        fetch(`http://localhost:3001/users/${userObject2}`, {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(userObject),
+          }
         }).then(response => {
             return response.json();
         }).then(data => {
