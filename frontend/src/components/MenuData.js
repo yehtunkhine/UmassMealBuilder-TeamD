@@ -1,4 +1,4 @@
-import { Link, useNavigate, useLocation} from "react-router-dom"
+import { Link} from "react-router-dom"
 import React, {useState} from 'react'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
@@ -76,11 +76,11 @@ margin: 25px;
 scale: 300%;
 background-color: lightgray;
 `;
-var modal = document.getElementById("myModal");
+// var modal = document.getElementById("myModal");
 
-var Btn = document.getElementById("myBtn")
+// var Btn = document.getElementById("myBtn")
 
-var span = document.getElementsByClassName("close")[0];
+// var span = document.getElementsByClassName("close")[0];
 
 /*
 Btn.onclick = function () {
@@ -182,7 +182,6 @@ const MenuData = ({hall}) => {
                         </Wrap>
                         {clicked === index ? (
                         <Dropdown>
-
                             <MealCard mdata = {mealtime[times[index]]} hall = {hall}/>
                         </Dropdown>
                         ) : null}
