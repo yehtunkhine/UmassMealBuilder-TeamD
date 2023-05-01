@@ -9,8 +9,8 @@ import Home from "./pages/Home"
 import Worcester from "./diningHalls/Worcester"
 import Hampshire from "./diningHalls/Hampshire"
 import Franklin from "./diningHalls/Franklin"
-import Berkshire from "./diningHalls/Franklin"
-// import MenuData from "./components/Fran"
+import Berkshire from "./diningHalls/Berkshire"
+import FactsTemplate from './components/FactsTemplate';
 
 import User from "./pages/User"
 import ResetPasswordEmail from './pages/resetPasswordEmail';
@@ -52,6 +52,7 @@ function App(){
               <Route path ="/hampshire" element={<Hampshire />} />
               <Route path ="/franklin" element={<Franklin />} />
               <Route path ="/berkshire" element={<Berkshire />} />
+              <Route path ="/FactsTemplate" element={<FactsTemplate />} />
               <Route path = "/userPage" element = {<User />} />
               <Route path = "/resetPasswordEmail" element = {<ResetPasswordEmail />} />
           </Routes>
