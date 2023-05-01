@@ -72,8 +72,7 @@ margin:30px;
 `;
 
 const Category = styled.div`
-margin: 25px;
-scale: 300%;
+padding: 25px;
 background-color: lightgray;
 `;
 // var modal = document.getElementById("myModal");
@@ -120,30 +119,30 @@ const MealCard = ({mdata}) => {
 
     return (
         <FContent >
-    { mdata.map((_, i) => (
-        <FCard key={i}>
-            <Category><u>{_.category}</u></Category>
-            <RecipeContent>
-                {_.recipes.map((item,i) => (
-                    <Recipe>
-                        <Link to={{pathname: "/FactsTemplate"}} state={{name: item.name}} style={{ textDecoration: 'none',color: 'black'}} >
-                            <h1>{item.name}</h1>
-                        </Link>
+            { mdata.map((mealContent, i) => (
+                <FCard key={i}>
+                    <Category>{mealContent.category}</Category>
+                    <RecipeContent>
+                        {mealContent.recipes.map((item,i) => (
+                            <Recipe>
+                                <Link to={{pathname: "/FactsTemplate"}} state={{name: item.name}} style={{ textDecoration: 'none',color: 'black'}} >
+                                    <h1>{item.name}</h1>
+                                </Link>
 
-                        {/* how to make above part into a button???? */}
-                        <button
-                            onClick={()=>{
-                                setOpenModal(true);
-                            }}
-                        >
-                        </button>
-                        {openModal && <Popup closeModal={setOpenModal}/>}
-                    </Recipe>
-                ))}
-            </RecipeContent>
-        </FCard>
-      ))
-    }
+                                {/* how to make above part into a button???? */}
+                                <button
+                                    onClick={()=>{
+                                        setOpenModal(true);
+                                    }}
+                                >
+                                </button>
+                                {openModal && <Popup closeModal={setOpenModal}/>}
+                            </Recipe>
+                        ))}
+                    </RecipeContent>
+                </FCard>
+              ))
+            }
      </FContent>
     )
 }
@@ -173,19 +172,19 @@ const MenuData = ({hall}) => {
       <IconContext.Provider value={{color: 'white', size: '30px'}}>
           <AccordionSection>
             <Container>
-                {times.map((item, index) => {
+                {times.map((mealName, index) => {
                     return (
-                        <>
-                        <Wrap onClick={() => toggle(index)} key = {index}>
-                        <h1>{times[index]}</h1>
-                        <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
-                        </Wrap>
-                        {clicked === index ? (
-                        <Dropdown>
-                            <MealCard mdata = {mealtime[times[index]]} hall = {hall}/>
-                        </Dropdown>
-                        ) : null}
-                        </>
+                        <div key={index}>
+                            <Wrap onClick={() => toggle(index)} key = {index}>
+                            <h1>{mealName}</h1>
+                            <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
+                            </Wrap>
+                            {clicked === index ? (
+                            <Dropdown>
+                                <MealCard mdata = {mealtime[mealName]} hall = {hall}/>
+                            </Dropdown>
+                            ) : null}
+                        </div>
                     );
                 })}
             </Container>
