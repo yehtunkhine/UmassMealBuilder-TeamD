@@ -7,11 +7,7 @@ import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
 import { MealItems } from "./AccData";
 import Modal from './Modal'
 let Data = require('./database.json');
-import React, {useState} from 'react'
-import { Data, FoodData } from './AccData'
-import styled from 'styled-components'
-import {IconContext} from 'react-icons'
-import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
+// import { Data, FoodData } from './AccData'
 
 
 const AccordionSection = styled.div`

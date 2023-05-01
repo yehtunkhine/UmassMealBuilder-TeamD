@@ -1,7 +1,8 @@
 import { Link} from "react-router-dom"
 import MenuData from "../components/MenuData"
 import { useLocation } from "react-router-dom";
-
+import React from "react";
+import { Chart } from "react-google-charts";
 
 
 
@@ -41,10 +42,32 @@ export default function Analysis(){
         
 }
 
-
-const pChart = ({chart}) => {
+export const data = (fat, protein, carbs) =>[
+    ["Task", "Hours per Day"],
+    ["Work", 11],
+    ["Eat", 2],
+    ["Commute", 2],
+    ["Watch TV", 2],
+    ["Sleep", 7],
+  ];
+  
+  export const options = {
+    title: "Some Title",
+  };
+const pChart = (fat, protein, carbs) => {
     return (
-        0
+        <Chart
+            chartType="PieChart"
+            data={[
+                ["Task", "Hours per Day"],
+                ["carbs", carbs],
+                ["protein", protein],
+                ["fat", fat],
+            ]}
+            options={options}
+            width={"100%"}
+            height={"400px"}
+        />
     );
 }
 const TotalInfo = ({foodlist}) => {
@@ -77,9 +100,11 @@ const TotalInfo = ({foodlist}) => {
             <h1>Total Protein: {tProtein.toFixed(1)}g</h1>
             <h1>Total Carbohydrates: {tCarbs.toFixed(1)}g</h1>
             <h1>Health Score: {healthScore.toFixed(2)} </h1>
-            
-        </div>
+            {(Number(tFat.toFixed(1)))}
+            {pChart(Number(tFat.toFixed(1)), Number(tProtein.toFixed(1)), Number(tCarbs.toFixed(1)))}
 
+        </div>
+        
     );
 
 }
