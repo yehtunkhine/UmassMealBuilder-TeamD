@@ -1,4 +1,3 @@
-import { Link} from "react-router-dom"
 import React, {useState} from 'react'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
@@ -99,10 +98,10 @@ const Popup = ({closeModal}) => {
     return (
         <div>
             <button id="myBtn">modal</button>
-            <div id="myModal" class="modal">
+            <div id="myModal" className="modal">
                 <button onClick = {() =>closeModal(false)}> X </button>
-                <div class="modal-content">
-                    <span class="close">&times;</span>
+                <div className="modal-content">
+                    <span className="close">&times;</span>
                     <p>Some text in the Modal..</p>
                 </div>
             </div>
@@ -119,26 +118,18 @@ const MealCard = ({mdata}) => {
 
     return (
         <FContent >
-            { mdata.map((mealContent, i) => (
+            {mdata.map((mealContent, i) => (
                 <FCard key={i}>
                     <Category>{mealContent.category}</Category>
                     <RecipeContent>
-                        {mealContent.recipes.map((item,i) => (
-                            <Recipe>
-                                <Link to={{pathname: "/FactsTemplate"}} state={{name: item.name}} style={{ textDecoration: 'none',color: 'black'}} >
-                                    <h1>{item.name}</h1>
-                                </Link>
-
-                                {/* how to make above part into a button???? */}
-                                <button
-                                    onClick={()=>{
-                                        setOpenModal(true);
-                                    }}
-                                >
-                                </button>
-                                {openModal && <Popup closeModal={setOpenModal}/>}
+                        {mealContent.recipes.map((item, index) => (
+                            <Recipe key={index}>
+                            {/* When the button is clicked, a popup will appear with nutrients
+                                and ingredients from the backend*/}
+                                <button onClick = {() =>setOpenModal(true)}>{item.name}</button>
                             </Recipe>
                         ))}
+                        {openModal && <Popup closeModal={setOpenModal}/>}
                     </RecipeContent>
                 </FCard>
               ))
@@ -176,13 +167,13 @@ const MenuData = ({hall}) => {
                     return (
                         <div key={index}>
                             <Wrap onClick={() => toggle(index)} key = {index}>
-                            <h1>{mealName}</h1>
-                            <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
+                                <h1>{mealName}</h1>
+                                <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
                             </Wrap>
                             {clicked === index ? (
-                            <Dropdown>
-                                <MealCard mdata = {mealtime[mealName]} hall = {hall}/>
-                            </Dropdown>
+                                <Dropdown>
+                                    <MealCard mdata = {mealtime[mealName]} hall = {hall}/>
+                                </Dropdown>
                             ) : null}
                         </div>
                     );
