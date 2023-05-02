@@ -21,9 +21,9 @@ app.use(express.json())
 //create user --works
 async function createUser(userid,username, useremail, userphone){
   let doesExist = await fetchUserData(userid)
-  if(doesExist == "[]"){
+  if(doesExist == "null"){
   const newUser=await User.create({userId: userid, name: username, email: useremail, phone: userphone});
-  return JSON.stringify(newUser);
+  return (newUser);
   }
   else{  
     return (userid+" already exists")
@@ -34,7 +34,7 @@ async function createUser(userid,username, useremail, userphone){
 app.post('/createUser', (req, res)=>{
   (async function createAndSend(){
     let sendVal = await createUser(req.query.userId, req.query.name, req.query.email, req.body.phone)
-    res.end(sendVal)
+    res.end(JSON.stringify(sendVal))
   })();
 })
 
@@ -43,15 +43,22 @@ app.post('/createUser', (req, res)=>{
 //delete user--works
 async function deleteuser(userid){
   let doesExist=await fetchUserData(userid)
-  if(doesExist=="[]"){
-    return userid+" does not exist"
+  let user_meal_Ids=await fetchMealIDS(userid)
+  let doesRestExist=await fetchUserRestrictions(userid)
+  let doesFavExist=await fetchFavoriteFoods(userid)
+  
+  if(doesFavExist.toString()!=[].toString()){await FavoriteFoodsBridge.destroy({where:{userId:userid}})}
+
+  if(user_meal_Ids.toString()!=[].toString()){
+    console.log(user_meal_Ids)
+    await user_meal_Ids.forEach(id=> MealFoodBridge.destroy({where:{mealId:id.mealId}}))
+    await Meal.destroy({where:{userId:userid}})
   }
-  else{
-  await User.destroy({
-    where:{
-      userId: userid,
-    }
-  });
+  if(doesRestExist.toString()!=[].toString()){
+    await UserRestriction.destroy({where:{userId:userid}})
+  }
+  if(doesExist=="null"||doesExist=="[]"){return userid+" does not exist"}
+  else{await User.destroy({where:{userId: userid}});
   return userid + " is deleted"
 }
 
@@ -59,7 +66,7 @@ async function deleteuser(userid){
 app.get('/deleteUser', (req,res)=>{
   (async function delUser(){
     let delVal=await deleteuser(req.query.userId)
-    res.end(delVal)
+    res.end(JSON.stringify(delVal))
   })();
 })
 
@@ -67,7 +74,7 @@ app.get('/deleteUser', (req,res)=>{
 
 //retrieve user data -- works
 async function fetchUserData(userid){
-    const users = await User.findAll({
+    const users = await User.findOne({
       where: {
         userId: userid,
       }
@@ -78,7 +85,7 @@ async function fetchUserData(userid){
 app.get('/getUser', (req, res) =>{
   (async function getUser(){
     let users = await fetchUserData((req.query.userId))
-    if(users=="[]"){
+    if(users=="null"){
       res.end(JSON.stringify(req.query.userId+" does not exist"))
     }
     else{
@@ -93,9 +100,8 @@ app.get('/getUser', (req, res) =>{
 //create user restriction--works
 async function createUserRestriction(userid, restrictons){
   let doesUserExist=await fetchUserData(userid)
- // let doesRestrictionExist=await
-  if(doesUserExist=="[]"){
-    return userid+" does not exist"
+  if(doesUserExist=="null"){
+    return JSON.stringify(userid+" does not exist")
   }
   else{
   const new_restrict= await UserRestriction.create({userId:userid, restriction:restrictons});
@@ -131,8 +137,8 @@ app.get('/getUserRestrictions', (req, res)=>{
 //delete user restriction--works
 async function deleteUserRestriction(userid, user_rest){
   let doesExist = await fetchUserRestrictions(userid)
-  if(doesExist == "[]"){
-    return userid+" has no restrictions"
+  if(doesExist == "null"){
+    return userid+" has no restrictions or does not have this restriction"
   }
   else{
     await UserRestriction.destroy({
@@ -147,7 +153,7 @@ async function deleteUserRestriction(userid, user_rest){
 app.get('/deleteuserRestriction', (req,res)=>{
   (async function deleteRest(){
     let delVal=await deleteUserRestriction(req.query.userId, req.query.restriction)
-    res.end(delVal)
+    res.end(JSON.stringify(delVal))
   })();
 })
 
@@ -187,7 +193,6 @@ async function fetchFavoriteFoods(userid){
 app.get('/getFavoriteFoods', (req,res)=>{
   (async function getFavoriteFoods(){
     let favs= await fetchFavoriteFoods((req.query.userId))
-    console.log(favs)
     if(favs.toString()==[].toString()){
       res.end(JSON.stringify(req.query.userId+" does not have favorites"))
     }
@@ -200,8 +205,8 @@ app.get('/getFavoriteFoods', (req,res)=>{
 //deletefavfood--works
 async function deleteFavFood(userid, foodid, name){
   let doesExist=await fetchFavoriteFoods(userid,foodid)
-  if(doesExist.toString()==[].toString()){
-    return userid+" has no favorites"
+  if(doesExist.toString()=="null"){
+    return userid+" has no favorites or has not favorited this item"
   }
   else{
     await FavoriteFoodsBridge.destroy({
@@ -221,86 +226,63 @@ app.get('/deleteFavoriteFood', (req,res)=>{
       }
     })
     let delVal = await deleteFavFood(req.query.userId, food.foodId, req.query.name)
-    res.end(delVal)
+    res.end(JSON.stringify(delVal))
   })();
 })
 
 
 
+
+
 //create meal
-let MEALIDCOUNTER=1010100
-async function createMeal(userid, foods){
-  const new_meal= await Meal.create({mealId:MEALIDCOUNTER, userId:userid})
-  MEALIDCOUNTER++
-  async function findID(nameof){
-    let ret=await Food.findOne({
-      where:{
-        name:nameof
-      }
-    })
-    return ret.foodId
-  }
-  let foodID=findID(foods)
-  MealFoodBridge.create({mealId:(MEALIDCOUNTER-1), foodId: foodID})
-  
-  return JSON.stringify(new_meal)
+async function createMeal(mealid, foodname){
+  let food=await Food.findOne({where:{name:foodname}})
+  let newBridge=await MealFoodBridge.create({mealId:mealid, foodId:food.foodId})
+  return newBridge.mealId
 }
 app.post('/createMeal', (req,res)=>{
   (async function createM(){
-
-    let sendVal=await createMeal((req.query.userId), (req.query.foods))
-    res.end(sendVal)
+    let foods=req.query.foods.split(',')
+    let meal_id=await Meal.create({userId:req.query.userId})
+    let sendVal=await foods.forEach((food)=>createMeal(meal_id.mealId, food))
+    res.end(JSON.stringify("Meal Created with ID "+ meal_id.mealId))
   })();
   
 })
 
 
 //fetch meals
-async function fetchMeals(userid){
-  async function fetchFoodInMeal(mealid){
-    const food_in_meal = await MealFoodBridge.findAll({
-      where:{
-        mealID: mealid,
-      }
-    });
-    return food_in_meal
-  }
-  const meals=await Meals.findAll({
-    where:{
-      userId:userid
-    }
-  })
 
-  let all_meals=[]
-  meals.forEach(meal=>{
-    all_meals.push({mealId:meal.mealId, foods:fetchFoodInMeal(meal.mealId)})
-  })
-  return JSON.stringify(all_meals);
 
+//fetch mealIDS
+async function fetchMealIDS(userid){
+  const mealIDS=await Meal.findAll({where:{userId:userid}})
+  return mealIDS
 }
-app.get('/getmeals', (req, res)=>{
+
+//fet items in meal by if
+async function getFoodInMeal(mealid){
+  const foods=await(await (await MealFoodBridge.findAll({where:{mealId:mealid}})).map(f=> f.foodId))
+  return foods;
+}
+
+
+app.get('/getMeals', (req, res)=>{
   (async function getmeals(){
-    let meal_ret=await fetchMeals((req.query.userId))
-    res.end(meal_ret)
-  })();
-})
-
-//fetch favorite locations
-
-async function fetchfavoritelocations(userid){
-  const favs= await favoriteLocationsBridge.findAll({
-    where:{
-      userID:userid,
+    let retVal=[]
+    let userMealIDS=await (await fetchMealIDS(req.query.userId)).map(f=>f.mealId)  //list of meal ids for user
+    for(let i=0;i<userMealIDS.length;++i){
+      let food=await getFoodInMeal(userMealIDS[i])
+      retVal.push({mealId:userMealIDS[i], foods:food})
     }
-  });
-  return JSON.stringify(favs);
-}
-app.get('/getfavoritelocations', (req,res)=>{
-  (async function getfavoriteLocations(){
-    let loc=await fetchfavoritelocations((req.query.userId))
-    res.end(loc)
+    console.log(retVal)
+    res.end(JSON.stringify(retVal))
   })();
 })
+
+
+
+
 
 
 
