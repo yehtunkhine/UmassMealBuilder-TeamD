@@ -42,7 +42,7 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
 
 
 ## Software Design Specifications
-- Continue to [SRS Doc](https://docs.google.com/document/d 1xARkV2M6CB3EhkK2Rf1cDI93MhJKZdLDTaTv2R8JQP0/edit)
+- Continue to [SRS Doc](https://docs.google.com/document/d/1xARkV2M6CB3EhkK2Rf1cDI93MhJKZdLDTaTv2R8JQP0/edit)
 
 
 ## Scope
