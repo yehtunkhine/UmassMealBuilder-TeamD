@@ -59,7 +59,7 @@ const Food = sequelize.define("Food",{
         type: DataTypes.DECIMAL(9,3).UNSIGNED,
         defaultValue: 0
     },
-    saturated_fat: {
+    saturatedFat: {
         type: DataTypes.DECIMAL(9,3).UNSIGNED,
         defaultValue: 0
     },
@@ -87,6 +87,11 @@ const Food = sequelize.define("Food",{
         allowNull: false
     },
     ingredients: {
+        type: DataTypes.STRING(2048),
+        defaultValue: "N/A",
+        allowNull: false
+    },
+    recipeLabels: {
         type: DataTypes.STRING(2048),
         defaultValue: "N/A",
         allowNull: false
@@ -279,8 +284,12 @@ LocationTimes.removeAttribute('id')
 // Push to db
 // Change models above and then uncomment and run this file to make db changes
 // force option will wipe database before updating tables!!!
+<<<<<<< HEAD
 /*
  await sequelize.sync({force: true})
+=======
+//await sequelize.sync({force: true})
+>>>>>>> e674c8265f6b9ee474d56f4c541edcf3bbc78efb
 
 
  await User.create({userId: "123456789", email: "random@email.com", phone: "555-555-5555", name: "John Doe"});

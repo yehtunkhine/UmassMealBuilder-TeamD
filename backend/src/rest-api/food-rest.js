@@ -4,24 +4,6 @@ import express from 'express'
 
 const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb');
 
-async function createFood(name, calories, fat, saturated_fat, carbs, category, ingredients, healthfulness, servingSize){ //create food with properties
-    const food = await Food.create({name: name, calories: calories, fat: fat, saturated_fat: saturated_fat, carbs: carbs, category: category, ingredients: ingredients, halthfulness: healthfulness, servingSize: servingSize});
-    console.log('-----------Created ' + name + ' Object-----------------')
-    console.log(food instanceof Food);
-    console.log(food.foodId);
-    console.log(food.name);
-    console.log(food.calories);
-    console.log(food.fat);
-    console.log(food.saturated_fat);
-    console.log(food.carbs);
-    console.log(food.category);
-    console.log(food.ingredients);
-    console.log(food.healthfulness);
-    console.log(food.servingSize);
-    console.log('Saved ' + name);
-    return 'Created ' + JSON.stringify(food)
-}
-
 async function findFood(key, value) { //find food with given key and value
     let food = await Food.findOne({
         where: {
@@ -35,12 +17,14 @@ async function findFood(key, value) { //find food with given key and value
             name: food.name,
             calories: food.calories,
             fat: food.fat,
-            saturated_fat: food.saturated_fat,
+            saturatedFat: food.saturatedFat,
+            protein: food.protein,
             carbs: food.carbs,
             category: food.category,
             ingredients: food.ingredients,
-            halthfulness: food.halthfulness,
-            servingSize: food.servingSize
+            healthfulness: food.healthfulness,
+            servingSize: food.servingSize,
+            recipeLabels: food.recipeLabels
         };
     }
 }
@@ -80,7 +64,7 @@ async function findFood(key, value) { //find food with given key and value
             name: food.name,
             calories: food.calories,
             fat: food.fat,
-            saturated_fat: food.saturated_fat,
+            saturatedFat: food.saturatedFat,
             carbs: food.carbs,
             ingredients: food.ingredients,
             halthfulness: food.halthfulness,
@@ -139,28 +123,6 @@ async function findFoodsAtLocationOnDate(locationId, date) {
     return retObj;
 }
 
-async function addFoodsToDatabase(inputObjStr) {
-    let inputObj = JSON.parse(inputObjStr);
-    
-}
-
-async function deleteFood(name){
-
-    /*await FoodRestriction.destroy({ //delete all associated FoodRestriction rows
-        where: {
-            foodId: food.foodId
-        }
-    });*/
-
-    await Food.destroy({ //delete all rows with given name
-        where: {
-          name: name
-        }
-    });
-
-    return 'Deleted ' + name + 's and associated restrictions';
-}
-
 // -------------------------
 // Rest API
 // -------------------------
@@ -173,24 +135,123 @@ app.use(express.urlencoded({ extended: true }));
 app.post('/createFood', (req, res) => {
     (async function createAndSend(){
         const data = req.body;
-        await createFood(
-            data.name,
-            data.calories,
-            data.fat,
-            0,
-            data.carbs,
-            'N/A',
-            data.ingredients,
-            data.healthfulness,
-            data.servingSize);
-        res.send(data.name + ' Successfully Created');
+        const duplicate = await Food.findOne({
+            where: {
+                name: data.name
+            }
+        });
+        if (duplicate !== null) res.send('ERROR: ' + data.name + ' already exists!');
+        else {
+            const food = await Food.create({
+                name: data.name,
+                calories: data.calories,
+                fat: data.fat,
+                saturatedFat: data.saturatedFat,
+                protein: data.protein,
+                carbs: data.carbs,
+                category: data.category,
+                ingredients: data.ingredients,
+                healthfulness: data.healthfulness, 
+                servingSize: data.servingSize,
+                recipeLabels: data.recipeLabels
+            });
+            res.send(data.name + ' Successfully Created with Food ID: ' + food.foodId);
+        }
+    })();
+});
+
+app.post('/addFoodToLocation', (req, res) => {
+    (async function createAndSend(){
+        const data = req.body;
+        const food = await findFood('foodId', data.foodId);
+        if (food === null) res.send('ERROR: Food with ID ' + data.foodId + ' does not exist!');
+        else {
+            const location = await Location.findOne({
+                where: {
+                    locationName: data.diningHall
+                }
+            });
+            if (location === null) res.send('ERROR: ' + data.diningHall + ' is not a location!');
+            else {
+                const duplicate = await LocationFoodBridge.findOne({
+                    where: {
+                        Date: data.date,
+                        Time: data.time,
+                        foodId: data.foodId,
+                        locationId: location.locationId
+                    }
+                })
+                if (duplicate !== null) res.send('ERROR: ' + food.name + ' is already linked to ' + data.diningHall + ' during ' + data.time + ' on ' + data.date + '!');
+                else {
+                    const bridge = await LocationFoodBridge.create({
+                        Date: data.date,
+                        Time: data.time,
+                        foodId: data.foodId,
+                        locationId: location.locationId
+                    });
+                    res.send('Succesfully Added ' + food.name + ' (Food ID: ' + data.foodId + ') to ' + data.diningHall + ' during ' + data.time + ' on ' + data.date + '.');
+                }
+            }
+        }
+    })();
+});
+
+app.post('/removeFoodFromLocation', (req, res) => {
+    (async function createAndSend() {
+        const data = req.body;
+        const location = await Location.findOne({
+            where: {
+                locationName: data.diningHall
+            }
+        });
+        if (location === null) res.send('ERROR: ' + data.diningHall + ' is not a location!');
+        else {
+            const bridge = await LocationFoodBridge.findOne({
+                where: {
+                    Date: data.date,
+                    Time: data.time,
+                    foodId: data.foodId,
+                    locationId: location.locationId
+                }
+            })
+            if (bridge === null) res.send('ERROR: No such bridge exists!');
+            else {
+                await LocationFoodBridge.destroy({
+                    where: {
+                        Date: data.date,
+                        Time: data.time,
+                        foodId: data.foodId,
+                        locationId: data.locationId
+                    }
+                });
+                res.send('Food successfully removed from location.');
+            }
+        }
     })();
 });
 
 app.post('/deleteFood', (req, res) => {
     (async function createAndSend(){
-        await deleteFood(req.body.name)
-        res.send(data.name + ' Successfully Deleted')
+        const data = req.body;
+        const food = await Food.findOne({
+            where: {
+              foodId: data.foodId
+            }
+        });
+        if (food === null) res.send('ERROR: No such food exists!');
+        else {
+            await Food.destroy({
+                where: {
+                  foodId: data.foodId
+                }
+            });
+            await LocationFoodBridge.destroy({
+            where: {
+                foodId: data.foodId
+            } 
+            });
+            res.send('Food with ID ' + data.foodId + ' Successfully Deleted.')
+        }
     })();
 });
 
@@ -219,10 +280,10 @@ app.get('/analysis', (req, res) => {
 
 app.get('/facts', (req, res) => {
     (async function getAndSend() {
-        let food = await findFood('foodId', req.query.item);
+        let food = await findFood('foodId', req.query.foodId);
         if (food === null) res.end('No such item exists!');
         else {
-            delete food.name;
+            delete food.foodId;
             let str = JSON.stringify(food);
             res.end(str);
         }
