@@ -16,23 +16,33 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
     - React
 - Database / API’s
     - Firestore
-    - SQL
+    - postGresSQL
     - Firebase Authentication
     - UMass Dining
         - Source of menu/food information
 
-
+## Challenges and Risks
+- Integrating between frontend and backend
+    - Displaying the data from UMass Dining Nutritional website onto the correct places on the client side 
+- Updating the different meals available for different days. 
+- Locations open and close at different times based on the day of the week, weekends and holidays. This must be accounted for.
 ## Releases
-## Test Users
+
+### 1.0 
+
+
 
 ## Build Process
 - Install git, npm , node on local machine. 
 - Clone the repository
 - Choose the main branch (or whatever branch you would like to update)
-- Run NPM install
+- Run NPM install and then run node server.js in git bash terminal
+- Change into frontend directory in git bash terminal (cd frontend)
+- Run npm start in git bash terminal
+
 
 ## Software Design Specifications
-
+- Continue to [SRS Doc](https://docs.google.com/document/d 1xARkV2M6CB3EhkK2Rf1cDI93MhJKZdLDTaTv2R8JQP0/edit)
 
 
 ## Scope
@@ -41,9 +51,7 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
 ## Team Structure
 
 - Full Stack Developer - 2 - Sivan, Jahkobee, Khiem
-- Front - End Developers/UI - 2 (future 3) - Lauren, Joseph
-- Back-end Developers - 2 (future 3) -Rishik, Chris
-- Data Engineers - 2 (future 0) - Omer, Lyle, Rishik
+- Front - End Developers/UI - 2 - Lauren, Joseph
+- Back-end Developers - 2 - Rishik, Chris
+- Data Engineers - 2  - Omer, Lyle, Rishik
 
-## Contributing
-## Assignments
