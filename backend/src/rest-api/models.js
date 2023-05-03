@@ -26,6 +26,28 @@ const FoodRestriction = sequelize.define("FoodRestriction", {
     timestamps: false
 });
 
+const FoodNonAllergenRestriction = sequelize.define("FoodNonAllergenRestriction", {
+    restriction: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+},
+{
+    noPrimaryKey: true,
+    timestamps: false
+});
+
+const UserNonAllergenRestriction = sequelize.define("UserNonAllergenRestriction", {
+    restriction: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+},
+{
+    noPrimaryKey: true,
+    timestamps: false
+});
+
 //UserRestriction
 const UserRestriction = sequelize.define("UserRestriction",{
     restriction: {
@@ -86,7 +108,7 @@ const Food = sequelize.define("Food",{
         allowNull: false
     },
     ingredients: {
-        type: DataTypes.STRING(2048),
+        type: DataTypes.STRING(16384),
         defaultValue: "N/A",
         allowNull: false
     }
@@ -235,11 +257,15 @@ LocationTimes.belongsTo(Location, {foreignKey: "locationId"});
 // a restriction is only for one food
 Food.hasMany(FoodRestriction, {foreignKey: "foodId"});
 FoodRestriction.belongsTo(Food, {foreignKey: "foodId"});
+Food.hasMany(FoodNonAllergenRestriction, {foreignKey: "foodId"});
+FoodNonAllergenRestriction.belongsTo(Food, {foreignKey: "foodId"});
 
 // one user can have many restrictions, but each instance of there being
 // a restriction is only for one user
 User.hasMany(UserRestriction, {foreignKey: "userId"});
 UserRestriction.belongsTo(User, {foreignKey: "userId"});
+User.hasMany(UserNonAllergenRestriction, {foreignKey: "userId"});
+UserNonAllergenRestriction.belongsTo(User, {foreignKey: "userId"});
 
 // Many to Many Relationshipds
 // A food can be favorited by many users, and many users can favorite the same item
@@ -266,18 +292,20 @@ Meal.belongsToMany(Food, {through: "MealFoodBridge", foreignKey: "mealId"});
 // Location.belongsToMany(Food, {through: {model: 'LocationFoodBridge', unique: false}, foreignKey: 'locationId'});
 
 // remove automatically generated PK's
-FavoriteFoodsBridge.removeAttribute('id')
-FavoriteLocationsBridge.removeAttribute('id')
-MealFoodBridge.removeAttribute('id')
-LocationFoodBridge.removeAttribute('id')
-FoodRestriction.removeAttribute('id')
-UserRestriction.removeAttribute('id')
-LocationTimes.removeAttribute('id')
+FavoriteFoodsBridge.removeAttribute('id');
+FavoriteLocationsBridge.removeAttribute('id');
+MealFoodBridge.removeAttribute('id');
+LocationFoodBridge.removeAttribute('id');
+FoodRestriction.removeAttribute('id');
+UserRestriction.removeAttribute('id');
+UserNonAllergenRestriction.removeAttribute('id');
+FoodNonAllergenRestriction.removeAttribute('id');
+LocationTimes.removeAttribute('id');
 
 // Push to db
 // Change models above and then uncomment and run this file to make db changes
 // force option will wipe database before updating tables!!!
-//await sequelize.sync({force: true})
+await sequelize.sync({force: true})
 
 
 // await User.create({userId: "123456789", email: "random@email.com", phone: "555-555-5555", name: "John Doe"});
