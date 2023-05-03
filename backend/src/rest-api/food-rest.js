@@ -23,60 +23,26 @@ async function findFood(key, value) { //find food with given key and value
             category: food.category,
             ingredients: food.ingredients,
             healthfulness: food.healthfulness,
-            servingSize: food.servingSize,
-            recipeLabels: food.recipeLabels
+            servingSize: food.servingSize
         };
     }
 }
 
-/*async function findRestrictions(key, value) { //find restrictions with given key and value
-    let list = [];
-    const restrictions = await FoodRestriction.findAll({
-        where: {
-            [key]: value
-        }
-    });
-
-    restrictions.forEach(restriction => {
-        list.push({
-            restriction: restriction.restriction,
-            foodId: restriction.foodId,
-        });
-    });
-
-    return list;
-}*/
-
-/*async function createFoodRestriction(name, restriction) { //add restriction to food
-    let food = findFood('name', name);
-    await FoodRestriction.create({restriction: restriction, foodId: food.foodId});
-
-    return 'Created ' + restriction + ' restriction for food: ' + name;
-}*/
-
-/*async function findFoodsWithRestriction(restriction) { //find all foods with given restriction
+async function findLocationFoodBridges(key, value, restrictionStr) { //find restrictions with given key, value, and restrictions
     const list = [];
-    const restrictionList = findRestrictions('restriction', restriction);
-    restrictionList.forEach(restriction => {
-        let food = findFood('foodId', restriction.foodId);
-        list.push({
-            foodId: food.foodId,
-            name: food.name,
-            calories: food.calories,
-            fat: food.fat,
-            saturatedFat: food.saturatedFat,
-            carbs: food.carbs,
-            ingredients: food.ingredients,
-            halthfulness: food.halthfulness,
-            servingSize: food.servingSize
+
+    /*const restrictionStrArr = restrictionStr.split(", ");
+    const filteredFoodIds = [];
+    for (let i = 0; i<restrictionStrArr.length; i++) {
+        let restrictionObjs = await FoodRestriction.findAll({
+            where: {restriction: restrictionStrArr[i]}
         });
-    });
 
-    return list;
-}*/
+        restrictionObjs.forEach(obj => {
+            filteredFoodIds.push(obj.foodId);
+        })
+    }*/
 
-async function findLocationFoodBridges(key, value) { //find restrictions with given key and value
-    const list = [];
     const bridges = await LocationFoodBridge.findAll({
         where: {
             [key]: value
@@ -91,11 +57,31 @@ async function findLocationFoodBridges(key, value) { //find restrictions with gi
             locationId: bridge.locationId
         });
     });
+
     return list;
 }
 
-async function findFoodsAtLocationOnDate(locationId, date) {
-    let bridgeList = await findLocationFoodBridges('locationId', locationId);
+async function findFoodRestrictions(restrictionStr) {
+    const list = [];
+    const restrictionArr = restrictionStr.split(", ");
+    for (let i = 0; i<restrictionArr.length; i++) {
+        let restrictionObjs = await FoodRestriction.findAll({
+            where: {restriction: restrictionArr[i]}
+        });
+
+        restrictionObjs.forEach(obj => {
+            list.push({
+                restriction: obj.restriction,
+                foodId: obj.foodId
+            })
+        })
+    }
+    return list;
+}
+
+async function findFoodsAtLocationOnDate(locationId, date, restrictionStr) {
+    //const restrictionList = findFoodRestrictions(restrictions);
+    let bridgeList = await findLocationFoodBridges('locationId', locationId, restrictionStr);
     let retObj = {'Breakfast': [], 'Lunch': [], 'Dinner': [], 'Late Night': []};
     for (let i = 0; i<bridgeList.length; i++) { //loop through all bridges
         let bridge = bridgeList[i]; //current bridge
@@ -152,10 +138,38 @@ app.post('/createFood', (req, res) => {
                 category: data.category,
                 ingredients: data.ingredients,
                 healthfulness: data.healthfulness, 
-                servingSize: data.servingSize,
-                recipeLabels: data.recipeLabels
+                servingSize: data.servingSize
             });
+            const restrictArr = data.allergens.split(", ");
+            for (let i = 0; i<restrictArr.length; i++) {
+                await FoodRestriction.create({
+                    restriction: restrictArr[i],
+                    foodId: food.foodId
+                });
+            }
             res.send(data.name + ' Successfully Created with Food ID: ' + food.foodId);
+        }
+    })();
+});
+
+app.post('/deleteFood', (req, res) => {
+    (async function createAndSend(){
+        const data = req.body;
+        const food = await Food.findOne({
+            where: {foodId: data.foodId}
+        });
+        if (food === null) res.send('ERROR: No such food exists!');
+        else {
+            await Food.destroy({
+                where: {foodId: data.foodId}
+            });
+            await LocationFoodBridge.destroy({
+                where: {foodId: data.foodId}
+            });
+            await FoodRestriction.destroy({
+                where: {foodId: data.foodId}
+            });
+            res.send('Food with ID ' + data.foodId + ' Successfully Deleted.')
         }
     })();
 });
@@ -230,38 +244,6 @@ app.post('/removeFoodFromLocation', (req, res) => {
     })();
 });
 
-app.post('/deleteFood', (req, res) => {
-    (async function createAndSend(){
-        const data = req.body;
-        const food = await Food.findOne({
-            where: {
-              foodId: data.foodId
-            }
-        });
-        if (food === null) res.send('ERROR: No such food exists!');
-        else {
-            await Food.destroy({
-                where: {
-                  foodId: data.foodId
-                }
-            });
-            await LocationFoodBridge.destroy({
-            where: {
-                foodId: data.foodId
-            } 
-            });
-            res.send('Food with ID ' + data.foodId + ' Successfully Deleted.')
-        }
-    })();
-});
-
-/*app.get('/createRestriction', (req, res) => {
-    (async function createAndSend(){
-        let sendVal = await createFoodRestriction('Chicken Soup', 'test restriction');
-        res.end(sendVal);
-    })();
-});*/
-
 app.get('/analysis', (req, res) => {
     (async function getAndSend() {
         const location = await Location.findOne({
@@ -271,7 +253,7 @@ app.get('/analysis', (req, res) => {
         });
         if (location === null) res.end(req.query.diningHall + ' is not a location!');
         else {
-            let resultObj = await findFoodsAtLocationOnDate(location.locationId, req.query.date);
+            let resultObj = await findFoodsAtLocationOnDate(location.locationId, req.query.date, req.query.restrictions);
             let str = JSON.stringify(resultObj);
             res.end(str);
         }
@@ -286,6 +268,20 @@ app.get('/facts', (req, res) => {
             delete food.foodId;
             let str = JSON.stringify(food);
             res.end(str);
+        }
+    })();
+});
+
+app.get('/getFoodIdFromName', (req, res) => {
+    (async function getAndSend() {
+        let food = await Food.findOne({
+            where: {
+                name: req.query.name
+            }
+        });
+        if (food === null) res.end('No such item exists!');
+        else {
+            res.end(String(food.foodId));
         }
     })();
 });

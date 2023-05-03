@@ -58,7 +58,7 @@ const Food = sequelize.define("Food",{
         type: DataTypes.DECIMAL(9,3).UNSIGNED,
         defaultValue: 0
     },
-    saturatedFat: {
+    saturated_fat: {
         type: DataTypes.DECIMAL(9,3).UNSIGNED,
         defaultValue: 0
     },
@@ -86,11 +86,6 @@ const Food = sequelize.define("Food",{
         allowNull: false
     },
     ingredients: {
-        type: DataTypes.STRING(2048),
-        defaultValue: "N/A",
-        allowNull: false
-    },
-    recipeLabels: {
         type: DataTypes.STRING(2048),
         defaultValue: "N/A",
         allowNull: false
@@ -290,7 +285,7 @@ LocationTimes.removeAttribute('id')
 // let oreo_ingredient = "Unbleached Enriched Flour (Wheat Flour Niacin, Reduced Iron, Thiamine Mononitrate {Vitamin B1}," +
 //     "Riboflavin {Vitamin B2}, Folic Acid), Sugar, Palm and/or Canola Oil, Cocoa (Processed with Alkali), High Fructose" +
 //     "Corn Syrup, Leavening (Baking Soda, and/or Calcium Phosphate), Salt, Soy Lecithin, Chocolate, Artificial Flavor.";
-// await Food.create({name: "Oreos", category: "Candy", calories: 140, fat: 7, protein: 0, carbs: 21, saturated_fat: 2,
+// await Food.create({name: "Oreos", category: "Candy", calories: 140, fat: 7, protein: 0, carbs: 21, saturatedFat: 2,
 //             ingredients: oreo_ingredient, servingSize: "2 Cookies"});
 // await LocationFoodBridge.create({locationId: 1, foodId: 1, Time: "Breakfast", Date: "2022-06-23"});
 // await FavoriteLocationsBridge.create({userId: "123456789", locationId: 1});
