@@ -1,6 +1,8 @@
 import { Sequelize, DataTypes, STRING } from 'sequelize';
 
-const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb') // Example for postgres
+const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb',
+{logging: false}
+) // Example for postgres
 
 async function testConnection() {
   try {
@@ -199,6 +201,10 @@ const LocationFoodBridge = sequelize.define("LocationFoodBridge", {
         type: DataTypes.STRING,
         primaryKey: true
     },
+    category: {
+        type: DataTypes.STRING,
+        primaryKey: true
+    }
 },
 {
     freezeTableName: true,
@@ -327,4 +333,7 @@ await sequelize.sync({force: true})
 // user.addFood(food);
 
 // Export Models For Other Files
-export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteFoodsBridge, MealFoodBridge};
+export {User, Food, FoodRestriction, UserRestriction, Meal,
+    Location, LocationTimes, LocationFoodBridge, FavoriteFoodsBridge, MealFoodBridge,
+    FoodNonAllergenRestriction, UserNonAllergenRestriction
+};

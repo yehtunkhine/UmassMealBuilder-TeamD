@@ -1,5 +1,4 @@
-
-import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, FavoriteFoodsBridge, MealFoodBridge} from './models.js'
+import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, FavoriteFoodsBridge, MealFoodBridge} from '../models.js'
 import { Sequelize, Op } from 'sequelize';
 import express from 'express'
 const app=express()
