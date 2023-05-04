@@ -3,12 +3,82 @@ import MenuData from "../components/MenuData"
 import { useLocation } from "react-router-dom";
 import React from "react";
 import { Chart } from "react-google-charts";
+import Speedometer from "react-d3-speedometer";
+import ReactDOM from 'react-dom';
+import styled from 'styled-components'
 
 
 
+const LeftSide = styled.div`
+display: flex;
+flex-direction: row;
+justify-content: space-evenly;
+align-items: center;
+position: relative;
 
 
 
+`;
+
+const Totals = styled.div`
+scale: 80%;
+text-align: center;
+position: relative;
+right: 35px;
+bottom: 50px;
+`;
+
+const Container = styled.div`
+`;
+
+const RightSide = styled.div`
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+position: relative;
+bottom: 100px ;
+
+`;
+
+const Meals = styled.div`
+position: relative;
+scale: 80%;
+text-align: center;
+max-width: 500px;
+left: 50px;
+align-items: center;
+bottom: 100px;
+`;
+
+const MainBody = styled.div`
+display: flex;
+flex-direction: column;
+justify-content: space-evenly;
+align-items: center;
+overflow-y: hidden;
+max-height: 1000px;
+
+`;
+
+const HealthMeter = styled.div`
+text-align: center;
+position: relative;
+justify-content: center;
+right: 100px;
+`;
+
+const PieChart = styled.div`
+position: relative;
+right: 75px;
+`;
+
+const NoItems = styled.div`
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+`;
 
 
 
@@ -17,12 +87,12 @@ export default function Analysis(){
     const location = useLocation();
     if (location.state === null){
         return (
-            <div>
+            <NoItems>
             <h1>No items currently selected</h1>
             <Link to={{pathname: "/DiningHalls"}}> 
                 <button>Select Items</button>
             </Link>
-            </div>
+            </NoItems>
         )
 
     }
@@ -34,13 +104,15 @@ export default function Analysis(){
     foods.forEach(x=> foodlist.push(items[x]));
 
     return (
-    <div>
-        <TotalInfo foodlist = {foodlist}/>
-        <h1>Meals: {foods.toString()}</h1>
-    </div>
+    <Container >
+        <TotalInfo foodlist = {foodlist} foods = {foods}/>
+
+    </Container>
     )
         
 }
+
+
 
 export const data = (fat, protein, carbs) =>[
     ["Task", "Hours per Day"],
@@ -52,9 +124,70 @@ export const data = (fat, protein, carbs) =>[
   ];
   
   export const options = {
-    title: "Some Title",
+    title: "Nutrient Balance",
   };
-const pChart = (fat, protein, carbs) => {
+ 
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+const HealthScale = ({hScore}) => 
+{
+return (
+<div>
+        <Speedometer
+          minValue={0}
+          maxValue={70}
+          width = {400}
+          height = {400}
+          customSegmentLabels={[
+            {
+              text: "Bad",
+              position: "INSIDE",
+              color: "#FFF",
+              fontSize: "10px",
+
+
+            },
+            {
+              text: "Ok",
+              position: "INSIDE",
+              color: "#FFF",
+              fontSize: "10px",
+            },
+            {
+              text: "Good",
+              position: "INSIDE",
+              color: "#FFF",
+              fontSize: "10px",
+
+            },
+            {
+              text: "Very Good",
+              position: "INSIDE",
+              color: "#FFF",
+              fontSize: "10px",
+
+            },
+          ]}
+          needleHeightRatio={0.8}
+          ringWidth={25}
+          segments = {4}
+          value={hScore}
+          segmentColors={[
+            "#b81414",
+            "#ec5555",
+            "#f2db5b",
+            "#7ab55c",
+            "#385828"
+          ]}
+          needleColor="#000080"
+        />
+      </div>
+  
+)
+
+
+}
+const PChart = ({fat, protein, carbs}) => {
     return (
         <Chart
             chartType="PieChart"
@@ -65,12 +198,12 @@ const pChart = (fat, protein, carbs) => {
                 ["fat", fat],
             ]}
             options={options}
-            width={"100%"}
-            height={"400px"}
+            width={"600px"}
+            height={"600px"}
         />
     );
 }
-const TotalInfo = ({foodlist}) => {
+const TotalInfo = ({foodlist, foods}) => {
     let tCalories = 0;
     let tFat = 0;
     let tSatFat = 0;
@@ -93,17 +226,32 @@ const TotalInfo = ({foodlist}) => {
     });
 
     return (
-        <div>
-            <h1>Total Calories: {tCalories}</h1>
-            <h1>Total Fat: {tFat.toFixed(1)}g</h1>
-            <h1>Total Saturated Fat: {tSatFat.toFixed(1)}g</h1>
-            <h1>Total Protein: {tProtein.toFixed(1)}g</h1>
-            <h1>Total Carbohydrates: {tCarbs.toFixed(1)}g</h1>
-            <h1>Health Score: {healthScore.toFixed(2)} </h1>
-            {(Number(tFat.toFixed(1)))}
-            {pChart(Number(tFat.toFixed(1)), Number(tProtein.toFixed(1)), Number(tCarbs.toFixed(1)))}
+      <MainBody>
+            <LeftSide >
+              <PieChart>
+        <PChart fat = {Number(tFat.toFixed(1))} protein ={Number(tProtein.toFixed(1))} carbs = {Number(tCarbs.toFixed(1))} />
+              </PieChart>
+            <Totals >
+            <h1 align='center'>Nutrient Totals</h1>
+            <h2>Total Calories: {tCalories}</h2>
+            <h2>Total Fat: {tFat.toFixed(1)}g</h2>
+            <h2>Total Saturated Fat: {tSatFat.toFixed(1)}g</h2>
+            <h2>Total Protein: {tProtein.toFixed(1)}g</h2>
+            <h2>Total Carbohydrates: {tCarbs.toFixed(1)}g</h2>
+            </Totals>
+            </LeftSide>
+        <RightSide>
+          <HealthMeter>
+            <h1>Health Score</h1>
+            <HealthScale hScore = {Math.round(healthScore)} />
+          </HealthMeter>
+            <Meals>
+            <h1 align='center'>Meals</h1>
+            <h2>{foods.toString()}</h2>
+            </Meals>
+            </RightSide>
 
-        </div>
+        </MainBody>
         
     );
 

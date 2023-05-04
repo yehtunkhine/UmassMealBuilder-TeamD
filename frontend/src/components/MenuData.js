@@ -4,8 +4,8 @@ import React, {useState} from 'react'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
-import { MealItems } from "./AccData";
 import Modal from './Modal'
+
 let Data = require('./database.json');
 // import { Data, FoodData } from './AccData'
 
@@ -59,7 +59,10 @@ overflow-x: hidden;
 align-items: start;
 `;
 
+
 const Menu = styled.div`
+
+
 `;
 
 const FCard = styled.div`
@@ -71,6 +74,9 @@ const FContent= styled.div`
 const RecipeContent = styled.div`
 `;
 
+const Plate = styled.div`
+text-align: center;
+`;
 const Recipe = styled.div`
 display: flex;
 justify-content: center;
@@ -166,7 +172,6 @@ const ItemFacts = (item) => {
             <h1>Recipe Lables : {item.recipeLables}</h1>
             <h1>Healthfulness : {item.healthfulness}</h1>
             <h1>Serving Size : {item.servingSize}</h1>
-            
         </ItemProps>
 
 
@@ -182,15 +187,18 @@ const MealCard = ({mdata, afunc, dfunc}) => {
     const [checked, setChecked] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [openModal, setOpenModal] = useState(false);
+    let id = 0;
 
     return (
+    
         <FContent >
     { mdata.map((_, i) => {
         return (
         <FCard key={i}>
             <Category><u>{_.category}</u></Category>
+            
             <RecipeContent>
-                {_.recipes.map((item,i) => (  
+                {_.recipes.map((item,id) => (  
                     <Recipe>     
                             <h1>{item.name}</h1>
                             <button onClick = {() => afunc(i,item)} >{'add'}</button>
@@ -198,9 +206,9 @@ const MealCard = ({mdata, afunc, dfunc}) => {
                                                
                         <div style={BUTTON_WRAPPER_STYLES}>
                             <button 
-                                onClick={()=>setIsOpen(true)}
+                                onClick={()=>{setIsOpen(true)}}
                                 >
-                                    {item.name}
+                                Info
                             </button>
                             <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
                                 {ItemFacts(item)}
@@ -250,10 +258,12 @@ const MenuData = ({hall}) => {
 
   return (
     <Menu>
+        <Plate>
         {'' +Object.keys(currentItems)}
         <Link to={{pathname: "/Analysis"}} state={{foods : Object.keys(currentItems)}}>
         <button>Build Plate</button>
         </Link>
+        </Plate>
       <IconContext.Provider value={{color: 'white', size: '30px'}}>
           <AccordionSection>
             <Container>
