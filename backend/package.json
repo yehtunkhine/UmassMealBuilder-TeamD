@@ -1,4 +1,7 @@
 {
+    "scripts": {
+        "start": "node src/rest-api/routs.js"
+    },
   "dependencies": {
     "express": "^4.18.2",
     "moment": "^2.29.4",
