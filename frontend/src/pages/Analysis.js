@@ -13,9 +13,6 @@ flex-direction: row;
 justify-content: space-evenly;
 align-items: center;
 position: relative;
-
-
-
 `;
 
 const Totals = styled.div`

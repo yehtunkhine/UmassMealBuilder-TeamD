@@ -142,39 +142,42 @@ let currentItems = {};
 const MealCard = ({mdata, afunc, dfunc}) => {
     // states
     const [isOpen, setIsOpen] = useState(false);
+    const [modelContent, setModelContent] = useState({});
+
+    const setModalContent = (item) => {
+        setModelContent(item);
+    }
+
 
     return (
-
         <FContent >
-    { mdata.map((_, i) => {
-        return (
-        <FCard key={i}>
-            <Category><u>{_.category}</u></Category>
+            { mdata.map((_, i) => {
+                return (
+                <FCard key={i}>
+                    <Category><u>{_.category}</u></Category>
 
-            <RecipeContent>
-                {_.recipes.map((item,idx) => (
-                    <Recipe key={idx}>
-                            <h1>{item.name}</h1>
-                            <button onClick = {() => afunc(idx,item)} >{'add'}</button>
-                            <button onClick = {() => dfunc(idx,item)} >{'del'}</button>
+                    <RecipeContent>
+                        {_.recipes.map((item,idx) => (
+                            <Recipe key={idx}>
+                                    <h1>{item.name}</h1>
+                                    <button onClick = {() => afunc(i,item)} >{'add'}</button>
+                                    <button onClick = {() => dfunc(i,item)} >{'del'}</button>
 
-                        <div style={BUTTON_WRAPPER_STYLES}>
-                            <button
-                                onClick={()=>{setIsOpen(true)}}
-                                >
-                                Info
-                            </button>
-                        </div>
-                        {/* <div style={OTHER_CONTENT_STYLES}>Other content</div> */}
-                    </Recipe>
-                ))}
-                <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
-                    <h1>Hi</h1>
-                </Modal>
-            </RecipeContent>
-        </FCard>
-      )})
-    }
+                                <div style={BUTTON_WRAPPER_STYLES}>
+                                    <button
+                                        onClick={()=>{setIsOpen(true); setModalContent(item)}}>
+                                        Info
+                                    </button>
+                                </div>
+                            </Recipe>
+                        ))}
+                        <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
+                            {modelContent.name}
+                        </Modal>
+                    </RecipeContent>
+                </FCard>
+              )})
+            }
      </FContent>
     )
 }
