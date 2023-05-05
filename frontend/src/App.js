@@ -11,7 +11,6 @@ import Hampshire from "./diningHalls/Hampshire"
 import Franklin from "./diningHalls/Franklin"
 import Berkshire from "./diningHalls/Berkshire"
 import FactsTemplate from './components/FactsTemplate';
-
 import User from "./pages/User"
 import ResetPasswordEmail from './pages/resetPasswordEmail';
 import {Route, Routes} from "react-router-dom"

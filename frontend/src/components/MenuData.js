@@ -1,8 +1,12 @@
+import { Link} from "react-router-dom"
 import React, {useState} from 'react'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
+import Modal from './Modal'
+
 let Data = require('./database.json');
+// import { Data, FoodData } from './AccData'
 
 const AccordionSection = styled.div`
 display: flex;
@@ -53,7 +57,10 @@ overflow-x: hidden;
 align-items: start;
 `;
 
+
 const Menu = styled.div`
+
+
 `;
 
 const FCard = styled.div`
@@ -65,7 +72,13 @@ const FContent= styled.div`
 const RecipeContent = styled.div`
 `;
 
+const Plate = styled.div`
+text-align: center;
+`;
 const Recipe = styled.div`
+display: flex;
+justify-content: center;
+align-items: center;
 color: black;
 margin:30px;
 `;
@@ -94,46 +107,74 @@ window.onclick = function(event) {
 }
 */
 
-const Popup = ({closeModal}) => {
-    return (
-        <div>
-            <button id="myBtn">modal</button>
-            <div id="myModal" className="modal">
-                <button onClick = {() =>closeModal(false)}> X </button>
-                <div className="modal-content">
-                    <span className="close">&times;</span>
-                    <p>Some text in the Modal..</p>
-                </div>
-            </div>
-        </div>
-    )
+const BUTTON_WRAPPER_STYLES={
+    position: 'relative',
+    zIndex: 1
 }
+
+// export default function FactsTemplate(){
+//     const location = useLocation()
+//     const { name } = location.state
+//     const mealItem = MealItems[name];
+//     return (<div>
+//         <ItemFacts item = {mealItem}/>
+//         </div>)
+// }
+
+
+// const ItemFacts = (item) => {
+//     return (
+//         <ItemProps>
+//             <h1>{item.name}</h1>
+//             <h1>Ingredients : {item.ingredients}</h1>
+//             <h1>Allerges: {item.allergens}</h1>
+//             <h1>Recipe Lables : {item.recipeLables}</h1>
+//             <h1>Healthfulness : {item.healthfulness}</h1>
+//             <h1>Serving Size : {item.servingSize}</h1>
+//         </ItemProps>
+//     )
+// };
 
 const date = new Date();
 const datestring = date.toLocaleDateString();
+let currentItems = {};
 
-const MealCard = ({mdata}) => {
+const MealCard = ({mdata, afunc, dfunc}) => {
     // states
-    const [openModal, setOpenModal] = useState(false)
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
+
         <FContent >
-            {mdata.map((mealContent, i) => (
-                <FCard key={i}>
-                    <Category>{mealContent.category}</Category>
-                    <RecipeContent>
-                        {mealContent.recipes.map((item, index) => (
-                            <Recipe key={index}>
-                            {/* When the button is clicked, a popup will appear with nutrients
-                                and ingredients from the backend*/}
-                                <button onClick = {() =>setOpenModal(true)}>{item.name}</button>
-                            </Recipe>
-                        ))}
-                        {openModal && <Popup closeModal={setOpenModal}/>}
-                    </RecipeContent>
-                </FCard>
-              ))
-            }
+    { mdata.map((_, i) => {
+        return (
+        <FCard key={i}>
+            <Category><u>{_.category}</u></Category>
+
+            <RecipeContent>
+                {_.recipes.map((item,idx) => (
+                    <Recipe key={idx}>
+                            <h1>{item.name}</h1>
+                            <button onClick = {() => afunc(idx,item)} >{'add'}</button>
+                            <button onClick = {() => dfunc(idx,item)} >{'del'}</button>
+
+                        <div style={BUTTON_WRAPPER_STYLES}>
+                            <button
+                                onClick={()=>{setIsOpen(true)}}
+                                >
+                                Info
+                            </button>
+                        </div>
+                        {/* <div style={OTHER_CONTENT_STYLES}>Other content</div> */}
+                    </Recipe>
+                ))}
+                <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
+                    <h1>Hi</h1>
+                </Modal>
+            </RecipeContent>
+        </FCard>
+      )})
+    }
      </FContent>
     )
 }
@@ -141,12 +182,23 @@ const MealCard = ({mdata}) => {
 
 const MenuData = ({hall}) => {
     const [clicked, setClicked] = useState(false);
+    // const [mclicked, msetClicked] = useState(false);
+
+
     const toggle = index => {
         if(clicked === index) {
             // if clicked question is already active, then close
             return setClicked(null)
         }
         setClicked(index);
+    }
+    const addItem = (item) => {
+        currentItems[item.name] = null;
+        // msetClicked()
+
+    }
+    const delItem = (item) => {
+        delete currentItems[item.name];
     }
     // json navigation
     let times = Object.keys(Data[hall][0].meals);
@@ -160,22 +212,28 @@ const MenuData = ({hall}) => {
 
   return (
     <Menu>
+        <Plate>
+        {'' +Object.keys(currentItems)}
+        <Link to={{pathname: "/Analysis"}} state={{foods : Object.keys(currentItems)}}>
+        <button>Build Plate</button>
+        </Link>
+        </Plate>
       <IconContext.Provider value={{color: 'white', size: '30px'}}>
           <AccordionSection>
             <Container>
                 {times.map((mealName, index) => {
                     return (
-                        <div key={index}>
-                            <Wrap onClick={() => toggle(index)} key = {index}>
-                                <h1>{mealName}</h1>
-                                <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
-                            </Wrap>
-                            {clicked === index ? (
-                                <Dropdown>
-                                    <MealCard mdata = {mealtime[mealName]} hall = {hall}/>
-                                </Dropdown>
-                            ) : null}
-                        </div>
+                        <>
+                        <Wrap onClick={() => toggle(index)} key = {index}>
+                        <h1>{mealName}</h1>
+                        <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
+                        </Wrap>
+                        {clicked === index ? (
+                        <Dropdown>
+                            <MealCard mdata = {mealtime[mealName]} afunc = {addItem} dfunc = {delItem}/>
+                        </Dropdown>
+                        ) : null}
+                        </>
                     );
                 })}
             </Container>
