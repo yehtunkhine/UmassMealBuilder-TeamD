@@ -35,7 +35,8 @@ const UserRestriction = sequelize.define("UserRestriction",{
 },
 {
     noPrimaryKey: true,
-    timestamps: false
+    timestamps: false,
+    onDelete: 'cascade'
 });
 
 //Food
@@ -58,7 +59,7 @@ const Food = sequelize.define("Food",{
         type: DataTypes.DECIMAL(9,3).UNSIGNED,
         defaultValue: 0
     },
-    saturatedFat: {
+    saturated_fat: {
         type: DataTypes.DECIMAL(9,3).UNSIGNED,
         defaultValue: 0
     },
@@ -86,11 +87,6 @@ const Food = sequelize.define("Food",{
         allowNull: false
     },
     ingredients: {
-        type: DataTypes.STRING(2048),
-        defaultValue: "N/A",
-        allowNull: false
-    },
-    recipeLabels: {
         type: DataTypes.STRING(2048),
         defaultValue: "N/A",
         allowNull: false
@@ -285,7 +281,6 @@ LocationTimes.removeAttribute('id')
 // force option will wipe database before updating tables!!!
 /*
  await sequelize.sync({force: true})
-//await sequelize.sync({force: true})
 
 
  await User.create({userId: "123456789", email: "random@email.com", phone: "555-555-5555", name: "John Doe"});
