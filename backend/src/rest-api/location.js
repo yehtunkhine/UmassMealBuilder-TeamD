@@ -1,4 +1,4 @@
-import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteLocationsBridge} from '../models.js'
+import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteLocationsBridge} from './models.js'
 import { Sequelize, Op } from 'sequelize';
 import moment from 'moment-timezone'
 import express from 'express'
