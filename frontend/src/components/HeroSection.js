@@ -2,6 +2,8 @@ import React from 'react';
 import '../App.css';
 import { Button } from './Button';
 import './HeroSection.css';
+import { Link} from "react-router-dom"
+
 
 function HeroSection() {
   return (
@@ -15,12 +17,14 @@ function HeroSection() {
         <Button buttonStyle ={'btn--outline'} buttonSize={'btn--large'}>
           See how it works
         </Button>
+        <Link to={{pathname: "/DiningHalls"}}>
         <Button
           buttonStyle={'btn--primary'}
           buttonSize={'btn--large'}
-        >
+          >
           Try Now
         </Button>
+          </Link>
       </div>
     </div>
   );
