@@ -293,13 +293,14 @@ LocationTimes.removeAttribute('id')
  await LocationFoodBridge.create({locationId: 1, foodId: 1, Time: "Breakfast", Date: "2022-06-23"});
  await FavoriteLocationsBridge.create({userId: "123456789", locationId: 1});
 
- let user = await User.findOne({
-     where: {userId: '123456789'}
- });
- let food = await Food.findOne({
-     where: {foodId: 1}
- });
- user.addFood(food);
+// let user = await User.findOne({
+//     where: {userId: '123456789'}
+// });
+// let food = await Food.findOne({
+//     where: {foodId: 1}
+// });
+// user.addFood(food);
 */
+
 // Export Models For Other Files
 export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteFoodsBridge, MealFoodBridge};
