@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes, STRING } from 'sequelize';
 
-const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb') // Example for postgres
+const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb')
 
 async function testConnection() {
   try {
