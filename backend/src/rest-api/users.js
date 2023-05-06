@@ -1,5 +1,5 @@
 
-import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, FavoriteFoodsBridge, MealFoodBridge} from './models.js'
+import {User, Food, FoodRestriction, UserRestriction,UserNonAllergenRestriction, Meal, Location, LocationTimes, FavoriteFoodsBridge, MealFoodBridge} from './models.js'
 import { Sequelize, Op } from 'sequelize';
 import express from 'express'
 const app=express()
@@ -93,7 +93,6 @@ app.get('/getUser', (req, res) =>{
 //create user restriction--works
 async function createUserRestriction(userid, restrictons){
   let doesUserExist=await fetchUserData(userid)
- // let doesRestrictionExist=await
   if(doesUserExist=="[]"){
     return userid+" does not exist"
   }
@@ -128,14 +127,51 @@ app.get('/getUserRestrictions', (req, res)=>{
   })();
 })
 
+//create user non allergenic restriction
+async function createUserNonAllergenicRestriction(userid, restrictons){
+  let doesUserExist=await fetchUserData(userid)
+  if(doesUserExist=="[]"){
+    return userid+" does not exist"
+  }
+  else{
+  const new_restrict= await UserNonAllergenRestriction.create({userId:userid, restriction:restrictons});
+  return JSON.stringify(new_restrict)
+  }
+}
+app.post('/createUsernonAllergenRestriction', (req,res)=>{
+  (async function createRestrict(){
+    let sendVal=await createUserRestriction((req.query.userId), (req.query.restriction))
+    res.end(sendVal)
+  })();
+})
+
+
+
+//fetch user non allergen restrictions
+async function fetchUserNonAllergenRestrictions(userid){
+  const user_data= await UserNonAllergenRestriction.findAll({
+    where:{
+        userId: userid,
+      }
+    });
+  return JSON.stringify(user_data);
+}
+
+app.get('/getUserNonAllergenicRestrictions', (req, res)=>{
+  (async function getUserNonAllergenRestrictions(){
+    let restrict = await fetchUserNonAllergenRestrictions((req.query.userId))
+    res.end(restrict)
+  })();
+})
+
 //delete user restriction--works
-async function deleteUserRestriction(userid, user_rest){
-  let doesExist = await fetchUserRestrictions(userid)
+async function deleteUserNonAllergenRestriction(userid, user_rest){
+  let doesExist = await fetchUserNonAllergenRestrictions(userid)
   if(doesExist == "[]"){
     return userid+" has no restrictions"
   }
   else{
-    await UserRestriction.destroy({
+    await UserNonAllergenRestriction.destroy({
       where:{
         userId:userid,
         restriction:user_rest
@@ -144,9 +180,9 @@ async function deleteUserRestriction(userid, user_rest){
     return userid+" had deleted restriction "+user_rest
   }
 }
-app.get('/deleteuserRestriction', (req,res)=>{
+app.get('/deleteuserNonAllergenRestriction', (req,res)=>{
   (async function deleteRest(){
-    let delVal=await deleteUserRestriction(req.query.userId, req.query.restriction)
+    let delVal=await deleteUserNonAllergenRestriction(req.query.userId, req.query.restriction)
     res.end(delVal)
   })();
 })
