@@ -112,6 +112,7 @@ export default function User(){
     handleDropdown();
 
     const getRestrictions = () =>{
+        //TODO If you want you can make these set to whatever's in the databse
         let restrictions = [" ", "Milk", "Peanuts", "Shellfish", "Eggs", "Gluten", "Tree Nuts", "Fish", "Soy", "Corn", "Sesame", 
         "Vegetarian", "Plant Based", "Local", "Whole Grain", "Halal", "Antibiotic Free", "Sustainable"];
         let selection = document.getElementById("allergen");
