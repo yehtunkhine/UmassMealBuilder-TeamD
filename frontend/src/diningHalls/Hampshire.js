@@ -1,3 +1,5 @@
+import MenuData from "../components/MenuData";
+
 export default function Hampshire(){
-    return <h1>Hampshire</h1>
+    return <div><MenuData hall = "Hampshire_Dining_Commons"/></div>
 }
