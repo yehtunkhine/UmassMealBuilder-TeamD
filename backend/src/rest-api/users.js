@@ -1,23 +1,12 @@
 
-import {User, Food, FoodRestriction, UserRestriction,UserNonAllergenRestriction, Meal, Location, LocationTimes, FavoriteFoodsBridge, MealFoodBridge} from './models.js'
+import {sequelize, User, Food, FoodRestriction, UserRestriction,UserNonAllergenRestriction, Meal, Location, LocationTimes, FavoriteFoodsBridge, MealFoodBridge} from './models.js'
 import { Sequelize, Op } from 'sequelize';
 import express from 'express'
-const app=express()
-const port=3000
 
-const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb') // Example for postgres
+// const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb') // Example for postgres
+const router=express.Router()
+router.use(express.json())
 
-async function testConnection() {
-  try {
-    await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }
-}
- 
-testConnection()
-app.use(express.json())
 //create user --works
 async function createUser(userid,username, useremail, userphone){
   let doesExist = await fetchUserData(userid)
@@ -28,7 +17,7 @@ async function createUser(userid,username, useremail, userphone){
   else{return (userid+" already exists")}
 }
 
-app.post('/createUser', (req, res)=>{
+router.post('/createUser', (req, res)=>{
   (async function createAndSend(){
     let sendVal = await createUser(req.query.userId, req.query.name, req.query.email, req.body.phone)
     res.end(JSON.stringify(sendVal))
@@ -53,7 +42,7 @@ async function deleteuser(userid){
     return userid + " is deleted"
 }}
 
-app.get('/deleteUser', (req,res)=>{
+router.get('/deleteUser', (req,res)=>{
   (async function delUser(){
     let delVal=await deleteuser(req.query.userId)
     res.end(JSON.stringify(delVal))
@@ -68,7 +57,7 @@ async function fetchUserData(userid){
   return JSON.stringify(users);
 }
 
-app.get('/getUser', (req, res) =>{
+router.get('/getUser', (req, res) =>{
   (async function getUser(){
     let users = await fetchUserData((req.query.userId))
     if(users=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}
@@ -88,7 +77,7 @@ async function createUserRestriction(userid, restrictons){
   return JSON.stringify(new_restrict)
   }
 }
-app.post('/createUserRestriction', (req,res)=>{
+router.post('/createUserRestriction', (req,res)=>{
   (async function createRestrict(){
     let sendVal=await createUserRestriction((req.query.userId), (req.query.restriction))
     res.end(sendVal)
@@ -102,7 +91,7 @@ async function fetchUserRestrictions(userid){
   const user_data= await UserRestriction.findAll({where:{userId: userid}});
   return JSON.stringify(user_data);
 }
-app.get('/getUserRestrictions', (req, res)=>{
+router.get('/getUserRestrictions', (req, res)=>{
   (async function getUserRestrictions(){
     let restrict = await fetchUserRestrictions((req.query.userId))
     if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no allergenic restrictions"))}
@@ -121,7 +110,7 @@ async function deleteUserRestriction(userid, user_rest){
     return userid+" had deleted restriction "+user_rest
   }
 }
-app.get('/deleteUserRestriction', (req,res)=>{
+router.get('/deleteUserRestriction', (req,res)=>{
   (async function deleteRest(){
     let delVal=await deleteUserRestriction(req.query.userId, req.query.restriction)
     res.end(JSON.stringify(delVal))
@@ -139,7 +128,7 @@ async function createUserNonAllergenRestriction(userid, restrictons){
   return new_restrict
   }
 }
-app.post('/createUserNonAllergenRestriction', (req,res)=>{
+router.post('/createUserNonAllergenRestriction', (req,res)=>{
   (async function createRestrict(){
     let sendVal=await createUserNonAllergenRestriction(req.query.userId,req.query.restriction)
     res.end(JSON.stringify(sendVal))
@@ -154,7 +143,7 @@ async function fetchUserNonAllergenRestrictions(userid){
   return JSON.stringify(user_data);
 }
 
-app.get('/getUserNonAllergenRestrictions', (req, res)=>{
+router.get('/getUserNonAllergenRestrictions', (req, res)=>{
   (async function getUserNonAllergenRestrictions(){
     let restrict = await fetchUserNonAllergenRestrictions((req.query.userId))
     if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no non allergenic restrictions"))}
@@ -171,7 +160,7 @@ async function deleteUserNonAllergenRestriction(userid, user_rest){
     return userid+" had deleted restriction "+user_rest
   }
 }
-app.get('/deleteuserNonAllergenRestriction', (req,res)=>{
+router.get('/deleteuserNonAllergenRestriction', (req,res)=>{
   (async function deleteRest(){
     let delVal=await deleteUserNonAllergenRestriction(req.query.userId, req.query.restriction)
     res.end(JSON.stringify(delVal))
@@ -190,7 +179,7 @@ async function createFavoriteFood(userid, foodid){
   }
   else{return userId+" does not exist"}
 }
-app.post('/createFavFood',(req,res)=>{
+router.post('/createFavFood',(req,res)=>{
   (async function createfav(){
     let food_id=await Food.findOne({where:{name:req.query.name}})
     let sendVal=await createFavoriteFood(req.query.userId, food_id.foodId)
@@ -205,7 +194,7 @@ async function fetchFavoriteFoods(userid){
   const fav_food_list = await FavoriteFoodsBridge.findAll({where:{userId: userid}});
   return (fav_food_list);
 }
-app.get('/getFavoriteFoods', (req,res)=>{
+router.get('/getFavoriteFoods', (req,res)=>{
   (async function getFavoriteFoods(){
     let favs= await fetchFavoriteFoods((req.query.userId))
     console.log(favs)
@@ -227,7 +216,7 @@ async function deleteFavFood(userid, foodid, name){
     return userid+" has unfavorited " + name
   }
 }
-app.get('/deleteFavoriteFood', (req,res)=>{
+router.get('/deleteFavoriteFood', (req,res)=>{
   (async function deleteFav(){
     let food = await Food.findOne({where:{name: req.query.name}})
     let delVal = await deleteFavFood(req.query.userId, food.foodId, req.query.name)
@@ -253,7 +242,7 @@ async function createMeal(userid, food_IDS){
   for(let i=0;i<food_IDS.length;++i){let newBridge=await MealFoodBridge.create({mealId:meal_ID, foodId:food_IDS[i]})}
   return JSON.stringify(new_meal)
 }
-app.post('/createMeal', (req,res)=>{
+router.post('/createMeal', (req,res)=>{
   (async function createM(){
     let foodlist=await req.query.foods.split(',') //spits list of foods by commas
     let foodAsIDS=await getFoodIDs(foodlist)//turns food names into ids
@@ -304,7 +293,7 @@ async function fetchMeals(userid){
   return JSON.stringify(all_meals);
 
 }
-app.get('/getmeals', (req, res)=>{
+router.get('/getmeals', (req, res)=>{
   (async function getmeals(){
     let doesUserExit=await fetchUserData(req.query.userId)
     if(doesUserExit.toString()==[].toString()||doesUserExit.toString()=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}
@@ -325,16 +314,11 @@ async function fetchfavoritelocations(userid){
   });
   return JSON.stringify(favs);
 }
-app.get('/getfavoritelocations', (req,res)=>{
+router.get('/getfavoritelocations', (req,res)=>{
   (async function getfavoriteLocations(){
     let loc=await fetchfavoritelocations((req.query.userId))
     res.end(loc)
   })();
 })
 
-
-
-
-app.listen(port, () => {
-  console.log(`app listening at http://localhost:${port}`)
-});
+export default router
