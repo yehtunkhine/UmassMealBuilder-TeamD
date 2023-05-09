@@ -14,6 +14,12 @@
   margin: auto;
 }
 
+.min-height{
+  min-height: -webkit-calc(100vh - 72px - 112px);
+  min-height: -moz-calc(100vh - 72px - 112px);
+  min-height: calc(100vh - 72px - 112px)
+}
+
 .labelText {
   text-align: left;
 }

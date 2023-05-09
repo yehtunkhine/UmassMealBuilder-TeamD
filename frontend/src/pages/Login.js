@@ -99,7 +99,7 @@ const Login = () => {
     }
 
     return (
-      <div class = "container">
+      <div class = "container min-height">
         <div class = "outerBox" >
             <text class = "labelText">Email:</text>
             <input class = "inputText" ref = {txtEmail} type = "text" id = "username" name = "emailInput" placeholder="Email"/>
