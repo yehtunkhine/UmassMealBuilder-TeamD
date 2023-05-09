@@ -5,33 +5,34 @@ import { exit } from 'process';
 import moment from 'moment';
 
 
+// calls python scripts to gather data from UMass
 async function scrape_data(){
     let finished = false;
     let err = false;
     const python = spawn('python', ['webscrape_orchestrator.py'])
 
     python.stdout.on('data', (data) => {
-    console.log(`${data}`);
+        console.log(`${data}`);
     });
 
     python.stderr.on('data', (data) => {
-    console.log("Error");
-    console.error(`Error: ${data}`);
-    err = true;
+        console.log("Error");
+        console.error(`Error: ${data}`);
+        err = true;
     });
 
     python.on('exit', (code) => {
-    finished = true;
+        finished = true;
     })
 
     while(!finished){
-    console.log("waiting");
-    await new Promise(resolve => setTimeout(resolve, 5000));
+        console.log("waiting");
+        await new Promise(resolve => setTimeout(resolve, 5000));
     }
 
     if(err){
-    console.log("Python Failed");
-    exit;
+        console.log("Python Failed");
+        exit;
     }
 }
 
@@ -112,7 +113,8 @@ async function create_food_entries(){
         try{
             dbFoodItem = await Food.create(foodItem);
         }catch(e){
-            errorMsg += e.message + "\n" + JSON.stringify(foodItem) + "==============================================================\n\n\n";
+            errorMsg += e.message + "\n" + JSON.stringify(foodItem) + 
+            "==============================================================\n\n\n";
             continue;
         }
 
@@ -140,6 +142,26 @@ async function create_food_entries(){
     console.log(errorMsg);
 }
 
+
+
+// database.json is of structure
+/*
+{
+    Dining_Hall_Name: [
+        {
+            date,
+            meals: {
+                Meal_Time: {
+                    {
+                        category,
+                        recipes: [{name}]
+                    },
+                }
+            }
+        }
+    ]
+}
+*/
 async function create_food_location_relations(){
     const failedToFindFoodItem = new Set();
     const FoodLocationEntryBulk = [];
@@ -194,11 +216,13 @@ async function create_food_location_relations(){
     }
     
     fs.writeFileSync('../json_files/unfoundFoodItems.json', JSON.stringify(Array.from(failedToFindFoodItem), undefined, 2));
+    console.log(failedToFindFoodItem.size)
     await LocationFoodBridge.bulkCreate(FoodLocationEntryBulk);
 }
 
-// await scrape_data();
-console.log("Entering food entries");
+console.log('Scraping web data')
+await scrape_data();
+console.log("Entering food items into db...");
 await create_food_entries();
-console.log("Entering food location relational entries");
+console.log("Entering food location relationship entries into db");
 await create_food_location_relations();
