@@ -21,20 +21,17 @@ app.use(express.json())
 //create user --works
 async function createUser(userid,username, useremail, userphone){
   let doesExist = await fetchUserData(userid)
-  if(doesExist == "[]"){
+  if(doesExist == "null"){
   const newUser=await User.create({userId: userid, name: username, email: useremail, phone: userphone});
-  return JSON.stringify(newUser);
+  return newUser;
   }
-  else{  
-    return (userid+" already exists")
-
-}
+  else{return (userid+" already exists")}
 }
 
 app.post('/createUser', (req, res)=>{
   (async function createAndSend(){
     let sendVal = await createUser(req.query.userId, req.query.name, req.query.email, req.body.phone)
-    res.end(sendVal)
+    res.end(JSON.stringify(sendVal))
   })();
 })
 
@@ -43,23 +40,23 @@ app.post('/createUser', (req, res)=>{
 //delete user--works
 async function deleteuser(userid){
   let doesExist=await fetchUserData(userid)
-  if(doesExist=="[]"){
-    return userid+" does not exist"
-  }
+  let userRestA=await fetchUserRestrictions(userid)
+  let userRestNA=await fetchUserNonAllergenRestrictions(userid)
+  let favs=await fetchFavoriteFoods(userid)
+  //let meals=await fetchMeals(userid)
+  if(doesExist=="null"){return userid+" does not exist"}
   else{
-  await User.destroy({
-    where:{
-      userId: userid,
-    }
-  });
-  return userid + " is deleted"
-}
+    if(userRestA!="[]"){await UserRestriction.destroy({where:{userId:userid}})}
+    if(userRestNA!="[]"){await UserNonAllergenRestriction.destroy({where:{userId:userid}})}
+    if(favs!="[]"){await FavoriteFoodsBridge.destroy({where:{userId:userid}})}
+    await User.destroy({where:{userId: userid}})
+    return userid + " is deleted"
+}}
 
-}
 app.get('/deleteUser', (req,res)=>{
   (async function delUser(){
     let delVal=await deleteuser(req.query.userId)
-    res.end(delVal)
+    res.end(JSON.stringify(delVal))
   })();
 })
 
@@ -67,23 +64,15 @@ app.get('/deleteUser', (req,res)=>{
 
 //retrieve user data -- works
 async function fetchUserData(userid){
-    const users = await User.findAll({
-      where: {
-        userId: userid,
-      }
-    });
+  const users = await User.findOne({where: {userId: userid}})
   return JSON.stringify(users);
 }
 
 app.get('/getUser', (req, res) =>{
   (async function getUser(){
     let users = await fetchUserData((req.query.userId))
-    if(users=="[]"){
-      res.end(JSON.stringify(req.query.userId+" does not exist"))
-    }
-    else{
-    res.end(users)
-    }
+    if(users=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}
+    else{res.end(users)}
   })();
 })
 
@@ -93,9 +82,7 @@ app.get('/getUser', (req, res) =>{
 //create user restriction--works
 async function createUserRestriction(userid, restrictons){
   let doesUserExist=await fetchUserData(userid)
-  if(doesUserExist=="[]"){
-    return userid+" does not exist"
-  }
+  if(doesUserExist=="[]"){return JSON.stringify(userid+" does not exist")}
   else{
   const new_restrict= await UserRestriction.create({userId:userid, restriction:restrictons});
   return JSON.stringify(new_restrict)
@@ -112,36 +99,48 @@ app.post('/createUserRestriction', (req,res)=>{
 
 //fetch user restrictions--works
 async function fetchUserRestrictions(userid){
-  const user_data= await UserRestriction.findAll({
-    where:{
-        userId: userid,
-      }
-    });
+  const user_data= await UserRestriction.findAll({where:{userId: userid}});
   return JSON.stringify(user_data);
 }
 
 app.get('/getUserRestrictions', (req, res)=>{
   (async function getUserRestrictions(){
     let restrict = await fetchUserRestrictions((req.query.userId))
-    res.end(restrict)
+    if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no allergenic restrictions"))}
+    else{res.end(restrict)}
+  })();
+})
+//delete user restriction--works
+async function deleteUserRestriction(userid, user_rest){
+  let doesExist = await fetchUserRestrictions(userid)
+  if(doesExist == "[]"){return userid+" has no restrictions"}
+  else{
+    await UserRestriction.destroy({where:{userId:userid,restriction:user_rest}})
+    return userid+" had deleted restriction "+user_rest
+  }
+}
+app.get('/deleteUserRestriction', (req,res)=>{
+  (async function deleteRest(){
+    let delVal=await deleteUserRestriction(req.query.userId, req.query.restriction)
+    res.end(JSON.stringify(delVal))
   })();
 })
 
+
 //create user non allergenic restriction
-async function createUserNonAllergenicRestriction(userid, restrictons){
+async function createUserNonAllergenRestriction(userid, restrictons){
   let doesUserExist=await fetchUserData(userid)
-  if(doesUserExist=="[]"){
-    return userid+" does not exist"
-  }
+  console.log(doesUserExist)
+  if(doesUserExist=="null"){return userid+" does not exist"}
   else{
   const new_restrict= await UserNonAllergenRestriction.create({userId:userid, restriction:restrictons});
-  return JSON.stringify(new_restrict)
+  return new_restrict
   }
 }
-app.post('/createUsernonAllergenRestriction', (req,res)=>{
+app.post('/createUserNonAllergenRestriction', (req,res)=>{
   (async function createRestrict(){
-    let sendVal=await createUserRestriction((req.query.userId), (req.query.restriction))
-    res.end(sendVal)
+    let sendVal=await createUserNonAllergenRestriction(req.query.userId,req.query.restriction)
+    res.end(JSON.stringify(sendVal))
   })();
 })
 
@@ -149,41 +148,31 @@ app.post('/createUsernonAllergenRestriction', (req,res)=>{
 
 //fetch user non allergen restrictions
 async function fetchUserNonAllergenRestrictions(userid){
-  const user_data= await UserNonAllergenRestriction.findAll({
-    where:{
-        userId: userid,
-      }
-    });
+  const user_data= await UserNonAllergenRestriction.findAll({where:{userId: userid}});
   return JSON.stringify(user_data);
 }
 
-app.get('/getUserNonAllergenicRestrictions', (req, res)=>{
+app.get('/getUserNonAllergenRestrictions', (req, res)=>{
   (async function getUserNonAllergenRestrictions(){
     let restrict = await fetchUserNonAllergenRestrictions((req.query.userId))
-    res.end(restrict)
+    if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no non allergenic restrictions"))}
+    else{res.end(restrict)}
   })();
 })
 
-//delete user restriction--works
+//delete user non allergen restriction--works
 async function deleteUserNonAllergenRestriction(userid, user_rest){
   let doesExist = await fetchUserNonAllergenRestrictions(userid)
-  if(doesExist == "[]"){
-    return userid+" has no restrictions"
-  }
+  if(doesExist == "[]"){return userid+" has no restrictions"}
   else{
-    await UserNonAllergenRestriction.destroy({
-      where:{
-        userId:userid,
-        restriction:user_rest
-      }
-    })
+    await UserNonAllergenRestriction.destroy({where:{userId:userid,restriction:user_rest}})
     return userid+" had deleted restriction "+user_rest
   }
 }
 app.get('/deleteuserNonAllergenRestriction', (req,res)=>{
   (async function deleteRest(){
     let delVal=await deleteUserNonAllergenRestriction(req.query.userId, req.query.restriction)
-    res.end(delVal)
+    res.end(JSON.stringify(delVal))
   })();
 })
 
@@ -191,18 +180,19 @@ app.get('/deleteuserNonAllergenRestriction', (req,res)=>{
 
 //create fav foods--works
 async function createFavoriteFood(userid, foodid){
-  const new_fav_food = await FavoriteFoodsBridge.create({userId:userid, foodId:foodid});
-  return JSON.stringify(new_fav_food)
+  let doesExist =await fetchUserData(userid)
+  console.log(doesExist)
+  if(doesExist!="null"){
+  let new_fav_food = await FavoriteFoodsBridge.create({userId:userid, foodId:foodid});
+  return new_fav_food
+  }
+  else{return userId+" does not exist"}
 }
 app.post('/createFavFood',(req,res)=>{
   (async function createfav(){
-    let food_id=await Food.findOne({
-      where:{
-        name:req.query.name
-      }
-    })
-    let sendVal=await createFavoriteFood((req.query.userId), food_id.foodId)
-    res.end(sendVal)
+    let food_id=await Food.findOne({where:{name:req.query.name}})
+    let sendVal=await createFavoriteFood(req.query.userId, food_id.foodId)
+    res.end(JSON.stringify(sendVal))
   })();
 })
 
