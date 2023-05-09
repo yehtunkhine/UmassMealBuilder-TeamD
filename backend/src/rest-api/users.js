@@ -102,7 +102,6 @@ async function fetchUserRestrictions(userid){
   const user_data= await UserRestriction.findAll({where:{userId: userid}});
   return JSON.stringify(user_data);
 }
-
 app.get('/getUserRestrictions', (req, res)=>{
   (async function getUserRestrictions(){
     let restrict = await fetchUserRestrictions((req.query.userId))
@@ -110,6 +109,9 @@ app.get('/getUserRestrictions', (req, res)=>{
     else{res.end(restrict)}
   })();
 })
+
+
+
 //delete user restriction--works
 async function deleteUserRestriction(userid, user_rest){
   let doesExist = await fetchUserRestrictions(userid)
@@ -200,15 +202,8 @@ app.post('/createFavFood',(req,res)=>{
 
 //fetch favorite foods--works
 async function fetchFavoriteFoods(userid){
-  const fav_food_list = await FavoriteFoodsBridge.findAll({
-    where:{
-      userId: userid,
-    }
-  });
-
-
+  const fav_food_list = await FavoriteFoodsBridge.findAll({where:{userId: userid}});
   return (fav_food_list);
-
 }
 app.get('/getFavoriteFoods', (req,res)=>{
   (async function getFavoriteFoods(){
@@ -217,9 +212,7 @@ app.get('/getFavoriteFoods', (req,res)=>{
     if(favs.toString()==[].toString()){
       res.end(JSON.stringify(req.query.userId+" does not have favorites"))
     }
-    else{
-    res.end(JSON.stringify(favs))
-    }
+    else{res.end(JSON.stringify(favs))}
   })();
 })
 
@@ -230,59 +223,66 @@ async function deleteFavFood(userid, foodid, name){
     return userid+" has no favorites"
   }
   else{
-    await FavoriteFoodsBridge.destroy({
-      where:{
-        userId:userid,
-        foodId:foodid
-      }
-    })
+    await FavoriteFoodsBridge.destroy({where:{userId:userid,foodId:foodid}})
     return userid+" has unfavorited " + name
   }
 }
 app.get('/deleteFavoriteFood', (req,res)=>{
   (async function deleteFav(){
-    let food = await Food.findOne({
-      where:{
-        name: req.query.name
-      }
-    })
+    let food = await Food.findOne({where:{name: req.query.name}})
     let delVal = await deleteFavFood(req.query.userId, food.foodId, req.query.name)
     res.end(delVal)
   })();
 })
 
-
+//get foods ids
+async function getFoodIDs(foods){
+  let foods_IDS=[]
+  for(let i=0;i<foods.length;++i){
+    let F_ID=await Food.findOne({where:{name:foods[i]}})
+    let fid=F_ID.foodId
+    foods_IDS.push(fid)
+  }
+  return foods_IDS;
+}
 
 //create meal
-let MEALIDCOUNTER=1010100
-async function createMeal(userid, foods){
-  const new_meal= await Meal.create({mealId:MEALIDCOUNTER, userId:userid})
-  MEALIDCOUNTER++
-  async function findID(nameof){
-    let ret=await Food.findOne({
-      where:{
-        name:nameof
-      }
-    })
-    return ret.foodId
-  }
-  let foodID=findID(foods)
-  MealFoodBridge.create({mealId:(MEALIDCOUNTER-1), foodId: foodID})
-  
+async function createMeal(userid, food_IDS){
+  const new_meal= await Meal.create({userId:userid})
+  let meal_ID=new_meal.mealId
+  for(let i=0;i<food_IDS.length;++i){let newBridge=await MealFoodBridge.create({mealId:meal_ID, foodId:food_IDS[i]})}
   return JSON.stringify(new_meal)
 }
 app.post('/createMeal', (req,res)=>{
   (async function createM(){
-
-    let sendVal=await createMeal((req.query.userId), (req.query.foods))
+    let foodlist=await req.query.foods.split(',') //spits list of foods by commas
+    let foodAsIDS=await getFoodIDs(foodlist)//turns food names into ids
+    let doesUserExist=await fetchUserData(req.query.userid)
+    if(doesUserExist.toString()==[].toString()){res.end(JSON.stringify(req.query.userId+" does not exist"))}
+    else if(foodAsIDS==[]){res.end(JSON.stringify('There are no foods in meal'))}
+    else{
+    let sendVal=await createMeal(req.query.userId, foodAsIDS)
     res.end(sendVal)
+    }
   })();
-  
 })
 
 
 //fetch meals
 async function fetchMeals(userid){
+  let userMeals=await Meals.findAll({where:{userId:userid}})
+  userMeals.map(f=>f.mealId)
+  let returnMeals=[]
+  if(userMeals==[]){return(userid+ ' has no meals')}
+  else{
+    for(let i=0;i<userMeals.length;++i){
+      let foodsInMeal=await MealFoodBridge.findAll({where:{}})
+    }
+  }
+
+
+
+
   async function fetchFoodInMeal(mealid){
     const food_in_meal = await MealFoodBridge.findAll({
       where:{
@@ -306,8 +306,12 @@ async function fetchMeals(userid){
 }
 app.get('/getmeals', (req, res)=>{
   (async function getmeals(){
-    let meal_ret=await fetchMeals((req.query.userId))
+    let doesUserExit=await fetchUserData(req.query.userId)
+    if(doesUserExit.toString()==[].toString()||doesUserExit.toString()=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}
+    else{
+    let meal_ret=await fetchMeals(req.query.userId)
     res.end(meal_ret)
+    }
   })();
 })
 
