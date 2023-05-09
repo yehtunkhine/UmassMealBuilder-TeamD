@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes, STRING } from 'sequelize';
 
-const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb') // Example for postgres
+const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb')
 
 async function testConnection() {
   try {
@@ -16,6 +16,28 @@ testConnection()
 //models
 //FoodRestriction
 const FoodRestriction = sequelize.define("FoodRestriction", {
+    restriction: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+},
+{
+    noPrimaryKey: true,
+    timestamps: false
+});
+
+const FoodNonAllergenRestriction = sequelize.define("FoodNonAllergenRestriction", {
+    restriction: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+},
+{
+    noPrimaryKey: true,
+    timestamps: false
+});
+
+const UserNonAllergenRestriction = sequelize.define("UserNonAllergenRestriction", {
     restriction: {
         type: DataTypes.STRING,
         allowNull: false
@@ -58,7 +80,7 @@ const Food = sequelize.define("Food",{
         type: DataTypes.DECIMAL(9,3).UNSIGNED,
         defaultValue: 0
     },
-    saturatedFat: {
+    saturated_fat: {
         type: DataTypes.DECIMAL(9,3).UNSIGNED,
         defaultValue: 0
     },
@@ -86,12 +108,7 @@ const Food = sequelize.define("Food",{
         allowNull: false
     },
     ingredients: {
-        type: DataTypes.STRING(2048),
-        defaultValue: "N/A",
-        allowNull: false
-    },
-    recipeLabels: {
-        type: DataTypes.STRING(2048),
+        type: DataTypes.STRING(16384),
         defaultValue: "N/A",
         allowNull: false
     }
@@ -240,11 +257,15 @@ LocationTimes.belongsTo(Location, {foreignKey: "locationId"});
 // a restriction is only for one food
 Food.hasMany(FoodRestriction, {foreignKey: "foodId"});
 FoodRestriction.belongsTo(Food, {foreignKey: "foodId"});
+Food.hasMany(FoodNonAllergenRestriction, {foreignKey: "foodId"});
+FoodNonAllergenRestriction.belongsTo(Food, {foreignKey: "foodId"});
 
 // one user can have many restrictions, but each instance of there being
 // a restriction is only for one user
 User.hasMany(UserRestriction, {foreignKey: "userId"});
 UserRestriction.belongsTo(User, {foreignKey: "userId"});
+User.hasMany(UserNonAllergenRestriction, {foreignKey: "userId"});
+UserNonAllergenRestriction.belongsTo(User, {foreignKey: "userId"});
 
 // Many to Many Relationshipds
 // A food can be favorited by many users, and many users can favorite the same item
@@ -271,13 +292,15 @@ Meal.belongsToMany(Food, {through: "MealFoodBridge", foreignKey: "mealId"});
 // Location.belongsToMany(Food, {through: {model: 'LocationFoodBridge', unique: false}, foreignKey: 'locationId'});
 
 // remove automatically generated PK's
-FavoriteFoodsBridge.removeAttribute('id')
-FavoriteLocationsBridge.removeAttribute('id')
-MealFoodBridge.removeAttribute('id')
-LocationFoodBridge.removeAttribute('id')
-FoodRestriction.removeAttribute('id')
-UserRestriction.removeAttribute('id')
-LocationTimes.removeAttribute('id')
+FavoriteFoodsBridge.removeAttribute('id');
+FavoriteLocationsBridge.removeAttribute('id');
+MealFoodBridge.removeAttribute('id');
+LocationFoodBridge.removeAttribute('id');
+FoodRestriction.removeAttribute('id');
+UserRestriction.removeAttribute('id');
+UserNonAllergenRestriction.removeAttribute('id');
+FoodNonAllergenRestriction.removeAttribute('id');
+LocationTimes.removeAttribute('id');
 
 // Push to db
 // Change models above and then uncomment and run this file to make db changes
@@ -290,7 +313,7 @@ LocationTimes.removeAttribute('id')
 // let oreo_ingredient = "Unbleached Enriched Flour (Wheat Flour Niacin, Reduced Iron, Thiamine Mononitrate {Vitamin B1}," +
 //     "Riboflavin {Vitamin B2}, Folic Acid), Sugar, Palm and/or Canola Oil, Cocoa (Processed with Alkali), High Fructose" +
 //     "Corn Syrup, Leavening (Baking Soda, and/or Calcium Phosphate), Salt, Soy Lecithin, Chocolate, Artificial Flavor.";
-// await Food.create({name: "Oreos", category: "Candy", calories: 140, fat: 7, protein: 0, carbs: 21, saturated_fat: 2,
+// await Food.create({name: "Oreos", category: "Candy", calories: 140, fat: 7, protein: 0, carbs: 21, saturatedFat: 2,
 //             ingredients: oreo_ingredient, servingSize: "2 Cookies"});
 // await LocationFoodBridge.create({locationId: 1, foodId: 1, Time: "Breakfast", Date: "2022-06-23"});
 // await FavoriteLocationsBridge.create({userId: "123456789", locationId: 1});
@@ -304,4 +327,4 @@ LocationTimes.removeAttribute('id')
 // user.addFood(food);
 
 // Export Models For Other Files
-export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteFoodsBridge, MealFoodBridge, FavoriteLocationsBridge};
+export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteFoodsBridge, MealFoodBridge,UserNonAllergenRestriction, FoodNonAllergenRestriction};
