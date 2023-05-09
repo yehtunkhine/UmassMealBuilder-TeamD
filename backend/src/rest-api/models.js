@@ -327,4 +327,4 @@ LocationTimes.removeAttribute('id');
 // user.addFood(food);
 
 // Export Models For Other Files
-export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteFoodsBridge, MealFoodBridge,UserNonAllergenRestriction, FoodNonAllergenRestriction};
+export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteFoodsBridge, MealFoodBridge,UserNonAllergenRestriction, FoodNonAllergenRestriction, FavoriteLocationsBridge};
