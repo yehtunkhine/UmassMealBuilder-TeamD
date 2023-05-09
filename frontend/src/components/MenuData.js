@@ -240,11 +240,14 @@ const MenuData = ({hall}) => {
     }
     const addItem = (index, item) => {
         currentItems[item.name] = null;
-        msetClicked()
+        let update = !mclicked;
+        msetClicked(update);
 
     }
     const delItem = (index, item) => {
         delete currentItems[item.name];
+        let update = !mclicked;
+        msetClicked(update);
     }
     // json navigation
     let times = Object.keys(Data[hall][0].meals);
