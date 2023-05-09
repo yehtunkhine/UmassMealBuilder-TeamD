@@ -77,7 +77,6 @@ export default function Navbar(){
                 <ul>
                     <CustomLink to = "/analysis">Analysis</CustomLink>
                     <CustomLink to = "/dininghalls">Dining Halls</CustomLink>
-                    <CustomLink to = "/favorites">Favorites</CustomLink>
                     <CustomLink to = {logInOrUserLink}>{logInOrUser}</CustomLink>
                     <CustomLink to = {signUpOrLogOutLink} onClick = {logout}>{signUpOrLogOut}</CustomLink>
                 </ul>
