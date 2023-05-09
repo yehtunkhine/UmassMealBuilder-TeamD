@@ -6,6 +6,7 @@ import { Chart } from "react-google-charts";
 import Speedometer from "react-d3-speedometer";
 import ReactDOM from 'react-dom';
 import styled from 'styled-components'
+import './AnalysisStyles.css';
 
 
 
@@ -15,9 +16,6 @@ flex-direction: row;
 justify-content: space-evenly;
 align-items: center;
 position: relative;
-
-
-
 `;
 
 const Totals = styled.div`
@@ -73,13 +71,6 @@ position: relative;
 right: 75px;
 `;
 
-const NoItems = styled.div`
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-`;
-
 
 
 
@@ -87,14 +78,17 @@ export default function Analysis(){
     const location = useLocation();
     if (location.state === null){
         return (
-            <NoItems>
-            <h1>No items currently selected</h1>
-            <Link to={{pathname: "/DiningHalls"}}> 
-                <button>Select Items</button>
-            </Link>
-            </NoItems>
+            <div class  = "outerBox">
+              <div class = "noItems">
+              <h1>No Items Currently Selected</h1>
+              <Link to={{pathname: "/DiningHalls"}}> 
+                  <div>
+                  <button class = "button">Select Items</button>
+                  </div>
+              </Link>
+              </div>
+            </div>
         )
-
     }
     const {foods} = location.state;
     let foodlist = [];

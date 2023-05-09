@@ -1,0 +1,28 @@
+.outerBox {
+    border-radius: 5px;
+    background-color: #EFEFEF;
+    padding: 20px;
+    width: 50%;
+    margin: auto;
+    align-items: center;
+}
+.noItem{
+    font-family: 'PT Sans', sans-serif;
+    font-size: larger;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.button {
+    border-radius: 5px;
+    background-color: #0B6EFD;
+    padding: 10px;
+    width: 80%;
+    margin: auto;
+    color: white;
+    align-items: center;
+  }
+  
+
+  
