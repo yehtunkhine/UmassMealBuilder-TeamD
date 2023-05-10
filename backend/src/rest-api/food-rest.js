@@ -1,8 +1,6 @@
-import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FoodNonAllergenRestriction} from './models.js'
+import {sequelize, User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FoodNonAllergenRestriction} from './models.js'
 import { Sequelize, Op } from 'sequelize';
 import express from 'express'
-
-const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb');
 
 async function findFood(key, value) { //find food with given key and value
     let food = await Food.findOne({
@@ -140,13 +138,12 @@ async function findFoodsAtLocationOnDate(locationId, date, allergenRestrictionSt
 // -------------------------
 // Rest API
 // -------------------------
-const app = express()
-const port = 3000
+const router = express.Router()
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
 
-app.post('/createFood', (req, res) => {
+router.post('/createFood', (req, res) => {
     (async function createAndSend(){
         const data = req.body;
         const duplicate = await Food.findOne({
@@ -190,7 +187,7 @@ app.post('/createFood', (req, res) => {
     })();
 });
 
-app.post('/deleteFood', (req, res) => {
+router.post('/deleteFood', (req, res) => {
     (async function createAndSend(){
         const data = req.body;
         const food = await Food.findOne({
@@ -215,7 +212,7 @@ app.post('/deleteFood', (req, res) => {
     })();
 });
 
-app.post('/addFoodToLocation', (req, res) => {
+router.post('/addFoodToLocation', (req, res) => {
     (async function createAndSend(){
         const data = req.body;
         const food = await findFood('foodId', data.foodId);
@@ -251,7 +248,7 @@ app.post('/addFoodToLocation', (req, res) => {
     })();
 });
 
-app.post('/removeFoodFromLocation', (req, res) => {
+router.post('/removeFoodFromLocation', (req, res) => {
     (async function createAndSend() {
         const data = req.body;
         const location = await Location.findOne({
@@ -285,7 +282,7 @@ app.post('/removeFoodFromLocation', (req, res) => {
     })();
 });
 
-app.get('/analysis', (req, res) => {
+router.get('/analysis', (req, res) => {
     (async function getAndSend() {
         const location = await Location.findOne({
             where: {
@@ -301,7 +298,7 @@ app.get('/analysis', (req, res) => {
     })();
 });
 
-app.get('/facts', (req, res) => {
+router.get('/facts', (req, res) => {
     (async function getAndSend() {
         let food = await findFood('foodId', req.query.foodId);
         if (food === null) res.end('No such item exists!');
@@ -313,7 +310,7 @@ app.get('/facts', (req, res) => {
     })();
 });
 
-app.get('/getFoodIdFromName', (req, res) => {
+router.get('/getFoodIdFromName', (req, res) => {
     (async function getAndSend() {
         let food = await Food.findOne({
             where: {
@@ -327,6 +324,4 @@ app.get('/getFoodIdFromName', (req, res) => {
     })();
 });
 
-app.listen(port, () => {
-    console.log(`app listening at http://localhost:${port}`)
-});
+export default router

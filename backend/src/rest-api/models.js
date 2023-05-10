@@ -328,3 +328,8 @@ LocationTimes.removeAttribute('id');
 
 // Export Models For Other Files
 export {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteFoodsBridge, MealFoodBridge,UserNonAllergenRestriction, FoodNonAllergenRestriction, FavoriteLocationsBridge};
+export {
+    FoodRestriction, FoodNonAllergenRestriction, UserNonAllergenRestriction, UserRestriction,
+    Food, FavoriteFoodsBridge, User, FavoriteLocationsBridge, MealFoodBridge, Meal,
+    LocationFoodBridge, Location, LocationTimes, sequelize
+}
