@@ -6,8 +6,6 @@ import moment from 'moment-timezone'
 const app=express()
 const port=3000
 
-
-
 const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb') // Example for postgres
 
 async function testConnection() {
@@ -22,6 +20,10 @@ async function testConnection() {
 testConnection()
 app.use(express.json())
 express.urlencoded({ extended: true })
+app.listen(port, () => {
+  console.log(`app listening at http://localhost:${port}`)
+});
+
 
 
 /////////////////////////////////////////////////// USER ENDPOINTS /////////////////////////////////////////////////////////////////
@@ -950,9 +952,6 @@ app.delete('/deleteAllLocationTimes', (req, res) => {
   })();
 });
 
-app.listen(port, () => {
-  console.log(`app listening at http://localhost:${port}`)
-});
 
 //////////////////////////////////////////////////////// FOOD ITEM ENDPOINTS ///////////////////////////////////////////////////////////
 
@@ -1275,6 +1274,3 @@ app.get('/getFoodIdFromName', (req, res) => {
   })();
 });
 
-app.listen(port, () => {
-  console.log(`app listening at http://localhost:${port}`)
-});
