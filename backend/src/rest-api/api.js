@@ -4,7 +4,8 @@ import userRoutes from './users.js'
 import express from 'express'
 
 let app = express()
-const port = 3000
+const port = 3001
+
 
 app.use('', foodRoutes)
 app.use('', locationRoutes)

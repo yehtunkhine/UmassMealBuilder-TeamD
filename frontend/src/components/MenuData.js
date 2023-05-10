@@ -145,6 +145,7 @@ const MealCard = ({mdata, afunc, dfunc}) => {
     const [modelContent, setModelContent] = useState({});
 
     const setModalContent = (item) => {
+        console.log(item.name);
         setModelContent(item);
     }
 
