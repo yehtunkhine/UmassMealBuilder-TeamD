@@ -1,12 +1,9 @@
 import { Link} from "react-router-dom"
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
 import Modal from './Modal'
-
-let Data = require('./database.json');
-// import { Data, FoodData } from './AccData'
 
 const AccordionSection = styled.div`
 display: flex;
@@ -87,57 +84,22 @@ const Category = styled.div`
 padding: 25px;
 background-color: lightgray;
 `;
-// var modal = document.getElementById("myModal");
-
-// var Btn = document.getElementById("myBtn")
-
-// var span = document.getElementsByClassName("close")[0];
-
-/*
-Btn.onclick = function () {
-    modal.style.display = "block"
-}
-span.onclick = function() {
-    modal.style.display = "none";
-  }
-window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-}
-*/
-
 const BUTTON_WRAPPER_STYLES={
     position: 'relative',
     zIndex: 1
 }
 
-// export default function FactsTemplate(){
-//     const location = useLocation()
-//     const { name } = location.state
-//     const mealItem = MealItems[name];
-//     return (<div>
-//         <ItemFacts item = {mealItem}/>
-//         </div>)
-// }
-
-
-// const ItemFacts = (item) => {
-//     return (
-//         <ItemProps>
-//             <h1>{item.name}</h1>
-//             <h1>Ingredients : {item.ingredients}</h1>
-//             <h1>Allerges: {item.allergens}</h1>
-//             <h1>Recipe Lables : {item.recipeLables}</h1>
-//             <h1>Healthfulness : {item.healthfulness}</h1>
-//             <h1>Serving Size : {item.servingSize}</h1>
-//         </ItemProps>
-//     )
-// };
-
-const date = new Date();
-const datestring = date.toLocaleDateString();
 let currentItems = {};
+
+const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    const currentDate = `${year}-${month}-${day}`;
+    return currentDate;
+}
 
 const MealCard = ({mdata, afunc, dfunc}) => {
     // states
@@ -186,8 +148,8 @@ const MealCard = ({mdata, afunc, dfunc}) => {
 
 const MenuData = ({hall}) => {
     const [clicked, setClicked] = useState(false);
-    // const [mclicked, msetClicked] = useState(false);
-
+    const [todayMeals, setTodayMeals] = useState({});
+    const [loading, setLoading] = useState(true);
 
     const toggle = index => {
         if(clicked === index) {
@@ -204,47 +166,50 @@ const MenuData = ({hall}) => {
     const delItem = (item) => {
         delete currentItems[item.name];
     }
-    // json navigation
-    let times = Object.keys(Data[hall][0].meals);
-    let mealtime = Data[hall][0].meals;
-    Data[hall].forEach(x=>{
-        if (x.date === datestring){
-            times = Object.keys(x.meals)
-            mealtime = x.meals
-        }
-    })
 
-  return (
-    <Menu>
-        <Plate>
-        {'' +Object.keys(currentItems)}
-        <Link to={{pathname: "/Analysis"}} state={{foods : Object.keys(currentItems)}}>
-        <button>Build Plate</button>
-        </Link>
-        </Plate>
-      <IconContext.Provider value={{color: 'white', size: '30px'}}>
-          <AccordionSection>
-            <Container>
-                {times.map((mealName, index) => {
-                    return (
-                        <>
-                        <Wrap onClick={() => toggle(index)} key = {index}>
-                        <h1>{mealName}</h1>
-                        <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
-                        </Wrap>
-                        {clicked === index ? (
-                        <Dropdown>
-                            <MealCard mdata = {mealtime[mealName]} afunc = {addItem} dfunc = {delItem}/>
-                        </Dropdown>
-                        ) : null}
-                        </>
-                    );
-                })}
-            </Container>
-          </AccordionSection>
-      </IconContext.Provider>
-      </Menu>
-  );
+    useEffect(() => {
+        const backendURL = `http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=&nonAllergenRestrictions=`
+        fetch(backendURL)
+        .then(res => res.json())
+        .then(data => {
+            setTodayMeals(data);
+            setLoading(false);
+        })
+        .catch(err => console.log(err))
+    }, [hall]);
+
+    return (
+        <Menu>
+            <Plate>
+                <h1>{hall}</h1>
+                <Link to={{pathname: "/Analysis"}} state={{foods : Object.keys(todayMeals)}}>
+                    <button>Build Plate</button>
+                </Link>
+            </Plate>
+            <IconContext.Provider value={{color: 'white', size: '30px'}}>
+              <AccordionSection>
+                <Container>
+                    {loading ? <h1>Loading...</h1>}
+                    {todayMeals && Object.keys(todayMeals).map((mealName, index) => {
+                        return (
+                            <div key={index}>
+                                <Wrap onClick={() => toggle(index)}>
+                                    <h1>{mealName}</h1>
+                                    <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
+                                </Wrap>
+                                {clicked === index ? (
+                                <Dropdown>
+                                    <MealCard mdata={todayMeals[mealName]} afunc={addItem} dfunc={delItem}/>
+                                </Dropdown>
+                                ) : null}
+                            </div>
+                        );
+                    })}
+                </Container>
+              </AccordionSection>
+            </IconContext.Provider>
+        </Menu>
+    )
 };
 
 export default MenuData
