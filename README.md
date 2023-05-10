@@ -41,8 +41,10 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
 - Run npm start in git bash terminal
 
 
-## Software Design Specifications
+## Software Requirement Specifications (SRS)
 - Continue to [SRS Doc](https://docs.google.com/document/d/1xARkV2M6CB3EhkK2Rf1cDI93MhJKZdLDTaTv2R8JQP0/edit)
+## Software Design Specification (SDS)
+- Contine to [SDS Doc](https://docs.google.com/document/d/1RPasyq5xxhvOO15QfFHecmJ8BU1d_DJ6zW3PnVy-DZA/edit)
 
 
 ## Scope
@@ -54,4 +56,3 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
 - Front - End Developers/UI - 2 - Lauren, Joseph
 - Back-end Developers - 2 - Rishik, Chris
 - Data Engineers - 2  - Omer, Lyle, Rishik
-

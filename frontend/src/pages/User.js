@@ -11,13 +11,13 @@ let firstRun = true;
 let trackState = [];
 
 export default function User(){
-    let auth = useContext(AuthenticationContext);
+    let auth = useContext(AuthenticationContext);//Firebase authentication
     let user = auth.currentUser;
     const allergensRef = useRef(null);
     const settingsRef = useRef(null);
     const favoritesRef = useRef(null);
     const navigate = useNavigate();
-    const [userRestrictionsState, setUserRestrictionsState] = useState(trackState);
+    const [userRestrictionsState, setUserRestrictionsState] = useState(trackState);//Tracks restrictions
 
     /* In case we can ever fix the user authentication
     const txtPassword = useRef(null);
@@ -70,7 +70,7 @@ export default function User(){
         })
     }*/
 
-    const sendPasswordReset = async () => {
+    const sendPasswordReset = async () => {//For reset password sends email
         let email = user.email;
         try {
           await sendPasswordResetEmail(auth, email);
@@ -81,7 +81,7 @@ export default function User(){
         }
     };
 
-
+    //To scroll smoothly
     const scrollAllergens = () =>{
         allergensRef.current?.scrollIntoView({behavior: 'smooth'});
     }
@@ -92,7 +92,7 @@ export default function User(){
         favoritesRef.current?.scrollIntoView({behavior: 'smooth'});
     }
 
-    
+    //Handles dropdown for settings
     const handleDropdown = () =>{
         let dropdown = document.getElementsByClassName("dropdown-btn");
         let i;
@@ -111,6 +111,7 @@ export default function User(){
     }   
     handleDropdown();
 
+    //Gets restrictions to display in dropdown
     const getRestrictions = () =>{
         //TODO If you want you can make these set to whatever's in the databse
         let restrictions = [" ", "Milk", "Peanuts", "Shellfish", "Eggs", "Gluten", "Tree Nuts", "Fish", "Soy", "Corn", "Sesame", 
@@ -214,9 +215,9 @@ export default function User(){
                 <h2>Welcome {user.displayName}!</h2>
             </div>
             <div class = "userBox labelBox" ref = {allergensRef}>
-                <h3>Allergens</h3>
+                <h3>Allergens/Restrictions</h3>
             </div>
-            <div class = "userBox">
+            <div class = "userBoxDescription">
                 <h4>Add a restriction</h4>
                 <div class = "flex-container">
                     <div class = "flex-space"></div>
@@ -237,13 +238,13 @@ export default function User(){
             <div class = "userBox labelBox" ref = {favoritesRef}>
                 <h3>Upcoming Favorites</h3>
             </div>
-            <div class= "userBox">
+            <div class= "userBoxDescription">
             </div>
             <br></br>
             <div class = "userBox labelBox" ref = {settingsRef}>
                 <h3>Settings</h3>
             </div>
-            <div class = "userBox">
+            <div class = "userBoxDescription">
                 <div class = "innerBox">
                     <button onClick = {handleDropdown} class="dropdown-btn">Change Password 
                         <i class="fa fa-caret-down"></i>

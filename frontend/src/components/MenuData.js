@@ -184,43 +184,43 @@ const datestring = date.toLocaleDateString();
 let currentItems = {};
 const MealCard = ({mdata, afunc, dfunc}) => {
     // states
-    const [checked, setChecked] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-    const [openModal, setOpenModal] = useState(false);
-    let id = 0;
+    const [modelContent, setModelContent] = useState({});
+
+    const setModalContent = (item) => {
+        setModelContent(item);
+    }
+
 
     return (
-    
         <FContent >
-    { mdata.map((_, i) => {
-        return (
-        <FCard key={i}>
-            <Category><u>{_.category}</u></Category>
-            
-            <RecipeContent>
-                {_.recipes.map((item,id) => (  
-                    <Recipe>     
-                            <h1>{item.name}</h1>
-                            <button onClick = {() => afunc(i,item)} >{'add'}</button>
-                            <button onClick = {() => dfunc(i,item)} >{'del'}</button>
-                                               
-                        <div style={BUTTON_WRAPPER_STYLES}>
-                            <button 
-                                onClick={()=>{setIsOpen(true)}}
-                                >
-                                Info
-                            </button>
-                            <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
-                                {ItemFacts(item)}
-                            </Modal>
-                        </div>
-                        {/* <div style={OTHER_CONTENT_STYLES}>Other content</div> */}
-                    </Recipe>
-                ))}
-            </RecipeContent>
-        </FCard>
-      )})
-    }
+            { mdata.map((_, i) => {
+                return (
+                <FCard key={i}>
+                    <Category><u>{_.category}</u></Category>
+
+                    <RecipeContent>
+                        {_.recipes.map((item,idx) => (
+                            <Recipe key={idx}>
+                                    <h1>{item.name}</h1>
+                                    <button onClick = {() => afunc(i,item)} >{'add'}</button>
+                                    <button onClick = {() => dfunc(i,item)} >{'del'}</button>
+
+                                <div style={BUTTON_WRAPPER_STYLES}>
+                                    <button
+                                        onClick={()=>{setIsOpen(true); setModalContent(item)}}>
+                                        Info
+                                    </button>
+                                </div>
+                            </Recipe>
+                        ))}
+                        <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
+                            {modelContent.name}
+                        </Modal>
+                    </RecipeContent>
+                </FCard>
+              )})
+            }
      </FContent>
     )
 }
@@ -240,11 +240,14 @@ const MenuData = ({hall}) => {
     }
     const addItem = (index, item) => {
         currentItems[item.name] = null;
-        msetClicked()
+        let update = !mclicked;
+        msetClicked(update);
 
     }
     const delItem = (index, item) => {
         delete currentItems[item.name];
+        let update = !mclicked;
+        msetClicked(update);
     }
     // json navigation
     let times = Object.keys(Data[hall][0].meals);
