@@ -189,7 +189,7 @@ const MenuData = ({hall}) => {
             <IconContext.Provider value={{color: 'white', size: '30px'}}>
               <AccordionSection>
                 <Container>
-                    {loading ? <h1>Loading...</h1>}
+                    {loading && <h1>Loading...</h1>}
                     {todayMeals && Object.keys(todayMeals).map((mealName, index) => {
                         return (
                             <div key={index}>
