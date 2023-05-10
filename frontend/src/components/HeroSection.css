@@ -2,7 +2,9 @@
   
   .hero-container {
     background: url("dining.png") center center/cover no-repeat;
-    height: 100vh;
+    min-height: -webkit-calc(100vh - 72px - 56px);
+    min-height: -moz-calc(100vh - 72px - 56px);
+    min-height: calc(100vh - 72px - 56px);
     /* width: 100vw; */
     display: flex;
     flex-direction: column;
