@@ -2,10 +2,13 @@ import foodRoutes from './food-rest.js'
 import locationRoutes from './location.js'
 import userRoutes from './users.js'
 import express from 'express'
+import cors from 'cors'
 
 let app = express()
 const port = 3001
 
+// Enable CORS for all requests
+app.use(cors())
 
 app.use('', foodRoutes)
 app.use('', locationRoutes)
