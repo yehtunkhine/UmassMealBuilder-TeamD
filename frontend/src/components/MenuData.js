@@ -41,6 +41,15 @@ span {
 }
 `;
 
+const ChosenItemsContainer = styled.div`
+    display: flex;
+`
+
+const ChosenItem = styled.div`
+    padding: 10px;
+    border: 1px solid black;
+`
+
 const Dropdown = styled.div`
 background: white;
 color: black;
@@ -123,8 +132,8 @@ const MealCard = ({mdata, afunc, dfunc}) => {
                         {_.recipes.map((item,idx) => (
                             <Recipe key={idx}>
                                     <h1>{item.name}</h1>
-                                    <button onClick = {() => afunc(i,item)} >{'add'}</button>
-                                    <button onClick = {() => dfunc(i,item)} >{'del'}</button>
+                                    <button onClick = {() => afunc(item)} >Add</button>
+                                    <button onClick = {() => dfunc(item)} >Del</button>
 
                                 <div style={BUTTON_WRAPPER_STYLES}>
                                     <button
@@ -149,6 +158,7 @@ const MealCard = ({mdata, afunc, dfunc}) => {
 const MenuData = ({hall}) => {
     const [clicked, setClicked] = useState(false);
     const [todayMeals, setTodayMeals] = useState({});
+    const [chosenItems, setChosenItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const toggle = index => {
@@ -159,12 +169,21 @@ const MenuData = ({hall}) => {
         setClicked(index);
     }
     const addItem = (item) => {
-        currentItems[item.name] = null;
-        // msetClicked()
-
+        if (chosenItems.includes(item)) {
+            chosenItems.filter((i) => i === item)[0]["count"] += 1;
+        } else {
+            item.count = 1;
+            setChosenItems([...chosenItems, item]);
+        }
     }
     const delItem = (item) => {
-        delete currentItems[item.name];
+        if (chosenItems.includes(item)) {
+            if (chosenItems.filter((i) => i === item)[0]["count"] === 1) {
+                setChosenItems(chosenItems.filter((i) => i !== item));
+            } else {
+                chosenItems.filter((i) => i === item)[0]["count"] -= 1;
+            }
+        }
     }
 
     useEffect(() => {
@@ -182,7 +201,17 @@ const MenuData = ({hall}) => {
         <Menu>
             <Plate>
                 <h1>{hall}</h1>
-                <Link to={{pathname: "/Analysis"}} state={{foods : Object.keys(todayMeals)}}>
+                <ChosenItemsContainer>
+                    {chosenItems.map((item, index) => {
+                        return (
+                            <ChosenItem key={index}>
+                                <p>{item.name}</p>
+                                <p>{item.count}</p>
+                            </ChosenItem>
+                        )
+                    })}
+                </ChosenItemsContainer>
+                <Link to={{pathname: "/Analysis"}} state={{foods : Object.keys(chosenItems)}}>
                     <button>Build Plate</button>
                 </Link>
             </Plate>
