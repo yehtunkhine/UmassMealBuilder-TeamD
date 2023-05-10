@@ -106,9 +106,23 @@ const MealCard = ({mdata, afunc, dfunc}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [modelContent, setModelContent] = useState({});
 
-    const setModalContent = (item) => {
+    const setModalContent = async (item) => {
+        let name = item.name;
+        await fetch(`http://localhost:3001/getFoodIdFromName?name=${name}`)
+            .then(res => res.json())
+            .then(data => {
+                fetch(`http://localhost:3001/facts?foodId=${data}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            let facts = {"calories" : data.calories, "carbs" : data.carbs, "fat" : data.fat, "protein" : data.protein};
+                            console.log(facts);
+                            setModelContent(10);
+                        })
+                }
+                );
+
         console.log(item.name);
-        setModelContent(item);
+        // setModelContent(item.name);
     }
 
 
