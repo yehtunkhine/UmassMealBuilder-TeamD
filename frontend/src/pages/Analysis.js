@@ -86,7 +86,7 @@ export default function Analysis(){
                   <button class = "button">Select Items</button>
                   </div>
               </Link>
-              </div>
+              /</div>
             </div>
         )
     }
