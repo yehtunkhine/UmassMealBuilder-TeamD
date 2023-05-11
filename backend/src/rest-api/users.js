@@ -56,7 +56,7 @@ async function deleteuser(userid){
 
 router.get('/deleteUser', (req,res)=>{
   (async function delUser(){
-    if(req.query.userId==undefined){res.end(JSON.stringify('missing parameters'))}//checks that parameters are present
+    if(req.query.userId==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are present
     else{
       let delVal=await deleteuser(req.query.userId)//calls delete function and stores return
       res.end(JSON.stringify(delVal))//attaches result to response in JSON string format
