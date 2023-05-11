@@ -110,6 +110,7 @@ router.post('/createUserRestriction', (req,res)=>{
 //fetch user restrictions--works
 async function fetchUserRestrictions(userid){
   const user_data= await UserRestriction.findAll({where:{userId: userid}});//finds all restrictions with matching userId
+  user_data.map(f=>f.restriction)//gets only restrictions
   return JSON.stringify(user_data);//returns array of objects {userId, restriction} if at leat one exists, else it returns []
 }
 router.get('/getUserRestrictions', (req, res)=>{
