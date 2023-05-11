@@ -1,7 +1,7 @@
 import foodRoutes from '../rest-api/food-rest.js'
 import locationRoutes from '../rest-api/location.js'
 import userRoutes from '../rest-api/users.js'
-import {sequelize, LocationFoodBridge} from '../rest-api/models.js'
+import {sequelize, LocationFoodBridge} from '../models.js'
 import {Op} from 'sequelize'
 import express from 'express'
 import moment from 'moment'
@@ -28,5 +28,5 @@ while(true){
         }
     });
     
-    await new Promise(resolve => setTimeout(resolve, 86400));
+    await new Promise(resolve => setTimeout(resolve, 86400000));
 }

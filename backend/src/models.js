@@ -1,6 +1,8 @@
 import { Sequelize, DataTypes, STRING } from 'sequelize';
 
-const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb')
+const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb',
+{logging: false}
+) // Example for postgres
 
 async function testConnection() {
   try {
@@ -199,6 +201,10 @@ const LocationFoodBridge = sequelize.define("LocationFoodBridge", {
         type: DataTypes.STRING,
         primaryKey: true
     },
+    category: {
+        type: DataTypes.STRING,
+        primaryKey: true
+    }
 },
 {
     freezeTableName: true,
@@ -302,6 +308,12 @@ UserNonAllergenRestriction.removeAttribute('id');
 FoodNonAllergenRestriction.removeAttribute('id');
 LocationTimes.removeAttribute('id');
 
+// Push to db
+// Change models above and then uncomment and run this file to make db changes
+// force option will wipe database before updating tables!!!
+await sequelize.sync({force: true})
+
+
 // await User.create({userId: "123456789", email: "random@email.com", phone: "555-555-5555", name: "John Doe"});
 // await Location.create({locationName: "Worcester"});
 // let oreo_ingredient = "Unbleached Enriched Flour (Wheat Flour Niacin, Reduced Iron, Thiamine Mononitrate {Vitamin B1}," +
@@ -321,8 +333,7 @@ LocationTimes.removeAttribute('id');
 // user.addFood(food);
 
 // Export Models For Other Files
-export {
-    FoodRestriction, FoodNonAllergenRestriction, UserNonAllergenRestriction, UserRestriction,
-    Food, FavoriteFoodsBridge, User, FavoriteLocationsBridge, MealFoodBridge, Meal,
-    LocationFoodBridge, Location, LocationTimes, sequelize
-}
+export {sequelize, User, Food, FoodRestriction, UserRestriction, Meal,
+    Location, LocationTimes, LocationFoodBridge, FavoriteLocationsBridge, FavoriteFoodsBridge, MealFoodBridge,
+    FoodNonAllergenRestriction, UserNonAllergenRestriction
+};

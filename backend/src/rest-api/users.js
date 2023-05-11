@@ -1,5 +1,5 @@
 
-import {sequelize, User, Food, UserRestriction, UserNonAllergenRestriction, Meal, FavoriteFoodsBridge, MealFoodBridge} from './models.js'
+import {sequelize, User, Food, UserRestriction, UserNonAllergenRestriction, Meal, FavoriteFoodsBridge, MealFoodBridge} from '../models.js'
 import { Sequelize, Op, UnknownConstraintError } from 'sequelize';
 import express from 'express'
 

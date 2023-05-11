@@ -1,1 +1,6 @@
 */node_modules
+/backend/src/database_filler/json_files/database.json
+/backend/src/database_filler/webscraper/venv
+/backend/src/database_filler/webscraper/__pycache__
+/backend/src/database_filler/html_content/*
+/backend/src/database_filler/json_files/unfoundFoodItems.json
