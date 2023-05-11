@@ -1,6 +1,7 @@
 
 import React from 'react'
 import ReactDom from 'react-dom'
+import './Modal.css'
 
 const MODAL_STYLES = {
   position: 'fixed',
@@ -30,8 +31,8 @@ export default function Modal({ open, children, onClose }) {
 
   return ReactDom.createPortal(
     <>
-      <div style={OVERLAY_STYLES} />
-      <div style={MODAL_STYLES}>
+      <div className = 'modal-dialog' style={OVERLAY_STYLES} />
+      <div className = 'modal-scroll' style={MODAL_STYLES}>
         <button onClick={onClose}>X</button>
         {children}
       </div>
