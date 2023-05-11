@@ -116,10 +116,14 @@ async function fetchUserRestrictions(userid){
 router.get('/getUserRestrictions', (req, res)=>{
   (async function getUserRestrictions(){
     if(req.query.userId==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
+    let doesUserExist=await fetchUserData(req.query.userId)//check if user exists
+    if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
     else{
-      let restrict = await fetchUserRestrictions(req.query.userId)//gets and stores user restriction array
-      if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no allergenic restrictions"))}//returns if there are no restrictions
-      else{res.end(restrict)}//attaches array of user restrictions to response
+      else{
+        let restrict = await fetchUserRestrictions(req.query.userId)//gets and stores user restriction array
+        if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no allergenic restrictions"))}//returns if there are no restrictions
+        else{res.end(restrict)}//attaches array of user restrictions to response
+      }
     }
   })();
 })
@@ -143,8 +147,12 @@ router.get('/deleteUserRestriction', (req,res)=>{
   (async function deleteRest(){
     if(req.query.userId==undefined||req.query.restriction==undefined){res.end(JSON.stringify('invalid parameters'))}//checks for valid parameters
     else{
-      let delVal=await deleteUserRestriction(req.query.userId, req.query.restriction)//gets and stores result of delete call
-      res.end(JSON.stringify(delVal))//attaches return to response
+      let doesUserExist=await fetchUserData(req.query.userId)//value to check if user exist
+      if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
+      else{
+        let delVal=await deleteUserRestriction(req.query.userId, req.query.restriction)//gets and stores result of delete call
+        res.end(JSON.stringify(delVal))//attaches return to response
+      }
     }
   })();
 })
