@@ -116,9 +116,9 @@ async function fetchUserRestrictions(userid){
 router.get('/getUserRestrictions', (req, res)=>{
   (async function getUserRestrictions(){
     if(req.query.userId==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
-    let doesUserExist=await fetchUserData(req.query.userId)//check if user exists
-    if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
     else{
+      let doesUserExist=await fetchUserData(req.query.userId)//check if user exists
+      if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
       else{
         let restrict = await fetchUserRestrictions(req.query.userId)//gets and stores user restriction array
         if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no allergenic restrictions"))}//returns if there are no restrictions
