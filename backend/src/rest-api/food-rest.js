@@ -1,6 +1,8 @@
-import {sequelize, User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FoodNonAllergenRestriction} from '../models.js'
+import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge} from './models.js'
 import { Sequelize, Op } from 'sequelize';
 import express from 'express'
+
+const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb');
 
 async function findFood(key, value) { //find food with given key and value
     let food = await Food.findOne({
@@ -26,72 +28,26 @@ async function findFood(key, value) { //find food with given key and value
     }
 }
 
-async function findLocationFoodBridges(key, value, allergenRestrictionStr, nonAllergenRestrictionStr) { //find restrictions with given key, value, and restrictions
+async function findLocationFoodBridges(key, value, restrictionStr) { //find restrictions with given key, value, and restrictions
     const list = [];
-    let bridges = [];
 
-    if (allergenRestrictionStr === "" && nonAllergenRestrictionStr === "") {
-        bridges = await LocationFoodBridge.findAll({
-            where: {[key]: value}
-        });
-    }
-    else {
-        const allergenRestrictionStrArr = allergenRestrictionStr.split(", ");
-        const nonAllergenRestrictionStrArr = nonAllergenRestrictionStr.split(", ");
-        const allergenRestrictionObjs = await FoodRestriction.findAll({
-            where: {
-                restriction: {
-                    [Op.or]: allergenRestrictionStrArr
-                }
-            }
+    /*const restrictionStrArr = restrictionStr.split(", ");
+    const filteredFoodIds = [];
+    for (let i = 0; i<restrictionStrArr.length; i++) {
+        let restrictionObjs = await FoodRestriction.findAll({
+            where: {restriction: restrictionStrArr[i]}
         });
 
-        const nonAllergenRestrictionObjs = await FoodNonAllergenRestriction.findAll({
-            where: {
-                restriction: {
-                    [Op.or]: nonAllergenRestrictionStrArr
-                }
-            }
-        });
-        //get food ids from objs
-        function getFoodIdsFromObjArr(objArr) {
-            const retArr = [];
-            for (let i = 0; i<objArr.length; i++) {
-                retArr.push(objArr[i].foodId);
-            }
-            return retArr;
-        }
-        const allergenFoodIds = getFoodIdsFromObjArr(allergenRestrictionObjs);
-        const nonAllergenFoodIds = getFoodIdsFromObjArr(nonAllergenRestrictionObjs);
+        restrictionObjs.forEach(obj => {
+            filteredFoodIds.push(obj.foodId);
+        })
+    }*/
 
-        if (nonAllergenFoodIds.length === 0) { //if not non allergens
-            if (nonAllergenRestrictionStr === "") { //if none inputted
-                bridges = await LocationFoodBridge.findAll({
-                    where: {
-                        [key]: value,
-                        [Op.not]: [{
-                            foodId: {
-                                [Op.or]: allergenFoodIds
-                            }
-                        }]
-                    }
-                });
-            }
-            else return []; //no non allergen with inputted name
+    const bridges = await LocationFoodBridge.findAll({
+        where: {
+            [key]: value
         }
-        else { //if either only non-allergens or both
-            //filter allergens from non-allergens
-            const filteredFoodIds = nonAllergenFoodIds.filter(id => !allergenFoodIds.includes(id));
-            bridges = await LocationFoodBridge.findAll({
-                where: {
-                    [key]: value,
-                    foodId: {
-                        [Op.or]: filteredFoodIds
-                    }
-                }
-            });
-        }
-    }
+    });
 
     bridges.forEach(bridge => {
         list.push({
@@ -105,10 +61,28 @@ async function findLocationFoodBridges(key, value, allergenRestrictionStr, nonAl
     return list;
 }
 
-async function findFoodsAtLocationOnDate(locationId, date, allergenRestrictionStr, nonAllergenRestrictionStr) {
-    let bridgeList = await findLocationFoodBridges('locationId', locationId, allergenRestrictionStr, nonAllergenRestrictionStr);
+async function findFoodRestrictions(restrictionStr) {
+    const list = [];
+    const restrictionArr = restrictionStr.split(", ");
+    for (let i = 0; i<restrictionArr.length; i++) {
+        let restrictionObjs = await FoodRestriction.findAll({
+            where: {restriction: restrictionArr[i]}
+        });
+
+        restrictionObjs.forEach(obj => {
+            list.push({
+                restriction: obj.restriction,
+                foodId: obj.foodId
+            })
+        })
+    }
+    return list;
+}
+
+async function findFoodsAtLocationOnDate(locationId, date, restrictionStr) {
+    //const restrictionList = findFoodRestrictions(restrictions);
+    let bridgeList = await findLocationFoodBridges('locationId', locationId, restrictionStr);
     let retObj = {'Breakfast': [], 'Lunch': [], 'Dinner': [], 'Late Night': []};
-    if (bridgeList.length === 0) return retObj; //If no relevant foods
     for (let i = 0; i<bridgeList.length; i++) { //loop through all bridges
         let bridge = bridgeList[i]; //current bridge
         if (bridge.Date === date) { //if date matches
@@ -138,12 +112,13 @@ async function findFoodsAtLocationOnDate(locationId, date, allergenRestrictionSt
 // -------------------------
 // Rest API
 // -------------------------
-const router = express.Router()
+const app = express()
+const port = 3000
 
-router.use(express.json());
-router.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-router.post('/createFood', (req, res) => {
+app.post('/createFood', (req, res) => {
     (async function createAndSend(){
         const data = req.body;
         const duplicate = await Food.findOne({
@@ -162,32 +137,22 @@ router.post('/createFood', (req, res) => {
                 carbs: data.carbs,
                 category: data.category,
                 ingredients: data.ingredients,
-                healthfulness: data.healthfulness
+                healthfulness: data.healthfulness, 
+                servingSize: data.servingSize
             });
-            if (data.allergenRestrictions != "") {
-                const allergenRestrictionArr = data.allergenRestrictions.split(", ");
-                for (let i = 0; i<allergenRestrictionArr.length; i++) {
-                    await FoodRestriction.create({
-                        restriction: allergenRestrictionArr[i],
-                        foodId: food.foodId
-                    });
-                }
-            }
-            if (data.nonAllergenRestrictions != "") {
-                const nonAllergenRestrictionArr = data.nonAllergenRestrictions.split(", ");
-                for (let i = 0; i<nonAllergenRestrictionArr.length; i++) {
-                    await FoodNonAllergenRestriction.create({
-                        restriction: nonAllergenRestrictionArr[i],
-                        foodId: food.foodId
-                    });
-                }
+            const restrictArr = data.allergens.split(", ");
+            for (let i = 0; i<restrictArr.length; i++) {
+                await FoodRestriction.create({
+                    restriction: restrictArr[i],
+                    foodId: food.foodId
+                });
             }
             res.send(data.name + ' Successfully Created with Food ID: ' + food.foodId);
         }
     })();
 });
 
-router.post('/deleteFood', (req, res) => {
+app.post('/deleteFood', (req, res) => {
     (async function createAndSend(){
         const data = req.body;
         const food = await Food.findOne({
@@ -204,15 +169,12 @@ router.post('/deleteFood', (req, res) => {
             await FoodRestriction.destroy({
                 where: {foodId: data.foodId}
             });
-            await FoodNonAllergenRestriction.destroy({
-                where: {foodId: data.foodId}
-            });
             res.send('Food with ID ' + data.foodId + ' Successfully Deleted.')
         }
     })();
 });
 
-router.post('/addFoodToLocation', (req, res) => {
+app.post('/addFoodToLocation', (req, res) => {
     (async function createAndSend(){
         const data = req.body;
         const food = await findFood('foodId', data.foodId);
@@ -248,7 +210,7 @@ router.post('/addFoodToLocation', (req, res) => {
     })();
 });
 
-router.post('/removeFoodFromLocation', (req, res) => {
+app.post('/removeFoodFromLocation', (req, res) => {
     (async function createAndSend() {
         const data = req.body;
         const location = await Location.findOne({
@@ -282,7 +244,7 @@ router.post('/removeFoodFromLocation', (req, res) => {
     })();
 });
 
-router.get('/analysis', (req, res) => {
+app.get('/analysis', (req, res) => {
     (async function getAndSend() {
         const location = await Location.findOne({
             where: {
@@ -291,14 +253,14 @@ router.get('/analysis', (req, res) => {
         });
         if (location === null) res.end(req.query.diningHall + ' is not a location!');
         else {
-            let resultObj = await findFoodsAtLocationOnDate(location.locationId, req.query.date, req.query.allergenRestrictions, req.query.nonAllergenRestrictions);
+            let resultObj = await findFoodsAtLocationOnDate(location.locationId, req.query.date, req.query.restrictions);
             let str = JSON.stringify(resultObj);
             res.end(str);
         }
     })();
 });
 
-router.get('/facts', (req, res) => {
+app.get('/facts', (req, res) => {
     (async function getAndSend() {
         let food = await findFood('foodId', req.query.foodId);
         if (food === null) res.end('No such item exists!');
@@ -310,7 +272,7 @@ router.get('/facts', (req, res) => {
     })();
 });
 
-router.get('/getFoodIdFromName', (req, res) => {
+app.get('/getFoodIdFromName', (req, res) => {
     (async function getAndSend() {
         let food = await Food.findOne({
             where: {
@@ -324,4 +286,6 @@ router.get('/getFoodIdFromName', (req, res) => {
     })();
 });
 
-export default router
+app.listen(port, () => {
+    console.log(`app listening at http://localhost:${port}`)
+});
