@@ -1,9 +1,8 @@
-import {User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteLocationsBridge} from '../models.js'
+import {sequelize, User, Food, FoodRestriction, UserRestriction, Meal, Location, LocationTimes, LocationFoodBridge, FavoriteLocationsBridge} from '../models.js'
 import { Sequelize, Op } from 'sequelize';
 import moment from 'moment-timezone'
 import express from 'express'
 
-const sequelize = new Sequelize('postgres://umassmealbuilderdb:Umass320!@34.145.185.28:5432/umassmealbuilderdb');
 
 // Basic Find, Deletes
 async function createLocation(name){
@@ -337,11 +336,10 @@ async function deleteAllLocationTimes(lid){
 // -------------------------
 // Rest API
 // -------------------------
-const app = express()
-app.use(express.json())
-const port = 3000
+const router = express.Router()
+router.use(express.json())
 
-app.post('/createLocation', (req, res) => {
+router.post('/createLocation', (req, res) => {
     let name = req.query.locationName;
 
     (async function anon(){
@@ -350,7 +348,7 @@ app.post('/createLocation', (req, res) => {
     })();
 });
 
-app.delete('/deleteLocationById', (req, res) => {
+router.delete('/deleteLocationById', (req, res) => {
     let id = req.query.locationId;
 
     (async function anon() {
@@ -363,7 +361,7 @@ app.delete('/deleteLocationById', (req, res) => {
     })();
 });
 
-app.delete('/deleteLocationByName', (req, res) => {
+router.delete('/deleteLocationByName', (req, res) => {
     let name = req.query.locationName;
 
     (async function anon(){
@@ -377,7 +375,7 @@ app.delete('/deleteLocationByName', (req, res) => {
     })();
 });
 
-app.get('/findLocationByName', (req, res) => {
+router.get('/findLocationByName', (req, res) => {
     let name = req.query.locationName;
 
     (async function anon(){
@@ -391,7 +389,7 @@ app.get('/findLocationByName', (req, res) => {
     })();
 });
 
-app.get('/findLocationById', (req, res) => {
+router.get('/findLocationById', (req, res) => {
     let id = req.query.locationId;
 
     (async function anon(){
@@ -405,7 +403,7 @@ app.get('/findLocationById', (req, res) => {
     })();
 });
 
-app.get('/findLocationIdsByName', (req, res) => {
+router.get('/findLocationIdsByName', (req, res) => {
     let name = req.query.locationName;
 
     (async function anon(){
@@ -419,7 +417,7 @@ app.get('/findLocationIdsByName', (req, res) => {
     })();
 });
 
-app.get('/findAllLocationsServingFoodItemsById', (req, res) => {
+router.get('/findAllLocationsServingFoodItemsById', (req, res) => {
     let foodItems = req.query.foodIds;
 
     (async function anon(){
@@ -433,7 +431,7 @@ app.get('/findAllLocationsServingFoodItemsById', (req, res) => {
     })();
 });
 
-app.get('/findAllLocationsServingFoodItemsByNames', (req, res) => {
+router.get('/findAllLocationsServingFoodItemsByNames', (req, res) => {
     let foodNames = req.query.foodNames;
 
     (async function anon(){
@@ -447,7 +445,7 @@ app.get('/findAllLocationsServingFoodItemsByNames', (req, res) => {
     })();
 });
 
-app.get('/findAllLocationsServingFoodItemOnDate', (req, res) => {
+router.get('/findAllLocationsServingFoodItemOnDate', (req, res) => {
     let foodId = req.query.foodId;
     let date = moment(req.query.date).format('YYYY-MM-DD');
 
@@ -465,7 +463,7 @@ app.get('/findAllLocationsServingFoodItemOnDate', (req, res) => {
     })();
 });
 
-app.get('/findAllLocationsServingFoodItemOnDateAtTime', (req, res) => {    
+router.get('/findAllLocationsServingFoodItemOnDateAtTime', (req, res) => {    
     let foodItem = req.query.foodId;
     let date = req.query.date;
     let time = req.query.time;
@@ -481,7 +479,7 @@ app.get('/findAllLocationsServingFoodItemOnDateAtTime', (req, res) => {
     })();
 });
 
-app.get('/findFavoriteLocationsForUser', (req, res) => {
+router.get('/findFavoriteLocationsForUser', (req, res) => {
     let uid = req.query.userId;
     (async function anon(){
         try{
@@ -494,7 +492,7 @@ app.get('/findFavoriteLocationsForUser', (req, res) => {
     })();
 });
 
-app.post('/addNewFavoriteLocationForUser', (req, res) => {
+router.post('/addNewFavoriteLocationForUser', (req, res) => {
     let uid = req.query.userId;
     let lid = req.query.locationId;
 
@@ -509,7 +507,7 @@ app.post('/addNewFavoriteLocationForUser', (req, res) => {
     })();
 });
 
-app.delete('/deleteFavoriteLocationFromUser', (req, res) => {
+router.delete('/deleteFavoriteLocationFromUser', (req, res) => {
     let uid = req.query.userId;
     let lid = req.query.locationId;
 
@@ -524,7 +522,7 @@ app.delete('/deleteFavoriteLocationFromUser', (req, res) => {
     })();
 });
 
-app.get('/findAllTimesForLocation', (req, res) => {
+router.get('/findAllTimesForLocation', (req, res) => {
     let lid = req.query.locationId;
 
     (async function anon(){
@@ -538,7 +536,7 @@ app.get('/findAllTimesForLocation', (req, res) => {
     })();
 });
 
-app.get('/findTimesForLocationOnDay', (req, res) => {
+router.get('/findTimesForLocationOnDay', (req, res) => {
     let lid = req.query.locationId;
     let day = req.query.day;
 
@@ -553,7 +551,7 @@ app.get('/findTimesForLocationOnDay', (req, res) => {
     })();
 });
 
-app.post('/createLocationTimesForDay', (req, res) => {
+router.post('/createLocationTimesForDay', (req, res) => {
     let lid = req.query.locationId;
     let day = req.query.day;
     let open = req.query.openTime;
@@ -570,7 +568,7 @@ app.post('/createLocationTimesForDay', (req, res) => {
     })();
 });
 
-app.post('/createTimesForEveryDayOfWeekForLocation', (req, res) => {
+router.post('/createTimesForEveryDayOfWeekForLocation', (req, res) => {
     let lid = req.query.locationId;
     let open = req.query.openTime;
     let close = req.query.closeTime;
@@ -586,7 +584,7 @@ app.post('/createTimesForEveryDayOfWeekForLocation', (req, res) => {
     })();
 });
 
-app.put('/setMealTimeForLocationOnDay', (req, res) => {
+router.put('/setMealTimeForLocationOnDay', (req, res) => {
     let lid = req.query.locationId;
     let timeLabel = req.query.timeLabel;
     let time = req.query.time;
@@ -603,7 +601,7 @@ app.put('/setMealTimeForLocationOnDay', (req, res) => {
     })();
 });
 
-app.delete('/deleteLocationTimeRowForDay', (req, res) => {
+router.delete('/deleteLocationTimeRowForDay', (req, res) => {
     let lid = req.query.locationId;
     let day = req.query.day;
 
@@ -618,7 +616,7 @@ app.delete('/deleteLocationTimeRowForDay', (req, res) => {
     })();
 });
 
-app.delete('/deleteAllLocationTimes', (req, res) => {
+router.delete('/deleteAllLocationTimes', (req, res) => {
     let lid = req.query.locationId;
 
     (async function anon(){
@@ -632,6 +630,4 @@ app.delete('/deleteAllLocationTimes', (req, res) => {
     })();
 });
 
-app.listen(port, () => {
-    console.log(`app listening at http://localhost:${port}`)
-});
+export default router

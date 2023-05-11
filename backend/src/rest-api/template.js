@@ -50,17 +50,16 @@ async function deleteJaneDoe(){
 // -------------------------
 // Rest API
 // -------------------------
-const app = express()
-const port = 3000
+const router = express.Router()
 
-app.get('/createUser', (req, res) => {
+router.get('/createUser', (req, res) => {
     (async function createAndSend(){
         let sendVal = await createJaneDoe()
         res.end(sendVal)
     })();
 });
 
-app.get('/getUsers', (req, res) => {
+router.get('/getUsers', (req, res) => {
     (async function getAndSend() {
         let users = await findJaneDoe()
         let str = JSON.stringify(users)
@@ -68,13 +67,11 @@ app.get('/getUsers', (req, res) => {
     })();
 });
 
-app.get('/deleteUsers', (req, res) => {
+router.get('/deleteUsers', (req, res) => {
     (async function deleteAndSend(){
         let retVal = await deleteJaneDoe();
         res.end(retVal);
     })();
 });
 
-app.listen(port, () => {
-    console.log(`app listening at http://localhost:${port}`)
-});
+export default router

@@ -333,7 +333,7 @@ await sequelize.sync({force: true})
 // user.addFood(food);
 
 // Export Models For Other Files
-export {User, Food, FoodRestriction, UserRestriction, Meal,
-    Location, LocationTimes, LocationFoodBridge, FavoriteFoodsBridge, MealFoodBridge,
+export {sequelize, User, Food, FoodRestriction, UserRestriction, Meal,
+    Location, LocationTimes, LocationFoodBridge, FavoriteLocationsBridge, FavoriteFoodsBridge, MealFoodBridge,
     FoodNonAllergenRestriction, UserNonAllergenRestriction
 };
