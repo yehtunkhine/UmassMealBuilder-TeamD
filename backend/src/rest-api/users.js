@@ -280,7 +280,7 @@ router.get('/getFavoriteFoods', (req,res)=>{
 //deletefavfood--works
 async function deleteFavFood(userid, foodid, name){
   let doesFavoriteExist=await FavoriteFoodsBridge.findOne({where:{userId:userid, foodId:foodid}})//checks if user has favorited item
-  if(doesFavoriteExist.toString()==[].toString()){return userid+" has not favorited this item"}//return if user has not favorited item
+  if(doesFavoriteExist=="null"){return userid+" has not favorited this item"}//return if user has not favorited item
   else{
     await FavoriteFoodsBridge.destroy({where:{userId:userid,foodId:foodid}})//destorys favorited iem
     return userid+" has unfavorited " + name//return of successful unfavorite
