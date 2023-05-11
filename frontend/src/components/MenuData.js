@@ -115,24 +115,37 @@ const MealCard = ({mdata, afunc, dfunc}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [modelContent, setModelContent] = useState({});
 
-    const setModalContent = async (item) => {
-        let name = item.name;
-        await fetch(`http://localhost:3001/getFoodIdFromName?name=${name}`)
-            .then(res => res.json())
-            .then(data => {
-                fetch(`http://localhost:3001/facts?foodId=${data}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            let facts = {"calories" : data.calories, "carbs" : data.carbs, "fat" : data.fat, "protein" : data.protein};
-                            console.log(facts);
-                            setModelContent(10);
-                        })
-                }
-                );
-
-        console.log(item.name);
-        // setModelContent(item.name);
+    const itemFacts = (item) => {
+        return (
+            <itemProps>
+                <p>Calories: {item.calories}</p>
+                <p>Carbs: {item.carbs}</p>
+                <p>Fat: {item.fat}</p>
+                <p>Protein: {item.protein}</p>
+            </itemProps>
+        )
     }
+    
+
+    const setModalContent = async (item) => {
+        try {
+            let name = item.name;
+            console.log(name);
+            let response = await fetch(`http://localhost:3001/getFoodIdFromName?name=${name}`);
+            console.log("response is", response);
+            let data = await response.json();
+            response = await fetch(`http://localhost:3001/facts?foodId=${data}`);
+            data = await response.json();
+            let facts = {"calories" : data.calories, "carbs" : data.carbs, "fat" : data.fat, "protein" : data.protein};
+            console.log(facts);
+            setModelContent(facts);
+            return facts;
+          } catch (error) {
+            console.error(error);
+          }
+        };
+
+    
 
 
     return (
@@ -158,7 +171,7 @@ const MealCard = ({mdata, afunc, dfunc}) => {
                             </Recipe>
                         ))}
                         <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
-                            {modelContent.name}
+                            {itemFacts(modelContent)}
                         </Modal>
                     </RecipeContent>
                 </FCard>
@@ -167,6 +180,7 @@ const MealCard = ({mdata, afunc, dfunc}) => {
      </FContent>
     )
 }
+
 
 
 const MenuData = ({hall}) => {
@@ -185,6 +199,8 @@ const MenuData = ({hall}) => {
     const addItem = (item) => {
         if (chosenItems.includes(item)) {
             chosenItems.filter((i) => i === item)[0]["count"] += 1;
+            let temp = [...chosenItems];
+            setChosenItems(temp);
         } else {
             item.count = 1;
             setChosenItems([...chosenItems, item]);
