@@ -87,6 +87,7 @@ margin:30px;
 `;
 
 const Category = styled.div`
+text-align: center;
 margin: 25px;
 scale: 300%;
 background-color: lightgray;
@@ -201,7 +202,6 @@ const MealCard = ({mdata, afunc, dfunc}) => {
                 return (
                 <FCard key={i}>
                     <Category><u>{_.category}</u></Category>
-
                     <RecipeContent>
                         {_.recipes.map((item,idx) => (
                             <Recipe key={idx}>

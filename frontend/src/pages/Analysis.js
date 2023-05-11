@@ -49,6 +49,7 @@ max-width: 500px;
 left: 50px;
 align-items: center;
 bottom: 100px;
+
 `;
 
 const MainBody = styled.div`
