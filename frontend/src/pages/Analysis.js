@@ -78,15 +78,13 @@ export default function Analysis(){
     const location = useLocation();
     if (location.state === null){
         return (
-            <div class  = "outerBox">
-              <div class = "noItems">
-              <h1>No Items Currently Selected</h1>
+            <div class  = "overlay">
+              <text class= "labelText">Select items to get started: </text>
               <Link to={{pathname: "/DiningHalls"}}> 
                   <div>
-                  <button class = "button">Select Items</button>
+                  <button class = "itemButton">Select Items</button>
                   </div>
               </Link>
-              /</div>
             </div>
         )
     }
