@@ -107,7 +107,7 @@ const Signup = () => {
 
     return (
         <html>
-        <div class = "container">
+        <div class = "container min-height">
             <div class = "outerBox" >
             <text class = "labelText">Display Name:</text>
                 <input class = "inputText" ref = {txtName} type = "text" id = "name" name = "nameInput" placeholder="Display Name"/>
