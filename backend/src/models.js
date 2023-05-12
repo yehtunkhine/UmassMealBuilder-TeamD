@@ -308,12 +308,6 @@ UserNonAllergenRestriction.removeAttribute('id');
 FoodNonAllergenRestriction.removeAttribute('id');
 LocationTimes.removeAttribute('id');
 
-// Push to db
-// Change models above and then uncomment and run this file to make db changes
-// force option will wipe database before updating tables!!!
-await sequelize.sync({force: true})
-
-
 // await User.create({userId: "123456789", email: "random@email.com", phone: "555-555-5555", name: "John Doe"});
 // await Location.create({locationName: "Worcester"});
 // let oreo_ingredient = "Unbleached Enriched Flour (Wheat Flour Niacin, Reduced Iron, Thiamine Mononitrate {Vitamin B1}," +
