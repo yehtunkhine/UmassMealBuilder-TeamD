@@ -20,7 +20,7 @@ async function createUser(userid,username, useremail, userphone){
 router.post('/createUser', (req, res)=>{
   (async function createAndSend(){
     //checking to make sure all parameters are defined 
-    if(req.query.userId==undefined||req.query.name==undefined||req.query.email==undefined||req.query.phone==undefined){res.end(JSON.stringify('missing parameters'))}
+    if(req.query.userId==undefined||req.query.name==undefined||req.query.email==undefined||req.query.phone==undefined||req.query.userId==""){res.end(JSON.stringify('missing parameters'))}
     else{
       let sendVal = await createUser(req.query.userId, req.query.name, req.query.email, req.query.phone)//creates the user
       res.end(JSON.stringify(sendVal))//turns user object into JSON and attachees to message response
