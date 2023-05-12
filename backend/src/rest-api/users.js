@@ -206,7 +206,7 @@ async function deleteUserNonAllergenRestriction(userid, user_rest){
   if(doesUserExist=="null"){return userid+' does not exist'}//return if user does not exist
   else{
     let doesRestrictionExist = await UserNonAllergenRestriction.findOne({where:{userId:userid, restriction:user_rest}})//value to check if user has specified restriction
-    if(doesRestrictionExist == "null"){return userid+" does not have this restriction"}//return if user does not have specified restriction
+    if(doesRestrictionExist == null){return userid+" does not have this restriction"}//return if user does not have specified restriction
     else{
       await UserNonAllergenRestriction.destroy({where:{userId:userid,restriction:user_rest}})//destroy all restrictions that match specification
       return userid+" had deleted restriction "+user_rest//return value of success 
