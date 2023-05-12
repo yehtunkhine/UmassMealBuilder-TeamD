@@ -1,5 +1,5 @@
 
-import {sequelize, User, Food, UserRestriction, UserNonAllergenRestriction, Meal, FavoriteFoodsBridge, MealFoodBridge} from './models.js'
+import {sequelize, User, Food, UserRestriction, UserNonAllergenRestriction, Meal, FavoriteFoodsBridge, MealFoodBridge} from '../models.js'
 import { Sequelize, Op, UnknownConstraintError } from 'sequelize';
 import express from 'express'
 
@@ -56,7 +56,7 @@ async function deleteuser(userid){
 
 router.get('/deleteUser', (req,res)=>{
   (async function delUser(){
-    if(req.query.userId==undefined){res.end(JSON.stringify('missing parameters'))}//checks that parameters are present
+    if(req.query.userId==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are present
     else{
       let delVal=await deleteuser(req.query.userId)//calls delete function and stores return
       res.end(JSON.stringify(delVal))//attaches result to response in JSON string format
@@ -110,15 +110,20 @@ router.post('/createUserRestriction', (req,res)=>{
 //fetch user restrictions--works
 async function fetchUserRestrictions(userid){
   const user_data= await UserRestriction.findAll({where:{userId: userid}});//finds all restrictions with matching userId
+  user_data.map(f=>f.restriction)//gets only restrictions
   return JSON.stringify(user_data);//returns array of objects {userId, restriction} if at leat one exists, else it returns []
 }
 router.get('/getUserRestrictions', (req, res)=>{
   (async function getUserRestrictions(){
     if(req.query.userId==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
     else{
-      let restrict = await fetchUserRestrictions(req.query.userId)//gets and stores user restriction array
-      if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no allergenic restrictions"))}//returns if there are no restrictions
-      else{res.end(restrict)}//attaches array of user restrictions to response
+      let doesUserExist=await fetchUserData(req.query.userId)//check if user exists
+      if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
+      else{
+        let restrict = await fetchUserRestrictions(req.query.userId)//gets and stores user restriction array
+        if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no allergenic restrictions"))}//returns if there are no restrictions
+        else{res.end(restrict)}//attaches array of user restrictions to response
+      }
     }
   })();
 })
@@ -142,8 +147,12 @@ router.get('/deleteUserRestriction', (req,res)=>{
   (async function deleteRest(){
     if(req.query.userId==undefined||req.query.restriction==undefined){res.end(JSON.stringify('invalid parameters'))}//checks for valid parameters
     else{
-      let delVal=await deleteUserRestriction(req.query.userId, req.query.restriction)//gets and stores result of delete call
-      res.end(JSON.stringify(delVal))//attaches return to response
+      let doesUserExist=await fetchUserData(req.query.userId)//value to check if user exist
+      if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
+      else{
+        let delVal=await deleteUserRestriction(req.query.userId, req.query.restriction)//gets and stores result of delete call
+        res.end(JSON.stringify(delVal))//attaches return to response
+      }
     }
   })();
 })
@@ -271,7 +280,7 @@ router.get('/getFavoriteFoods', (req,res)=>{
 //deletefavfood--works
 async function deleteFavFood(userid, foodid, name){
   let doesFavoriteExist=await FavoriteFoodsBridge.findOne({where:{userId:userid, foodId:foodid}})//checks if user has favorited item
-  if(doesFavoriteExist.toString()==[].toString()){return userid+" has not favorited this item"}//return if user has not favorited item
+  if(doesFavoriteExist=="null"){return userid+" has not favorited this item"}//return if user has not favorited item
   else{
     await FavoriteFoodsBridge.destroy({where:{userId:userid,foodId:foodid}})//destorys favorited iem
     return userid+" has unfavorited " + name//return of successful unfavorite
