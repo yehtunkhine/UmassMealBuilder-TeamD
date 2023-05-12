@@ -98,8 +98,6 @@ const BUTTON_WRAPPER_STYLES={
     zIndex: 1
 }
 
-let currentItems = {};
-
 const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -125,7 +123,7 @@ const MealCard = ({mdata, afunc, dfunc}) => {
             </itemProps>
         )
     }
-    
+
 
     const setModalContent = async (item) => {
         try {
@@ -145,7 +143,7 @@ const MealCard = ({mdata, afunc, dfunc}) => {
           }
         };
 
-    
+
 
 
     return (
