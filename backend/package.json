@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start": "node src/rest-api/api.js"
+        "start": "node src/server/server.js"
     },
     "dependencies": {
         "cors": "^2.8.5",
