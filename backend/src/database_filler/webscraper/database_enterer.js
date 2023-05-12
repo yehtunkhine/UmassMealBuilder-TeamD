@@ -138,7 +138,7 @@ async function create_food_entries(){
         console.log('Found food item: ' + foodItemName);
     }
 
-    await FoodRestriction.bulkCreate(foodAllergyBulk);
+    await FoodRestriction.bulkCreate(foodAllergyBulk, {ignoreDuplicates: true});
     await FoodNonAllergenRestriction.bulkCreate(foodNonAllergyRestrictionBulk, {ignoreDuplicates: true});
 
     console.log(errorMsg);
