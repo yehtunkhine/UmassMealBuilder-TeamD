@@ -20,7 +20,7 @@ async function createUser(userid,username, useremail, userphone){
 router.post('/createUser', (req, res)=>{
   (async function createAndSend(){
     //checking to make sure all parameters are defined 
-    if(req.query.userId==(undefined||"")||req.query.name==(undefined||"")||req.query.email==(undefined||"")||req.query.phone==(undefined||"")){res.end(JSON.stringify('missing parameters'))}
+    if(req.query.userId==(undefined||"")||req.query.name==(undefined||"")||req.query.email==(undefined||"")||req.query.phone==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}
     else{
       let sendVal = await createUser(req.query.userId, req.query.name, req.query.email, req.query.phone)//creates the user
       res.end(JSON.stringify(sendVal))//turns user object into JSON and attachees to message response
@@ -74,7 +74,7 @@ async function fetchUserData(userid){
 
 router.get('/getUser', (req, res) =>{
   (async function getUser(){
-    if(req.query.userId==(undefined||"")){res.end(JSON.stringify('missing parameters'))}//checks that a userId is sent
+    if(req.query.userId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks that a userId is sent
     else{
       let users = await fetchUserData((req.query.userId))//gets data to return
       if(users=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}//if user does not exist return this
@@ -136,7 +136,7 @@ async function deleteUserRestriction(userid, user_rest){
   if(doesExist == "[]"){return userid+" has no restrictions"}//returns if the userId is invalid
   else{
     let doesRestExist=await UserRestriction.findAll({where:{userId:userid,restriction:user_rest}})//checks if user has specified restriction
-    if(doesRestExist=="[]"){return userId + ' does not have this restriction'}//return if user has restrictions but not specified one
+    if(doesRestExist.toString()==[].toString()){return userid + ' does not have this restriction'}//return if user has restrictions but not specified one
     else{
     await UserRestriction.destroy({where:{userId:userid,restriction:user_rest}})//destorys all instances of matcing restriction and user
     return userid+" had deleted restriction "+user_rest//return message on success
@@ -190,7 +190,7 @@ router.get('/getUserNonAllergenRestrictions', (req, res)=>{
     if(req.query.userId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
     else{
       let doesUserExist=await fetchUserData(req.query.userId)//value to check if user is valid
-      if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userid+" does not exist"))}//return if user does not exist
+      if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}//return if user does not exist
       else{
         let restrict = await fetchUserNonAllergenRestrictions((req.query.userId))//gets and stores user non allergen restrictions
         if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no non allergenic restrictions"))}//return if user has no no allergen restrictions
