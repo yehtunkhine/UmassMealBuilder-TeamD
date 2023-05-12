@@ -56,7 +56,7 @@ async function deleteuser(userid){
 
 router.get('/deleteUser', (req,res)=>{
   (async function delUser(){
-    if(req.query.userId==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are present
+    if(req.query.userId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are present
     else{
       let delVal=await deleteuser(req.query.userId)//calls delete function and stores return
       res.end(JSON.stringify(delVal))//attaches result to response in JSON string format
@@ -74,7 +74,7 @@ async function fetchUserData(userid){
 
 router.get('/getUser', (req, res) =>{
   (async function getUser(){
-    if(req.query.userId==undefined){res.end(JSON.stringify('missing parameters'))}//checks that a userId is sent
+    if(req.query.userId==(undefined||"")){res.end(JSON.stringify('missing parameters'))}//checks that a userId is sent
     else{
       let users = await fetchUserData((req.query.userId))//gets data to return
       if(users=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}//if user does not exist return this
@@ -97,7 +97,7 @@ async function createUserRestriction(userid, restrictons){
 }
 router.post('/createUserRestriction', (req,res)=>{
   (async function createRestrict(){
-    if(req.query.userId==undefined||req.query.restriction==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
+    if(req.query.userId==(undefined||"")||req.query.restriction==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
     else{
       let sendVal=await createUserRestriction(req.query.userId,req.query.restriction)//calls function to create restriction and stores fuction return
       res.end(sendVal)//attaches message to response 
@@ -115,7 +115,7 @@ async function fetchUserRestrictions(userid){
 }
 router.get('/getUserRestrictions', (req, res)=>{
   (async function getUserRestrictions(){
-    if(req.query.userId==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
+    if(req.query.userId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
     else{
       let doesUserExist=await fetchUserData(req.query.userId)//check if user exists
       if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
@@ -145,7 +145,7 @@ async function deleteUserRestriction(userid, user_rest){
 }
 router.get('/deleteUserRestriction', (req,res)=>{
   (async function deleteRest(){
-    if(req.query.userId==undefined||req.query.restriction==undefined){res.end(JSON.stringify('invalid parameters'))}//checks for valid parameters
+    if(req.query.userId==(undefined||"")||req.query.restriction==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks for valid parameters
     else{
       let doesUserExist=await fetchUserData(req.query.userId)//value to check if user exist
       if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
@@ -169,7 +169,7 @@ async function createUserNonAllergenRestriction(userid, restrictons){
 }
 router.post('/createUserNonAllergenRestriction', (req,res)=>{
   (async function createRestrict(){
-    if(req.query.userId==undefined||req.query.restriction==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters exist
+    if(req.query.userId==(undefined||"")||req.query.restriction==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks that parameters exist
     else{
       let sendVal=await createUserNonAllergenRestriction(req.query.userId,req.query.restriction)//sends data to creation function and stores return
       res.end(JSON.stringify(sendVal))//attaches return to response
@@ -187,7 +187,7 @@ async function fetchUserNonAllergenRestrictions(userid){
 
 router.get('/getUserNonAllergenRestrictions', (req, res)=>{
   (async function getUserNonAllergenRestrictions(){
-    if(req.query.userId==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
+    if(req.query.userId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
     else{
       let doesUserExist=await fetchUserData(req.query.userId)//value to check if user is valid
       if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userid+" does not exist"))}//return if user does not exist
@@ -215,7 +215,7 @@ async function deleteUserNonAllergenRestriction(userid, user_rest){
 }
 router.get('/deleteuserNonAllergenRestriction', (req,res)=>{
   (async function deleteRest(){
-    if(req.query.userId==undefined||req.query.restricton==undefined){res.end(JSON.stringify('invalid parameters'))}//checks if parameters are defined
+    if(req.query.userId==(undefined||"")||req.query.restricton==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks if parameters are defined
     else{
       let delVal=await deleteUserNonAllergenRestriction(req.query.userId, req.query.restriction)//calls and stores return of delete call
       res.end(JSON.stringify(delVal))//attaches return to response
@@ -236,7 +236,7 @@ async function createFavoriteFood(userid, foodid){
 }
 router.post('/createFavFood',(req,res)=>{
   (async function createfav(){
-    if(req.query.userId==undefined||req.query.foodId==undefined){res.end(JSON.stringify('invalid parameters'))}//check if parameters are given
+    if(req.query.userId==(undefined||"")||req.query.foodId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//check if parameters are given
     else{
       let food_id=await Food.findOne({where:{name:req.query.name}})//gets food object that is to be favorited
       if(food_id=="null"){res.end(JSON.stringify('food does not exist'))}//return if food noes not exist
@@ -264,7 +264,7 @@ async function fetchFavoriteFoods(userid){
 }
 router.get('/getFavoriteFoods', (req,res)=>{
   (async function getFavoriteFoods(){
-    if(req.query.userId==undefined){res.end(JSON.stringify('invalid parameters'))}//check if parameters are given
+    if(req.query.userId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//check if parameters are given
     else{
       let doesUserExist = await fetchUserData(req.query.userId)//value to check if user exists
       if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if userId is invalid
@@ -288,7 +288,7 @@ async function deleteFavFood(userid, foodid, name){
 }
 router.get('/deleteFavoriteFood', (req,res)=>{
   (async function deleteFav(){
-    if(req.query.userId==undefined||req.query.name==undefined){res.end(JSON.stringify('invalid parameters'))}//checks parameters exist
+    if(req.query.userId==(undefined||"")||req.query.name==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks parameters exist
     else{
       let doesUserExit=await fetchUserData(req.query.userId)//value to check if user exists
       if(doesUserExit=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
@@ -333,7 +333,7 @@ async function createMeal(userid, food_IDS){
 }
 router.post('/createMeal', (req,res)=>{
   (async function createM(){
-    if(req.query.userId==undefined||req.query.foods==undefined){res.end(JSON.stringify('invalid parameters'))}//checks parameters exist
+    if(req.query.userId==(undefined||"")||req.query.foods==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks parameters exist
     else{
       let foodlist=await req.query.foods.split(',') //spits list of foods by commas
       let foodAsIDS=await getFoodIDs(foodlist)//turns food names into ids
@@ -366,7 +366,7 @@ async function fetchMeals(userid){
 }
 router.get('/getmeals', (req, res)=>{
   (async function getmeals(){
-    if(req.query.userId==undefined){res.end(JSON.stringify('invalid parameters'))}//checks if parameters are given
+    if(req.query.userId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks if parameters are given
     else{
       let doesUserExist=await fetchUserData(req.query.userId)//value to check if user exists
       if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}//return is user does not exist
@@ -395,7 +395,7 @@ async function deleteMeal(userid, mealid){
 
 router.get('/deleteMeal', (req,res)=>{
   (async function delMeal(){
-    if(req.query.userId==undefined||req.query.mealId==undefined){res.end(JSON.stringify('invalid parameters'))}//checks is parameters are given
+    if(req.query.userId==(undefined||"")||req.query.mealId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks is parameters are given
     else{
       let delVal=await deleteMeal(req.query.userId, req.query.mealId)//deletes and stores return of call
       res.end(JSON.stringify(delVal))//attaches return to response
