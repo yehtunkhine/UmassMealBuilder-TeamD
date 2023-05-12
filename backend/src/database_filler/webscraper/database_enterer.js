@@ -121,7 +121,7 @@ async function create_food_entries(){
         if(dbFoodItem == null){
             continue;
         }
-
+        
         let allergens = food["allergens"].trim().replace("\n", " ").split(",").map((s) => s.trim())
         .filter((s) => s != null && s != undefined && s.trim() != "");
         
@@ -134,10 +134,12 @@ async function create_food_entries(){
         for(const rest of restrictions){
             foodNonAllergyRestrictionBulk.push({foodId: dbFoodItem.foodId, restriction: rest});
         }
+
+        console.log('Found food item: ' + foodItemName);
     }
 
     await FoodRestriction.bulkCreate(foodAllergyBulk);
-    await FoodNonAllergenRestriction.bulkCreate(foodNonAllergyRestrictionBulk);
+    await FoodNonAllergenRestriction.bulkCreate(foodNonAllergyRestrictionBulk, {ignoreDuplicates: true});
 
     console.log(errorMsg);
 }
@@ -209,6 +211,8 @@ async function create_food_location_relations(){
                             Date: date,
                             category: mealCategory
                         });
+
+                        console.log('Found "' + foodItemName + '" being served at "' + diningHall.locationName + '" during "' + mealTime + '" on "' + date + '"');
                     }
                 }
             }
@@ -217,7 +221,7 @@ async function create_food_location_relations(){
     
     fs.writeFileSync('../json_files/unfoundFoodItems.json', JSON.stringify(Array.from(failedToFindFoodItem), undefined, 2));
     console.log(failedToFindFoodItem.size)
-    await LocationFoodBridge.bulkCreate(FoodLocationEntryBulk);
+    await LocationFoodBridge.bulkCreate(FoodLocationEntryBulk, {ignoreDuplicates: true});
 }
 
 console.log('Scraping web data')
