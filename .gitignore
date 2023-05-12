@@ -1,4 +1,4 @@
-*/node_modules
+node_modules
 /backend/src/database_filler/webscraper/venv/
 /backend/src/database_filler/webscraper/__pycache__
 /backend/src/database_filler/html_content/*
