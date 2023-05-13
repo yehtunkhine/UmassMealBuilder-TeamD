@@ -224,7 +224,7 @@ select{
 
 .flex-list{
   flex:15;
-  text-align: left;
+  text-align: center;
   font-size: 20px;
 }
 
@@ -239,4 +239,21 @@ select{
   text-align: center;
   vertical-align: middle;
   margin: auto;
+  align-items: center;
+}
+
+ul{
+  list-style-type: none;
+}
+
+.color-gray{
+  background-color: white;
+}
+
+.color-white{
+  background-color: #EFEFEF;
+}
+
+.restrictions-container{
+  text-align: center;
 }

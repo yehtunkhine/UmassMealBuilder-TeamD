@@ -7,68 +7,19 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 //import { EmailAuthCredential, updatePassword } from 'firebase/auth';
 
-let firstRun = true;
-let trackState = [];
+let firstRun = true;//Tracks first run through in order to only set the restrictions on the first run
+let trackState = [];//Global trackState in order to make it so when we setState it properly refreshes
 
 export default function User(){
     let auth = useContext(AuthenticationContext);//Firebase authentication
-    let user = auth.currentUser;
+    let user = auth.currentUser;//Firebase user
     const allergensRef = useRef(null);
     const settingsRef = useRef(null);
     const favoritesRef = useRef(null);
     const navigate = useNavigate();
     const [userRestrictionsState, setUserRestrictionsState] = useState(trackState);//Tracks restrictions
 
-    /* In case we can ever fix the user authentication
-    const txtPassword = useRef(null);
-    const txtNewPassword = useRef(null);
-    const txtReNewPassword = useRef(null);
-
-    const changePassword = () =>{
-        const password = txtPassword.current.value;
-        const newPassword = txtNewPassword.current.value;
-        const confirmPassword = txtReNewPassword.current.value;
-
-        var strongPassword = false;
-        let len = newPassword.length;
-        console.log(len);
-        for (let i = 0; i < len; i++) {
-            let code = newPassword.charCodeAt(i);
-            if (!(code > 47 && code < 58) && // numeric (0-9)
-                !(code > 64 && code < 91) && // upper alpha (A-Z)
-                !(code > 96 && code < 123)) { // lower alpha (a-z)
-                    strongPassword = true;
-            }
-        }
-        try{
-            if(newPassword.localeCompare(newPassword.toUpperCase()) === 0 || newPassword.localeCompare(newPassword.toLowerCase()) === 0 
-                || !/[0-9]/.test(newPassword) || !strongPassword || len < 8){
-                throw new Error("Password is not strong enough, please have at least 1 number, 1 uppercase, 1 lowercase, 1 special character and at least 8 characters");
-            }
-            if(newPassword.localeCompare(confirmPassword) !== 0){
-                throw new Error("Passwords don't match");
-            }
-        }catch(error){
-            console.log(`There was an error: ${error}`);
-            alert(error);
-            return;
-        }  
-        let credential = EmailAuthCredential.credential(user.email ,password).then(() => {
-            try{
-                updatePassword(user, newPassword).then(() => {
-                    try{
-                        alert("Password successfully changed");
-                    }catch(error){
-                        console.log(error);
-                        alert(error);
-                    }
-                })
-            }catch(error){
-                console.log(error);
-                alert(error);
-            }
-        })
-    }*/
+    
 
     const sendPasswordReset = async () => {//For reset password sends email
         let email = user.email;
@@ -109,7 +60,7 @@ export default function User(){
             });
         }
     }   
-    handleDropdown();
+    handleDropdown();//Calls it so it will add the listener
 
     //Gets restrictions to display in dropdown
     const getRestrictions = () =>{
@@ -117,10 +68,10 @@ export default function User(){
         let restrictions = [" ", "Milk", "Peanuts", "Shellfish", "Eggs", "Gluten", "Tree Nuts", "Fish", "Soy", "Corn", "Sesame", 
         "Vegetarian", "Plant Based", "Local", "Whole Grain", "Halal", "Antibiotic Free", "Sustainable"];
         let selection = document.getElementById("allergen");
-        for(let i = selection.length-1; i >= 0; i--){
+        for(let i = selection.length-1; i >= 0; i--){//Clears all elements in list
             selection.remove(i);
         }
-        for(let i = 0; i < restrictions.length; i++){
+        for(let i = 0; i < restrictions.length; i++){//Readds all elements
             var el = document.createElement("option");
             el.textContent = restrictions[i];
             el.value = restrictions[i];
@@ -128,30 +79,37 @@ export default function User(){
         }
     }  
 
+    //Sets all user restrictions in the list
     const getUserRestrictions = () =>{
         let restrictions = document.getElementById("userRestrictions");
         let removal = document.getElementById("userRestrictionsRemoval");
-        while(restrictions.firstChild){
+        while(restrictions.firstChild){//Removes restrictions
             restrictions.removeChild(restrictions.firstChild);
         }
-        while(removal.firstChild){
+        while(removal.firstChild){//Removes x boxes
             removal.removeChild(removal.firstChild);
         }
         let userRestrictionsArray = userRestrictionsState;
         for(let i = 0; i < userRestrictionsArray.length; i++){
-            var el = document.createElement("li");
+            var el = document.createElement("li");//Sets the restriction
             el.textContent = userRestrictionsArray[i];
-            var remove = document.createElement("button");
+            var remove = document.createElement("button");//Sets the x boxes
             remove.textContent = "\xD7";
-            remove.className = "removal-button";
+            remove.className= "removal-button"
             remove.onclick = function(){
                 removeUserRestriction(userRestrictionsArray[i]);
             };
+            if(i % 2 === 0){
+                el.className = "color-white";
+            }else{
+                el.className = "color-gray";
+            }
             removal.appendChild(remove);
             restrictions.appendChild(el);
         }
     }
 
+    //For when we delete a restriction
     const removeUserRestriction = (child) => {
         let tempState = [...trackState];
         tempState.splice(tempState.indexOf(child), 1);
@@ -160,6 +118,7 @@ export default function User(){
         setUserRestrictionsState(trackState); 
     }
 
+    //The initial call in order to set the lists
     const setUserRestrictions = () => {
         //TODO set userRestrictionsArray to user data
         //Integrate here, this will only trigger on initial run through
@@ -171,6 +130,7 @@ export default function User(){
         setUserRestrictionsState(userRestrictionsArray);
     }
 
+    //When we want to add a restriction
     const addUserRestrictions = () =>{
         let userRestrictionsArray = [...userRestrictionsState];
         let tempRestriction = document.getElementById("allergen").value;
@@ -186,20 +146,19 @@ export default function User(){
 
 
     useEffect(() => {
-        if(firstRun){
+        if(firstRun){//So we only set on the first run
             firstRun = false;
             setUserRestrictions();
         }
-        if(user !== null){
+        if(user !== null){//Will then set the lists
             getRestrictions();
             getUserRestrictions();
             
-        }else{
+        }else{//in case there is no user redirects
             navigate("/");
         }
-        console.log(userRestrictionsState);
     });
-    if(user === null){
+    if(user === null){//So we don't try to call anything that needs ids
         return <div>   
             </div>;
     }
@@ -230,8 +189,8 @@ export default function User(){
             <div class="separate"></div>
                 <h4>Current Restrictions</h4>
                 <div class = "flex-container">
-                <ul id="userRestrictions" class = "flex-list"></ul>
-                <ul id="userRestrictionsRemoval" class = "flex-remove"></ul>
+                    <ul id="userRestrictions" class = "flex-list"></ul>
+                    <ul id="userRestrictionsRemoval" class = "flex-remove"></ul>
                 </div>
             </div>
             <br></br>
@@ -261,10 +220,3 @@ export default function User(){
     </div>
     );
 }
-/*<text class = "dropdown-text">Enter Current Password</text>
-                        <input class = "input" ref = {txtPassword} id = "password" name = "passwordInput" placeholder="Password" type = "password"/>
-                        <text class = "dropdown-text">Enter New Password</text>
-                        <input class = "input" ref = {txtNewPassword} id = "password" name = "passwordInput" placeholder="New Password" type = "password"/>
-                        <text class = "dropdown-text">Re-enter New Password</text>
-                        <input class = "input" ref = {txtReNewPassword} id = "password" name = "passwordInput" placeholder="Re-Enter New Password" type = "password"/>
-                        <button onClick={changePassword} class = "">Change Password</button>*/
