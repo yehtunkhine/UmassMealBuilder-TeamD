@@ -257,14 +257,7 @@ router.post('/createFavFood',(req,res)=>{
 //fetch favorite foods--works
 async function fetchFavoriteFoods(userid){
   const fav_food_list = await FavoriteFoodsBridge.findAll({where:{userId: userid}});//gets all foods favorited by user
-  fav_food_list.map(f=>f.foodId)//turns objects {userId, foodId} to lsit of food Ids
-  let foodNameList=[]//default return
-  for(let i=0;i<fav_food_list.length;++i){//loops over all favorite food ids
-    let food=await Food.findOne({where:{foodId:fav_food_list[i]}})//gets food item with correponding foodId
-    if(food=="null"){foodNameList.push(fav_food_list[i]+" is not in DB")}//value of food if not present in DB
-    else{foodNameList.push(food.name)}//pushes food name to return lsit
-  }
-  return foodNameList;//returns lsit of favorite foods
+  return fav_food_list.map(f=>f.foodId);//returns lsit of favorite foods
 }
 router.get('/getFavoriteFoods', (req,res)=>{
   (async function getFavoriteFoods(){
