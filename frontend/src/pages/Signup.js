@@ -30,7 +30,7 @@ const Signup = () => {
         var strongPassword = false;
         let len = password.length;
         console.log(len);
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < len; i++) {//Makes sure the passwords are strong
             let code = password.charCodeAt(i);
             if (!(code > 47 && code < 58) && // numeric (0-9)
                 !(code > 64 && code < 91) && // upper alpha (A-Z)
@@ -54,7 +54,7 @@ const Signup = () => {
             alert(error);
             return;
         }
-      
+        //If everything is alright then we send it to firebase
         try {
           await createUserWithEmailAndPassword(auth, email, password)
         await updateProfile(auth.currentUser, {
@@ -64,7 +64,7 @@ const Signup = () => {
         await signInWithEmailAndPassword(auth, email, password);
         navigate("/")
         }
-        catch(error) {
+        catch(error) {//If can't for some reason
           console.log(`There was an error: ${error}`);
           alert(error);
           return;
@@ -75,18 +75,10 @@ const Signup = () => {
         console.log('signing in');
         signInWithPopup(auth, provider)
           .then((result) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            //const credential = GoogleAuthProvider.credentialFromResult(result);
-            //const token = credential.accessToken;
+            //If successful go home
             navigate("/");
           }).catch((error) => {
-            /*// Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.customData.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);*/
+            // Handle Errors here.
             alert(error);
             console.log(error);
           });

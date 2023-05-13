@@ -94,15 +94,15 @@ export default function User(){
             var el = document.createElement("li");//Sets the restriction
             el.textContent = userRestrictionsArray[i];
             var remove = document.createElement("button");//Sets the x boxes
-            remove.textContent = "\xD7";
+            remove.innerHTML = "X";
             remove.className= "removal-button"
             remove.onclick = function(){
                 removeUserRestriction(userRestrictionsArray[i]);
             };
-            if(i % 2 === 0){
-                el.className = "color-white";
+            if(i % 2 === 1){
+                el.className = "color-white user-preference";
             }else{
-                el.className = "color-gray";
+                el.className = "color-gray user-preference";
             }
             removal.appendChild(remove);
             restrictions.appendChild(el);
@@ -211,7 +211,7 @@ export default function User(){
                     
                     <div class="dropdown-container">
                         <div class = "separate"></div>
-                        <button class = "" onClick={sendPasswordReset} >Send Password Reset Link</button>
+                        <button class = "dropdown-inner-button" onClick={sendPasswordReset} >Send Password Reset Link</button>
                     </div>
                 </div>
             </div>
