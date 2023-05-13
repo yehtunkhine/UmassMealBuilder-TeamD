@@ -230,7 +230,7 @@ async function createFavoriteFood(userid, foodid){
   let doesExist =await fetchUserData(userid)//checks if user is valid
   if(doesExist!="null"){
     let alreadyFav=await FavoriteFoodsBridge.findOne({where:{userId:userid, foodId:foodid}})//value to check if already a favorite
-    if(alreadyFav=="null"){return userid+' has already favorited '+foodid}
+    if(alreadyFav!="null"){return userid+' has already favorited '+foodid}
     else{
       let new_fav_food = await FavoriteFoodsBridge.create({userId:userid, foodId:foodid});//creates a new favorite
       return new_fav_food//returns created object
@@ -243,7 +243,7 @@ router.post('/createFavFood',(req,res)=>{
     if(req.query.userId==(undefined||"")||req.query.name==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//check if parameters are given
     else{
       let food_id=await Food.findOne({where:{name:req.query.name}})//gets food object that is to be favorited
-      if(food_id=="null"){res.end(JSON.stringify('food does not exist'))}//return if food noes not exist
+      if(food_id==null){res.end(JSON.stringify(req.query.name+' does not exist'))}//return if food noes not exist
       else{
         let sendVal=await createFavoriteFood(req.query.userId, food_id.foodId)//creates and stores result of favotorite call
         res.end(JSON.stringify(sendVal))//attaches return to response
