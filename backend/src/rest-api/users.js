@@ -347,15 +347,14 @@ router.post('/createMeal', (req,res)=>{
 
 //fetch meals
 async function fetchMeals(userid){
-  let userMeals=await Meals.findAll({where:{userId:userid}})//gets meals for user
+  let userMeals=await Meal.findAll({where:{userId:userid}})//gets meals for user
   let returnMeals=[]//initailozed return value
   if(userMeals=="[]"){return(userid+ ' has no meals')}//return if user has no meals created
   else{
-    userMeals.map(f=>f.mealId)//turns list of meals into list of mealIds
     for(let i=0;i<userMeals.length;++i){//loops over all mealIds
-      let foodsInMeal=await MealFoodBridge.findAll({where:{mealId:userMeals[i]}})//finds foods in meal
-      foodsInMeal.map(f=>f.foodId)//turns objects {mealId, foodId} to array of foodIds
-      returnMeals.push({mealId:userMeals[i], foods:foodsInMeal})//adds an entry to return consisting of mealId and list of foods
+      let foodsInMeal=await MealFoodBridge.findAll({where:{mealId:userMeals[i].mealId}})//finds foods in meal
+      let ids=await foodsInMeal.map(f=>f.foodId)//turns food objs to food ids
+      returnMeals.push({mealId:userMeals[i].mealId, foods:ids})//adds an entry to return consisting of mealId and list of foods
     }
     return returnMeals;//return value
   }
