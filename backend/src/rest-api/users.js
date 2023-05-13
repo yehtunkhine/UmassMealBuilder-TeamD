@@ -310,7 +310,7 @@ async function getFoodIDs(foods){//takes in lsit of food
   let foods_IDS=[]//default return
   for(let i=0;i<foods.length;++i){//loops over food list
     let F_ID=await Food.findOne({where:{name:foods[i]}})//value of food itemby name
-    if(F_ID!="null"){foods_IDS.push(F_ID.foodId)}//return if the food have an entry in DB
+    if(F_ID!=null){foods_IDS.push(F_ID.foodId)}//return if the food have an entry in DB
     else{foods_IDS.push("invalid food name")}//return if food does not exist
   }
   return foods_IDS;//return list of ids and invalid entries
@@ -322,9 +322,8 @@ async function createMeal(userid, food_IDS){
   let meal_ID=new_meal.mealId//stores mealId of new meal
   let counter=0
   for(let i=0;i<food_IDS.length;++i){//loops over foodIDs
-    if(food_IDS[i]!="invalid food name"){let newBridge=await MealFoodBridge.create({mealId:meal_ID, foodId:food_IDS[i]})//creates an entry in DB
-    if(food_IDS[i]=="invalid food name"){counter++}//increments counter of invalid foods 
-  }
+    if(typeof food_IDS[i]=='number'){let newBridge=await MealFoodBridge.create({mealId:meal_ID, foodId:food_IDS[i]})}//creates an entry in DB
+    if(typeof food_IDS[i]=='string'){counter=counter+1}//increments counter of invalid foods 
   }
   return JSON.stringify(userid+' has created a meal with ID '+ meal_ID+' with '+counter+' invalid foods')
 }
@@ -334,8 +333,8 @@ router.post('/createMeal', (req,res)=>{
     else{
       let foodlist=await req.query.foods.split(',') //spits list of foods by commas
       let foodAsIDS=await getFoodIDs(foodlist)//turns food names into ids
-      let doesUserExist=await fetchUserData(req.query.userid)//value ot check if user exists
-      if(doesUserExist.toString()==[].toString()){res.end(JSON.stringify(req.query.userId+" does not exist"))}//return if user id invalid
+      let doesUserExist=await fetchUserData(req.query.userId)//value ot check if user exists
+      if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}//return if user id invalid
       else if(foodAsIDS==[]){res.end(JSON.stringify('There are no foods in meal'))}//return if empty array is returned
       else{
       let sendVal=await createMeal(req.query.userId, foodAsIDS)//creates and stores meal return
