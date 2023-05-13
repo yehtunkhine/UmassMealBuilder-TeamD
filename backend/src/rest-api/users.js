@@ -277,7 +277,7 @@ router.get('/getFavoriteFoods', (req,res)=>{
 //deletefavfood--works
 async function deleteFavFood(userid, foodid, name){
   let doesFavoriteExist=await FavoriteFoodsBridge.findOne({where:{userId:userid, foodId:foodid}})//checks if user has favorited item
-  if(doesFavoriteExist=="null"){return userid+" has not favorited this item"}//return if user has not favorited item
+  if(doesFavoriteExist==null){return userid+" has not favorited this item"}//return if user has not favorited item
   else{
     await FavoriteFoodsBridge.destroy({where:{userId:userid,foodId:foodid}})//destorys favorited iem
     return userid+" has unfavorited " + name//return of successful unfavorite
@@ -291,7 +291,7 @@ router.get('/deleteFavoriteFood', (req,res)=>{
       if(doesUserExit=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
       else{
         let food = await Food.findOne({where:{name: req.query.name}})//finds food that is to be deleted from name
-        if(food=="null"){res.end(JSON.stringify(req.query.name+' does not exist'))}//return if food to be deleted does exist in DB
+        if(food==null){res.end(JSON.stringify(req.query.name+' does not exist'))}//return if food to be deleted does exist in DB
         else{
           let delVal = await deleteFavFood(req.query.userId, food.foodId, req.query.name)//calls and stores return of delete call
           res.end(JSON.stringify(delVal))//attaches return to response
