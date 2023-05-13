@@ -10,7 +10,7 @@ import cors from 'cors'
 
 let app = express()
 app.use(cors())
-const port = 3000
+const port = 3001
 
 app.use('', foodRoutes)
 app.use('', locationRoutes)

@@ -1,8 +1,10 @@
 import { Link} from "react-router-dom"
+import MenuData from "../components/MenuData"
 import { useLocation } from "react-router-dom";
 import React from "react";
 import { Chart } from "react-google-charts";
 import Speedometer from "react-d3-speedometer";
+import ReactDOM from 'react-dom';
 import styled from 'styled-components'
 import './AnalysisStyles.css';
 
@@ -77,13 +79,6 @@ export default function Analysis(){
     const location = useLocation();
     if (location.state === null){
         return (
-          <div>
-            <NoItems>
-            <h1>No items currently selected</h1>
-            <Link to={{pathname: "/DiningHalls"}}>
-                <button>Select Items</button>
-            </Link>
-            </NoItems>
             <div class  = "overlay">
               <text class= "labelText">Select items to get started: </text>
               <Link to={{pathname: "/DiningHalls"}}> 
@@ -92,7 +87,6 @@ export default function Analysis(){
                   </div>
               </Link>
             </div>
-          </div>
         )
     }
     const {foods} = location.state;
@@ -108,7 +102,7 @@ export default function Analysis(){
 
     </Container>
     )
-
+        
 }
 
 
@@ -121,12 +115,14 @@ export const data = (fat, protein, carbs) =>[
     ["Watch TV", 2],
     ["Sleep", 7],
   ];
-
+  
   export const options = {
     title: "Nutrient Balance",
   };
+ 
+const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const HealthScale = ({hScore}) =>
+const HealthScale = ({hScore}) => 
 {
 return (
 <div>
@@ -179,7 +175,7 @@ return (
           needleColor="#000080"
         />
       </div>
-
+  
 )
 
 
@@ -249,6 +245,7 @@ const TotalInfo = ({foodlist, foods}) => {
             </RightSide>
 
         </MainBody>
-
+        
     );
+
 }

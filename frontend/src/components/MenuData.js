@@ -116,10 +116,16 @@ const MealCard = ({mdata, afunc, dfunc}) => {
     const itemFacts = (item) => {
         return (
             <itemProps>
+                <h2>Macros: </h2>
                 <p>Calories: {item.calories}</p>
                 <p>Carbs: {item.carbs}</p>
                 <p>Fat: {item.fat}</p>
                 <p>Protein: {item.protein}</p>
+                <h2>Ingredients: </h2>
+                <p>ingredients: {item.ingredients}</p>
+                <h2>Recipe Lables : {item.recipeLables}</h2>
+                <h2>Healthfulness : {item.healthfulness}</h2>
+                <h2>Serving Size : {item.servingSize}</h2>
             </itemProps>
         )
     }
@@ -134,7 +140,8 @@ const MealCard = ({mdata, afunc, dfunc}) => {
             let data = await response.json();
             response = await fetch(`http://localhost:3001/facts?foodId=${data}`);
             data = await response.json();
-            let facts = {"calories" : data.calories, "carbs" : data.carbs, "fat" : data.fat, "protein" : data.protein};
+            let facts = {"calories" : data.calories, "carbs" : data.carbs, "fat" : data.fat, "protein" : data.protein,
+            "ingredients" : data.ingredients, "recipeLables" : data.recipeLables, "healthfulness" : data.healthfulness};
             console.log(facts);
             setModelContent(facts);
             return facts;
