@@ -229,8 +229,12 @@ router.get('/deleteuserNonAllergenRestriction', (req,res)=>{
 async function createFavoriteFood(userid, foodid){
   let doesExist =await fetchUserData(userid)//checks if user is valid
   if(doesExist!="null"){
-  let new_fav_food = await FavoriteFoodsBridge.create({userId:userid, foodId:foodid});//creates a new favorite
-  return new_fav_food//returns created object
+    let alreadyFav=await FavoriteFoodsBridge.findOne({where:{userId:userid, foodId:foodid}})//value to check if already a favorite
+    if(alreadyFav=="null"){return userid+' has already favorited '+foodid}
+    else{
+      let new_fav_food = await FavoriteFoodsBridge.create({userId:userid, foodId:foodid});//creates a new favorite
+      return new_fav_food//returns created object
+    }
   }
   else{return userid+" does not exist"}//return if user does not exist
 }
