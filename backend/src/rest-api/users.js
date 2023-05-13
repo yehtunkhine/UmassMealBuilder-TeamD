@@ -39,14 +39,14 @@ async function deleteuser(userid){
     let userRestricctionNonAllergen=await fetchUserNonAllergenRestrictions(userid)//gets user no allergens if they exist
     let favs=await fetchFavoriteFoods(userid)//gets user favorites if they exist
     let meals=await Meal.findAll({where:{userId:userid}})//gets a list of usermeals if it exists
-    meals.map(f=>f.mealId)//turns list of meal objects(userId, mealId) into a lsit of mealIds
     if(userRestrictionAllergen!="[]"){await UserRestriction.destroy({where:{userId:userid}})}//if user has allergen restrictions delete them
     if(userRestricctionNonAllergen!="[]"){await UserNonAllergenRestriction.destroy({where:{userId:userid}})}//if user has non allergen restrictions delete
     if(favs!="[]"){await FavoriteFoodsBridge.destroy({where:{userId:userid}})}//delete favorite foods
     if(meals!="[]"){
-      for(let i=0;i<meals.length;++i){
-        await MealFoodBridge.destroy({where:{mealId:meals[i]}})//destroys listings in to MealFoodBridge with correcponding mealId
-        await Meal.destroy({where:{mealId:meals[i]}})//deletes meal with mealId from Meal database, must be done after deleting MealFoodBridge
+      let mealIDS=await meals.map(f=>f.mealId)//turns list of meal objects(userId, mealId) into a lsit of mealIds
+      for(let i=0;i<mealIDS.length;++i){
+        await MealFoodBridge.destroy({where:{mealId:mealIDS[i]}})//destroys listings in to MealFoodBridge with correcponding mealId
+        await Meal.destroy({where:{mealId:mealIDS[i]}})//deletes meal with mealId from Meal database, must be done after deleting MealFoodBridge
         //otherwise it leads to MealFoodBridge containing a null value where the mealId was previously
       }
     }
@@ -349,7 +349,8 @@ router.post('/createMeal', (req,res)=>{
 async function fetchMeals(userid){
   let userMeals=await Meal.findAll({where:{userId:userid}})//gets meals for user
   let returnMeals=[]//initailozed return value
-  if(userMeals=="[]"){return(userid+ ' has no meals')}//return if user has no meals created
+  console.log(userMeals)
+  if(userMeals.toString()==[].toString()){return(userid+ ' has no meals')}//return if user has no meals created
   else{
     for(let i=0;i<userMeals.length;++i){//loops over all mealIds
       let foodsInMeal=await MealFoodBridge.findAll({where:{mealId:userMeals[i].mealId}})//finds foods in meal
@@ -379,7 +380,7 @@ async function deleteMeal(userid, mealid){
   let doesUserExist = (await fetchUserData(userid)).toString()//value to check if user exists
   let doesMealExist = (await Meal.findOne({where:{userId:userid, mealId:mealid}}))//value to check if meal exists
   if(doesUserExist=="null"){return userid+' does not exist'}//return if user does not exist
-  else if(doesMealExist=="null"){return userid+" does not have a meal with id "+ mealid}//return if user does not have a meal with given id
+  else if(doesMealExist==null){return userid+" does not have a meal with id "+ mealid}//return if user does not have a meal with given id
   else{
     await MealFoodBridge.destroy({where:{mealId:mealid}})//destroys meal listing in MealFoodBridge
     await Meal.destroy({where:{mealId:mealid}})//destorys meal in Meal, must be done last otherwise all listings of mealId will become null values
