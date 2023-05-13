@@ -232,11 +232,11 @@ async function createFavoriteFood(userid, foodid){
   let new_fav_food = await FavoriteFoodsBridge.create({userId:userid, foodId:foodid});//creates a new favorite
   return new_fav_food//returns created object
   }
-  else{return userId+" does not exist"}//return if user does not exist
+  else{return userid+" does not exist"}//return if user does not exist
 }
 router.post('/createFavFood',(req,res)=>{
   (async function createfav(){
-    if(req.query.userId==(undefined||"")||req.query.foodId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//check if parameters are given
+    if(req.query.userId==(undefined||"")||req.query.name==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//check if parameters are given
     else{
       let food_id=await Food.findOne({where:{name:req.query.name}})//gets food object that is to be favorited
       if(food_id=="null"){res.end(JSON.stringify('food does not exist'))}//return if food noes not exist
