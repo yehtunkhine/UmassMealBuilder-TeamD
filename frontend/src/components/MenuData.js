@@ -246,7 +246,7 @@ const MenuData = ({hall}) => {
                         )
                     })}
                 </ChosenItemsContainer>
-                <Link to={{pathname: "/Analysis"}} state={{foods : Object.keys(chosenItems)}}>
+                <Link to={{pathname: "/analysis"}} state={{foods : chosenItems}}>
                     <button>Build Plate</button>
                 </Link>
             </Plate>
