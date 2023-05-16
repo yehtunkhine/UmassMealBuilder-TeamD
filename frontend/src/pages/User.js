@@ -191,10 +191,18 @@ export default function User(){
         if(selectedAllergenValue !== "" && selectedAllergenValue !== "Select an option"){
             const updatedSet = new Set(allergenSet);
             updatedSet.add(selectedAllergenValue);
-            // TODO: push updatedSet to database (await for backend to be fixed)
             setAllergenSet(updatedSet);
             setSelectedAllergenValue("");
+            updateUserRestrictions();
         }
+    }
+
+    // Update user restrictions in the backend
+    const updateUserRestrictions = async () => {
+        const restriction = [...allergenSet].join(',');
+        await fetch(`http://localhost:3001/createUserRestriction?userId=${user.uid}&restriction=${restriction}`, {
+            method: 'POST',
+        })
     }
 
     const handleRemoveAllergen = (value) => {
@@ -217,7 +225,7 @@ export default function User(){
                 setAllergenSet(set);
             }
         })
-    }, []);
+    }, [user]);
 
     if(user === null){
         return <div>
