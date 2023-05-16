@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import {IconContext} from 'react-icons'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
 import Modal from './Modal'
+import { IoAdd, IoCloseOutline, IoInformationCircleOutline} from "react-icons/io5";
 
 const AccordionSection = styled.div`
 display: flex;
@@ -89,9 +90,16 @@ color: black;
 margin:30px;
 `;
 
+const ADButton = styled.button`
+all: unset;
+
+
+`;
+
 const Category = styled.div`
 padding: 25px;
 background-color: lightgray;
+text-align: center;
 `;
 const BUTTON_WRAPPER_STYLES={
     position: 'relative',
@@ -159,20 +167,21 @@ const MealCard = ({mdata, afunc, dfunc}) => {
                 return (
                 <FCard key={i}>
                     <Category><u>{_.category}</u></Category>
-
                     <RecipeContent>
                         {_.recipes.map((item,idx) => (
                             <Recipe key={idx}>
                                     <h1>{item.name}</h1>
-                                    <button onClick = {() => afunc(item)} >Add</button>
-                                    <button onClick = {() => dfunc(item)} >Del</button>
+                                    <IconContext.Provider value = {{color: 'black', size: '25px'}}>
+                                    <ADButton onClick = {() => afunc(item)} ><IoAdd/></ADButton>
+                                    <ADButton onClick = {() => dfunc(item)} ><IoCloseOutline/></ADButton>
 
                                 <div style={BUTTON_WRAPPER_STYLES}>
-                                    <button
+                                    <ADButton
                                         onClick={()=>{setIsOpen(true); setModalContent(item)}}>
-                                        Info
-                                    </button>
+                                        <IoInformationCircleOutline/>
+                                    </ADButton>
                                 </div>
+                                    </IconContext.Provider>
                             </Recipe>
                         ))}
                         <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
