@@ -129,7 +129,7 @@ router.get('/getUserRestrictions', (req, res)=>{
       if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
       else{
         let restrict = await fetchUserRestrictions(req.query.userId)//gets and stores user restriction array
-        if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no allergenic restrictions"))}//returns if there are no restrictions
+        if(restrict=="[]"){res.end(JSON.stringify({"userId": req.query.userId, "restrictions": ""}))}//returns if there are no restrictions
         else{res.end(restrict)}//attaches array of user restrictions to response
       }
     }
