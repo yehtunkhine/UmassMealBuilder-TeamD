@@ -208,8 +208,14 @@ export default function User(){
         const updatedSet = new Set(allergenSet);
         updatedSet.delete(value);
         setAllergenSet(updatedSet);
+        deleteUserRestriction(value);
     }
 
+    const deleteUserRestriction = async (value) => {
+        await fetch(`http://localhost:3001/deleteUserRestriction?userId=${user.uid}&restriction=${value}`, {
+            method: 'GET',
+        })
+    }
 
     useEffect(() => {
        // retrieve user's restrictions
