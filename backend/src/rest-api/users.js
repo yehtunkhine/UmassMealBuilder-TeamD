@@ -90,8 +90,11 @@ async function createUserRestriction(userid, restrictons){
   let doesUserExist=await fetchUserData(userid)//value to check if user exists
   if(doesUserExist=="null"){return JSON.stringify(userid+" does not exist")}//returns this if the userId is incorrect
   else{
-    const new_restrict= await UserRestriction.create({userId:userid, restriction:restrictons});//create a new restriction in the database
-    return JSON.stringify(new_restrict)//returns created object int JSON string format
+      let restriction = await UserRestriction.findOne({where: {userId: userid, restriction: restrictons}})//checks if user already has a restriction})
+      if (restriction == null) {
+        restriction = await UserRestriction.create({userId:userid, restriction:restrictons});//create a new restriction in the database
+      }
+    return JSON.stringify(restriction)//returns created object int JSON string format
   }
 }
 
