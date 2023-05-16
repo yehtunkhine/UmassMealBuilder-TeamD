@@ -41,7 +41,7 @@ export default function User(){
             }
         }
         try{
-            if(newPassword.localeCompare(newPassword.toUpperCase()) === 0 || newPassword.localeCompare(newPassword.toLowerCase()) === 0 
+            if(newPassword.localeCompare(newPassword.toUpperCase()) === 0 || newPassword.localeCompare(newPassword.toLowerCase()) === 0
                 || !/[0-9]/.test(newPassword) || !strongPassword || len < 8){
                 throw new Error("Password is not strong enough, please have at least 1 number, 1 uppercase, 1 lowercase, 1 special character and at least 8 characters");
             }
@@ -52,7 +52,7 @@ export default function User(){
             console.log(`There was an error: ${error}`);
             alert(error);
             return;
-        }  
+        }
         let credential = EmailAuthCredential.credential(user.email ,password).then(() => {
             try{
                 updatePassword(user, newPassword).then(() => {
@@ -108,13 +108,13 @@ export default function User(){
                 }
             });
         }
-    }   
+    }
     handleDropdown();
 
     //Gets restrictions to display in dropdown
     const getRestrictions = () =>{
         //TODO If you want you can make these set to whatever's in the databse
-        let restrictions = [" ", "Milk", "Peanuts", "Shellfish", "Eggs", "Gluten", "Tree Nuts", "Fish", "Soy", "Corn", "Sesame", 
+        let restrictions = [" ", "Milk", "Peanuts", "Shellfish", "Eggs", "Gluten", "Tree Nuts", "Fish", "Soy", "Corn", "Sesame",
         "Vegetarian", "Plant Based", "Local", "Whole Grain", "Halal", "Antibiotic Free", "Sustainable"];
         let selection = document.getElementById("allergen");
         for(let i = selection.length-1; i >= 0; i--){
@@ -126,7 +126,7 @@ export default function User(){
             el.value = restrictions[i];
             selection.appendChild(el);
         }
-    }  
+    }
 
     const getUserRestrictions = () =>{
         let restrictions = document.getElementById("userRestrictions");
@@ -157,16 +157,13 @@ export default function User(){
         tempState.splice(tempState.indexOf(child), 1);
         trackState = tempState;
         //TODO set userdata to trackState
-        setUserRestrictionsState(trackState); 
+        setUserRestrictionsState(trackState);
     }
 
     const setUserRestrictions = () => {
         //TODO set userRestrictionsArray to user data
         //Integrate here, this will only trigger on initial run through
         let userRestrictionsArray = [];
-        userRestrictionsArray.push("Sample Restriction");
-        userRestrictionsArray.push("Sample Restriction2");
-        userRestrictionsArray.push("Sample");
         trackState = userRestrictionsArray;
         setUserRestrictionsState(userRestrictionsArray);
     }
@@ -193,72 +190,74 @@ export default function User(){
         if(user !== null){
             getRestrictions();
             getUserRestrictions();
-            
+
         }else{
             navigate("/");
         }
         console.log(userRestrictionsState);
     });
+
     if(user === null){
-        return <div>   
+        return <div>
             </div>;
     }
-    return (  
-    <div class ="flex-container">
-        <div class="sidenav flex-child-nav">
-            <text class = "forgotPasswordButton" onClick={scrollAllergens}>Allergens/Restrictions</text>
-            <text class = "forgotPasswordButton" onClick={scrollFavorites}>Upcoming Favorites</text>
-            <text class = "forgotPasswordButton" onClick={scrollSettings}>Account Settings</text>
-        </div>
-        <div class="container flex-child" >
-            <div>
-                <h2>Welcome {user.displayName}!</h2>
+
+    return (
+        <div className ="flex-container">
+            <div className="sidenav flex-child-nav">
+                <text className = "forgotPasswordButton" onClick={scrollAllergens}>Allergens/Restrictions</text>
+                <text className = "forgotPasswordButton" onClick={scrollFavorites}>Upcoming Favorites</text>
+                <text className = "forgotPasswordButton" onClick={scrollSettings}>Account Settings</text>
             </div>
-            <div class = "userBox labelBox" ref = {allergensRef}>
-                <h3>Allergens/Restrictions</h3>
-            </div>
-            <div class = "userBoxDescription">
-                <h4>Add a restriction</h4>
-                <div class = "flex-container">
-                    <div class = "flex-space"></div>
-                    <select id="allergen" class = "flex-select "></select>
-                    <div class="flex-space"></div>
-                    <button onClick={addUserRestrictions} class = "flex-button  restrictions-button">Add Restriction</button>
-                    <div class = "flex-space"></div>
+            <div className="container flex-child" >
+                <div>
+                    <h2>Welcome {user.displayName}!</h2>
                 </div>
-                <br></br><br></br>
-            <div class="separate"></div>
-                <h4>Current Restrictions</h4>
-                <div class = "flex-container">
-                <ul id="userRestrictions" class = "flex-list"></ul>
-                <ul id="userRestrictionsRemoval" class = "flex-remove"></ul>
+                <div className = "userBox labelBox" ref = {allergensRef}>
+                    <h3>Allergens/Restrictions</h3>
                 </div>
-            </div>
-            <br></br>
-            <div class = "userBox labelBox" ref = {favoritesRef}>
-                <h3>Upcoming Favorites</h3>
-            </div>
-            <div class= "userBoxDescription">
-            </div>
-            <br></br>
-            <div class = "userBox labelBox" ref = {settingsRef}>
-                <h3>Settings</h3>
-            </div>
-            <div class = "userBoxDescription">
-                <div class = "innerBox">
-                    <button onClick = {handleDropdown} class="dropdown-btn">Change Password 
-                        <i class="fa fa-caret-down"></i>
-                    </button>
-                    
-                    <div class="dropdown-container">
-                        <div class = "separate"></div>
-                        <button class = "" onClick={sendPasswordReset} >Send Password Reset Link</button>
+                <div className = "userBoxDescription">
+                    <h4>Add a restriction</h4>
+                    <div className = "flex-container">
+                        <div className = "flex-space"></div>
+                        <select id="allergen" className = "flex-select "></select>
+                        <div className="flex-space"></div>
+                        <button onClick={addUserRestrictions} className = "flex-button  restrictions-button">Add Restriction</button>
+                        <div className = "flex-space"></div>
+                    </div>
+                    <br></br><br></br>
+                <div className="separate"></div>
+                    <h4>Current Restrictions</h4>
+                    <div className = "flex-container">
+                    <ul id="userRestrictions" className = "flex-list"></ul>
+                    <ul id="userRestrictionsRemoval" className = "flex-remove"></ul>
+                    </div>
+                </div>
+                <br></br>
+                <div className = "userBox labelBox" ref = {favoritesRef}>
+                    <h3>Upcoming Favorites</h3>
+                </div>
+                <div className= "userBoxDescription">
+                </div>
+                <br></br>
+                <div className = "userBox labelBox" ref = {settingsRef}>
+                    <h3>Settings</h3>
+                </div>
+                <div className = "userBoxDescription">
+                    <div className = "innerBox">
+                        <button onClick = {handleDropdown} className="dropdown-btn">Change Password
+                            <i className="fa fa-caret-down"></i>
+                        </button>
+
+                        <div className="dropdown-container">
+                            <div className = "separate"></div>
+                            <button className = "" onClick={sendPasswordReset} >Send Password Reset Link</button>
+                        </div>
                     </div>
                 </div>
             </div>
+            <script></script>
         </div>
-        <script></script>
-    </div>
     );
 }
 /*<text class = "dropdown-text">Enter Current Password</text>
