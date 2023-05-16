@@ -228,7 +228,7 @@ export default function User(){
             })
             setAllergenSet(set);
         })
-    }, [user]);
+    }, [user, allergenSet])
 
     if(user === null){
         return <div>
