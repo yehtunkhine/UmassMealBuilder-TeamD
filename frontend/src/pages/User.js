@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { AuthenticationContext } from './../App';
 import { useRef } from 'react';
@@ -191,6 +191,7 @@ export default function User(){
         if(selectedAllergenValue !== "" && selectedAllergenValue !== "Select an option"){
             const updatedSet = new Set(allergenSet);
             updatedSet.add(selectedAllergenValue);
+            // TODO: push updatedSet to database (await for backend to be fixed)
             setAllergenSet(updatedSet);
             setSelectedAllergenValue("");
         }
@@ -203,20 +204,20 @@ export default function User(){
     }
 
 
-    // useEffect(() => {
-    //     if(firstRun){
-    //         firstRun = false;
-    //         setUserRestrictions();
-    //     }
-    //     if(user !== null){
-    //         getRestrictions();
-    //         getUserRestrictions();
-
-    //     }else{
-    //         navigate("/");
-    //     }
-    //     console.log(userRestrictionsState);
-    // });
+    useEffect(() => {
+       // retrieve user's restrictions
+        fetch(`http://localhost:3001/getUserRestrictions?userId=${user?.uid}`)
+        .then(response => response.json())
+        .then(data => {
+            data = data[0]
+            if (data.restriction !== "") {
+                const restrictions = data.restriction.split(",")
+                const trimmedRestrictions = restrictions.map((restriction) => restriction.trim());
+                const set = new Set(trimmedRestrictions);
+                setAllergenSet(set);
+            }
+        })
+    }, []);
 
     if(user === null){
         return <div>
