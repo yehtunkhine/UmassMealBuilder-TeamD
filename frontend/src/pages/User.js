@@ -199,8 +199,7 @@ export default function User(){
 
     // Update user restrictions in the backend
     const updateUserRestrictions = async () => {
-        const restriction = [...allergenSet].join(',');
-        await fetch(`http://localhost:3001/createUserRestriction?userId=${user.uid}&restriction=${restriction}`, {
+        await fetch(`http://localhost:3001/createUserRestriction?userId=${user.uid}&restriction=${selectedAllergenValue}`, {
             method: 'POST',
         })
     }
@@ -217,13 +216,11 @@ export default function User(){
         fetch(`http://localhost:3001/getUserRestrictions?userId=${user?.uid}`)
         .then(response => response.json())
         .then(data => {
-            data = data[0]
-            if (data.restriction !== "") {
-                const restrictions = data.restriction.split(",")
-                const trimmedRestrictions = restrictions.map((restriction) => restriction.trim());
-                const set = new Set(trimmedRestrictions);
-                setAllergenSet(set);
-            }
+            const set = new Set(allergenSet);
+            data.forEach((item) => {
+                set.add(item.restriction);
+            })
+            setAllergenSet(set);
         })
     }, [user]);
 
