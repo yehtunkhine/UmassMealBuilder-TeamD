@@ -19,7 +19,7 @@ async function createUser(userid,username, useremail, userphone){
 
 router.post('/createUser', (req, res)=>{
   (async function createAndSend(){
-    //checking to make sure all parameters are defined 
+    //checking to make sure all parameters are defined
     if(req.query.userId==undefined||req.query.name==undefined||req.query.email==undefined||req.query.phone==undefined){res.end(JSON.stringify('missing parameters'))}
     else{
       let sendVal = await createUser(req.query.userId, req.query.name, req.query.email, req.query.phone)//creates the user
@@ -33,7 +33,7 @@ router.post('/createUser', (req, res)=>{
 //delete user--works
 async function deleteuser(userid){
   let doesUserExist=await fetchUserData(userid)//gets userdata if it exists
-  if(doesUserExist=="null"){return userid+" does not exist"}//if the user does not exist return 
+  if(doesUserExist=="null"){return userid+" does not exist"}//if the user does not exist return
   else{
     let userRestrictionAllergen=await fetchUserRestrictions(userid)//gets user allergens if they exist
     let userRestricctionNonAllergen=await fetchUserNonAllergenRestrictions(userid)//gets user no allergens if they exist
@@ -91,8 +91,16 @@ async function createUserRestriction(userid, restrictons){
   let doesUserExist=await fetchUserData(userid)//value to check if user exists
   if(doesUserExist=="null"){return JSON.stringify(userid+" does not exist")}//returns this if the userId is incorrect
   else{
-    const new_restrict= await UserRestriction.create({userId:userid, restriction:restrictons});//create a new restriction in the database
-    return JSON.stringify(new_restrict)//returns created object int JSON string format
+    // const restrictions = await UserRestriction.findone({where:{userId:userid}})//gets user restriction with given userId
+    const userRestrictions = await UserRestriction.findOne(
+        {where:{userId:userid}}
+    )
+    if (userRestrictions == null) {
+        await UserRestriction.create({userId:userid, restriction:restrictons});//create a new restriction in the database
+    } else {
+        await UserRestriction.update({restriction:restrictons}, {where:{userId:userid}});//update the restriction in the databas
+    }
+    return JSON.stringify(restrictons)//returns created object int JSON string format
   }
 }
 router.post('/createUserRestriction', (req,res)=>{
@@ -100,7 +108,7 @@ router.post('/createUserRestriction', (req,res)=>{
     if(req.query.userId==undefined||req.query.restriction==undefined){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
     else{
       let sendVal=await createUserRestriction(req.query.userId,req.query.restriction)//calls function to create restriction and stores fuction return
-      res.end(sendVal)//attaches message to response 
+      res.end(sendVal)//attaches message to response
     }
   })();
 })
@@ -209,7 +217,7 @@ async function deleteUserNonAllergenRestriction(userid, user_rest){
     if(doesRestrictionExist == "null"){return userid+" does not have this restriction"}//return if user does not have specified restriction
     else{
       await UserNonAllergenRestriction.destroy({where:{userId:userid,restriction:user_rest}})//destroy all restrictions that match specification
-      return userid+" had deleted restriction "+user_rest//return value of success 
+      return userid+" had deleted restriction "+user_rest//return value of success
     }
   }
 }
@@ -326,7 +334,7 @@ async function createMeal(userid, food_IDS){
   let counter=0
   for(let i=0;i<food_IDS.length;++i){//loops over foodIDs
     if(food_IDS[i]!="invalid food name"){let newBridge=await MealFoodBridge.create({mealId:meal_ID, foodId:food_IDS[i]})//creates an entry in DB
-    if(food_IDS[i]=="invalid food name"){counter++}//increments counter of invalid foods 
+    if(food_IDS[i]=="invalid food name"){counter++}//increments counter of invalid foods
   }
   }
   return JSON.stringify(userid+' has created a meal with ID '+ meal_ID+' with '+counter+' invalid foods')

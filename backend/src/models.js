@@ -52,6 +52,10 @@ const UserNonAllergenRestriction = sequelize.define("UserNonAllergenRestriction"
 
 //UserRestriction
 const UserRestriction = sequelize.define("UserRestriction",{
+    userId: {
+        type: DataTypes.STRING,
+        primaryKey: false,
+    },
     restriction: {
         type: DataTypes.STRING,
         allowNull: false
