@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useContext } from 'react';
 import { AuthenticationContext } from './../App';
 import { useRef } from 'react';
 import './loginstyles.css';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 //import { EmailAuthCredential, updatePassword } from 'firebase/auth';
 
-let firstRun = true;
-let trackState = [];
+// let firstRun = true;
 
 export default function User(){
     let auth = useContext(AuthenticationContext);//Firebase authentication
@@ -16,8 +15,9 @@ export default function User(){
     const allergensRef = useRef(null);
     const settingsRef = useRef(null);
     const favoritesRef = useRef(null);
-    const navigate = useNavigate();
-    const [userRestrictionsState, setUserRestrictionsState] = useState(trackState);//Tracks restrictions
+    // const navigate = useNavigate();
+    const [allergenSet, setAllergenSet] = useState(new Set());//Tracks restrictions
+    const [selectedAllergenValue, setSelectedAllergenValue] = useState('');//Tracks selected allergen
 
     /* In case we can ever fix the user authentication
     const txtPassword = useRef(null);
@@ -111,91 +111,112 @@ export default function User(){
     }
     handleDropdown();
 
-    //Gets restrictions to display in dropdown
-    const getRestrictions = () =>{
+    //returns list of allergens
+    const getAllergens = () =>{
         //TODO If you want you can make these set to whatever's in the databse
-        let restrictions = [" ", "Milk", "Peanuts", "Shellfish", "Eggs", "Gluten", "Tree Nuts", "Fish", "Soy", "Corn", "Sesame",
-        "Vegetarian", "Plant Based", "Local", "Whole Grain", "Halal", "Antibiotic Free", "Sustainable"];
-        let selection = document.getElementById("allergen");
-        for(let i = selection.length-1; i >= 0; i--){
-            selection.remove(i);
-        }
-        for(let i = 0; i < restrictions.length; i++){
-            var el = document.createElement("option");
-            el.textContent = restrictions[i];
-            el.value = restrictions[i];
-            selection.appendChild(el);
+        // let restrictions = [" ", "Milk", "Peanuts", "Shellfish", "Eggs", "Gluten", "Tree Nuts", "Fish", "Soy", "Corn", "Sesame",
+        // "Vegetarian", "Plant Based", "Local", "Whole Grain", "Halal", "Antibiotic Free", "Sustainable"];
+        return ['Select an option', 'Shellfish', 'Sesame', 'Tree Nuts', 'Fish', 'Eggs', 'Wheat', 'Gluten', 'Milk', 'Peanuts', 'Corn', 'Soy']
+        // let selection = document.getElementById("allergen");
+        // for(let i = selection.length-1; i >= 0; i--){
+        //     selection.remove(i);
+        // }
+        // for(let i = 0; i < restrictions.length; i++){
+        //     var el = document.createElement("option");
+        //     el.textContent = restrictions[i];
+        //     el.value = restrictions[i];
+        //     selection.appendChild(el);
+        // }
+    }
+
+    // const getUserRestrictions = () =>{
+    //     let restrictions = document.getElementById("userRestrictions");
+    //     let removal = document.getElementById("userRestrictionsRemoval");
+    //     while(restrictions.firstChild){
+    //         restrictions.removeChild(restrictions.firstChild);
+    //     }
+    //     while(removal.firstChild){
+    //         removal.removeChild(removal.firstChild);
+    //     }
+    //     let userRestrictionsArray = userRestrictionsState;
+    //     for(let i = 0; i < userRestrictionsArray.length; i++){
+    //         var el = document.createElement("li");
+    //         el.textContent = userRestrictionsArray[i];
+    //         var remove = document.createElement("button");
+    //         remove.textContent = "\xD7";
+    //         remove.className = "removal-button";
+    //         remove.onclick = function(){
+    //             removeUserRestriction(userRestrictionsArray[i]);
+    //         };
+    //         removal.appendChild(remove);
+    //         restrictions.appendChild(el);
+    //     }
+    // }
+
+    //const removeUserRestriction = (child) => {
+    //    let tempState = [...trackState];
+    //    tempState.splice(tempState.indexOf(child), 1);
+    //    trackState = tempState;
+    //    //TODO set userdata to trackState
+    //    setUserRestrictionsState(trackState);
+    //}
+
+    //const setUserRestrictions = () => {
+    //    //TODO set userRestrictionsArray to user data
+    //    //Integrate here, this will only trigger on initial run through
+    //    let userRestrictionsArray = [];
+    //    trackState = userRestrictionsArray;
+    //    setUserRestrictionsState(userRestrictionsArray);
+    //}
+
+    //const addUserRestrictions = () =>{
+    //    let userRestrictionsArray = [...userRestrictionsState];
+    //    let tempRestriction = document.getElementById("allergen").value;
+    //    if(!userRestrictionsArray.includes(tempRestriction)){
+    //        userRestrictionsArray.push(tempRestriction);
+    //        trackState = userRestrictionsArray;
+    //        //Sort if have time
+    //        //Then push array to database
+    //        //TODO push new restriction to user data
+    //        setUserRestrictionsState(userRestrictionsArray);
+    //    }
+    //}
+    //
+    const handleSelectAllergen = (e) => {
+        setSelectedAllergenValue(e.target.value);
+    }
+
+    const handleSubmitAllergen = (e) => {
+        e.preventDefault();
+        if(selectedAllergenValue !== "" && selectedAllergenValue !== "Select an option"){
+            const updatedSet = new Set(allergenSet);
+            updatedSet.add(selectedAllergenValue);
+            setAllergenSet(updatedSet);
+            setSelectedAllergenValue("");
         }
     }
 
-    const getUserRestrictions = () =>{
-        let restrictions = document.getElementById("userRestrictions");
-        let removal = document.getElementById("userRestrictionsRemoval");
-        while(restrictions.firstChild){
-            restrictions.removeChild(restrictions.firstChild);
-        }
-        while(removal.firstChild){
-            removal.removeChild(removal.firstChild);
-        }
-        let userRestrictionsArray = userRestrictionsState;
-        for(let i = 0; i < userRestrictionsArray.length; i++){
-            var el = document.createElement("li");
-            el.textContent = userRestrictionsArray[i];
-            var remove = document.createElement("button");
-            remove.textContent = "\xD7";
-            remove.className = "removal-button";
-            remove.onclick = function(){
-                removeUserRestriction(userRestrictionsArray[i]);
-            };
-            removal.appendChild(remove);
-            restrictions.appendChild(el);
-        }
-    }
-
-    const removeUserRestriction = (child) => {
-        let tempState = [...trackState];
-        tempState.splice(tempState.indexOf(child), 1);
-        trackState = tempState;
-        //TODO set userdata to trackState
-        setUserRestrictionsState(trackState);
-    }
-
-    const setUserRestrictions = () => {
-        //TODO set userRestrictionsArray to user data
-        //Integrate here, this will only trigger on initial run through
-        let userRestrictionsArray = [];
-        trackState = userRestrictionsArray;
-        setUserRestrictionsState(userRestrictionsArray);
-    }
-
-    const addUserRestrictions = () =>{
-        let userRestrictionsArray = [...userRestrictionsState];
-        let tempRestriction = document.getElementById("allergen").value;
-        if(!userRestrictionsArray.includes(tempRestriction)){
-            userRestrictionsArray.push(tempRestriction);
-            trackState = userRestrictionsArray;
-            //Sort if have time
-            //Then push array to database
-            //TODO push new restriction to user data
-            setUserRestrictionsState(userRestrictionsArray);
-        }
+    const handleRemoveAllergen = (value) => {
+        const updatedSet = new Set(allergenSet);
+        updatedSet.delete(value);
+        setAllergenSet(updatedSet);
     }
 
 
-    useEffect(() => {
-        if(firstRun){
-            firstRun = false;
-            setUserRestrictions();
-        }
-        if(user !== null){
-            getRestrictions();
-            getUserRestrictions();
+    // useEffect(() => {
+    //     if(firstRun){
+    //         firstRun = false;
+    //         setUserRestrictions();
+    //     }
+    //     if(user !== null){
+    //         getRestrictions();
+    //         getUserRestrictions();
 
-        }else{
-            navigate("/");
-        }
-        console.log(userRestrictionsState);
-    });
+    //     }else{
+    //         navigate("/");
+    //     }
+    //     console.log(userRestrictionsState);
+    // });
 
     if(user === null){
         return <div>
@@ -218,19 +239,28 @@ export default function User(){
                 </div>
                 <div className = "userBoxDescription">
                     <h4>Add a restriction</h4>
-                    <div className = "flex-container">
+                    <form className = "flex-container" onSubmit={handleSubmitAllergen}>
                         <div className = "flex-space"></div>
-                        <select id="allergen" className = "flex-select "></select>
+                        <select value={selectedAllergenValue} onChange={handleSelectAllergen} className="flex-select">
+                            {getAllergens().map((allergen) => (
+                                <option key={allergen} value={allergen}>{allergen}</option>
+                            ))}
+                        </select>
                         <div className="flex-space"></div>
-                        <button onClick={addUserRestrictions} className = "flex-button  restrictions-button">Add Restriction</button>
+                        <button className = "flex-button  restrictions-button" type="submit">Add Allergen</button>
                         <div className = "flex-space"></div>
-                    </div>
+                    </form>
                     <br></br><br></br>
                 <div className="separate"></div>
                     <h4>Current Restrictions</h4>
                     <div className = "flex-container">
-                    <ul id="userRestrictions" className = "flex-list"></ul>
-                    <ul id="userRestrictionsRemoval" className = "flex-remove"></ul>
+                        <ul className = "flex-list">
+                            {[...allergenSet].map((allergen, index) => (
+                                <li key={index}>
+                                    <button className = "flex-button restrictions-button" style={{margin: 10, padding: 10}} onClick={() => handleRemoveAllergen(allergen)}>{allergen}</button>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
                 <br></br>
@@ -260,10 +290,3 @@ export default function User(){
         </div>
     );
 }
-/*<text class = "dropdown-text">Enter Current Password</text>
-                        <input class = "input" ref = {txtPassword} id = "password" name = "passwordInput" placeholder="Password" type = "password"/>
-                        <text class = "dropdown-text">Enter New Password</text>
-                        <input class = "input" ref = {txtNewPassword} id = "password" name = "passwordInput" placeholder="New Password" type = "password"/>
-                        <text class = "dropdown-text">Re-enter New Password</text>
-                        <input class = "input" ref = {txtReNewPassword} id = "password" name = "passwordInput" placeholder="Re-Enter New Password" type = "password"/>
-                        <button onClick={changePassword} class = "">Change Password</button>*/
