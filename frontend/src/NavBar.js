@@ -20,11 +20,9 @@ export default function Navbar(){
     const [logInOrUserLink, setLogInOrUserLink] = useState("/login");
     const [signUpOrLogOut, setSignUpOrLogOut] = useState("Sign Up");
     const [signUpOrLogOutLink, setSignUpOrLogOutLink] = useState("/signup");
-    /*shouldComponentUpdate = (nextProps, nextState) => {
-        return signUpOrLogOutLink !== nextState.value;
-    }*/
+
     const changeLogIn = () => {
-        if(loggedIn){
+        if(loggedIn){//If the user is logged in
             setLogInOrUser(userName);
             setLogInOrUserLink("/userPage");
             setSignUpOrLogOut("Log Out");
@@ -44,9 +42,9 @@ export default function Navbar(){
             if (user) {
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/firebase.User
-            if(user.displayName !== null){
+            if(user.displayName !== null){//So we only set the user name after it is declared
                 userName = user.displayName;
-                if(userName.length > 10){
+                if(userName.length > 10){//So it cuts off if name is too long
                     userName = userName.substring(0,10) + "..."
                 }
                 loggedIn = true;
