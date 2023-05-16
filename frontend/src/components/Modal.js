@@ -1,6 +1,7 @@
 
 import React from 'react'
 import ReactDom from 'react-dom'
+import './Modal.css'
 
 const MODAL_STYLES = {
   position: 'fixed',
@@ -9,7 +10,8 @@ const MODAL_STYLES = {
   transform: 'translate(-50%, -50%)',
   backgroundColor: '#FFF',
   padding: '50px',
-  zIndex: 1000
+  zIndex: 1000,
+  maxHeight: '800px'
 }
 
 const OVERLAY_STYLES = {
@@ -19,7 +21,9 @@ const OVERLAY_STYLES = {
   right: 0,
   bottom: 0,
   backgroundColor: 'rgba(0, 0, 0, .07)',
-  zIndex: 1000
+  zIndex: 1000,
+  overflow: 'scroll',
+  maxHeight: '800px'
 }
 
 export default function Modal({ open, children, onClose }) {
@@ -27,8 +31,8 @@ export default function Modal({ open, children, onClose }) {
 
   return ReactDom.createPortal(
     <>
-      <div style={OVERLAY_STYLES} />
-      <div style={MODAL_STYLES}>
+      <div className = 'modal-dialog' style={OVERLAY_STYLES} />
+      <div className = 'modal-scroll' style={MODAL_STYLES}>
         <button onClick={onClose}>X</button>
         {children}
       </div>

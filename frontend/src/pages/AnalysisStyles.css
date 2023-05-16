@@ -1,0 +1,44 @@
+.overlay {
+    opacity:0.95;
+    border-radius: 50px;
+    padding: 20px;
+    width: 50%;
+    height: 50%;
+    align-items: center;
+    margin: auto;
+}
+
+.labelText {
+
+    margin-top:30px;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Oswald';
+    font-weight: 700;
+    font-size: xx-large;
+    display: flex;
+    text-align:right;
+    flex-direction: column;
+    justify-content: center;
+    align-items: inherit;
+  }
+  
+.itemButton {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Oswald';
+    border-radius: 5px;
+    background-color:#0B6EFD;
+    padding: 5px;
+    width: 20%;
+    margin: auto;
+    margin-top: 60px;
+    margin-bottom:60px;
+    color: rgb(250, 247, 247);
+    align-content: center;
+    display:flex;
+    justify-content: center;
+  }
+  .itemButton:hover {
+    background-color: #151976;
+  }
+  
+  
+
+  
