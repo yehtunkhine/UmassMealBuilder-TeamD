@@ -20,7 +20,7 @@ async function createUser(userid,username, useremail, userphone){
 router.post('/createUser', (req, res)=>{
   (async function createAndSend(){
     //checking to make sure all parameters are defined 
-    if(req.query.userId==(undefined||"")||req.query.name==(undefined||"")||req.query.email==(undefined||"")||req.query.phone==(undefined||"")){res.end(JSON.stringify('missing parameters'))}
+    if(req.query.userId==(undefined||"")||req.query.name==(undefined||"")||req.query.email==(undefined||"")||req.query.phone==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}
     else{
       let sendVal = await createUser(req.query.userId, req.query.name, req.query.email, req.query.phone)//creates the user
       res.end(JSON.stringify(sendVal))//turns user object into JSON and attachees to message response
@@ -39,14 +39,14 @@ async function deleteuser(userid){
     let userRestricctionNonAllergen=await fetchUserNonAllergenRestrictions(userid)//gets user no allergens if they exist
     let favs=await fetchFavoriteFoods(userid)//gets user favorites if they exist
     let meals=await Meal.findAll({where:{userId:userid}})//gets a list of usermeals if it exists
-    meals.map(f=>f.mealId)//turns list of meal objects(userId, mealId) into a lsit of mealIds
     if(userRestrictionAllergen!="[]"){await UserRestriction.destroy({where:{userId:userid}})}//if user has allergen restrictions delete them
     if(userRestricctionNonAllergen!="[]"){await UserNonAllergenRestriction.destroy({where:{userId:userid}})}//if user has non allergen restrictions delete
     if(favs!="[]"){await FavoriteFoodsBridge.destroy({where:{userId:userid}})}//delete favorite foods
     if(meals!="[]"){
-      for(let i=0;i<meals.length;++i){
-        await MealFoodBridge.destroy({where:{mealId:meals[i]}})//destroys listings in to MealFoodBridge with correcponding mealId
-        await Meal.destroy({where:{mealId:meals[i]}})//deletes meal with mealId from Meal database, must be done after deleting MealFoodBridge
+      let mealIDS=await meals.map(f=>f.mealId)//turns list of meal objects(userId, mealId) into a lsit of mealIds
+      for(let i=0;i<mealIDS.length;++i){
+        await MealFoodBridge.destroy({where:{mealId:mealIDS[i]}})//destroys listings in to MealFoodBridge with correcponding mealId
+        await Meal.destroy({where:{mealId:mealIDS[i]}})//deletes meal with mealId from Meal database, must be done after deleting MealFoodBridge
         //otherwise it leads to MealFoodBridge containing a null value where the mealId was previously
       }
     }
@@ -74,7 +74,7 @@ async function fetchUserData(userid){
 
 router.get('/getUser', (req, res) =>{
   (async function getUser(){
-    if(req.query.userId==(undefined||"")){res.end(JSON.stringify('missing parameters'))}//checks that a userId is sent
+    if(req.query.userId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks that a userId is sent
     else{
       let users = await fetchUserData((req.query.userId))//gets data to return
       if(users=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}//if user does not exist return this
@@ -136,7 +136,7 @@ async function deleteUserRestriction(userid, user_rest){
   if(doesExist == "[]"){return userid+" has no restrictions"}//returns if the userId is invalid
   else{
     let doesRestExist=await UserRestriction.findAll({where:{userId:userid,restriction:user_rest}})//checks if user has specified restriction
-    if(doesRestExist=="[]"){return userId + ' does not have this restriction'}//return if user has restrictions but not specified one
+    if(doesRestExist.toString()==[].toString()){return userid + ' does not have this restriction'}//return if user has restrictions but not specified one
     else{
     await UserRestriction.destroy({where:{userId:userid,restriction:user_rest}})//destorys all instances of matcing restriction and user
     return userid+" had deleted restriction "+user_rest//return message on success
@@ -190,7 +190,7 @@ router.get('/getUserNonAllergenRestrictions', (req, res)=>{
     if(req.query.userId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//checks that parameters are given
     else{
       let doesUserExist=await fetchUserData(req.query.userId)//value to check if user is valid
-      if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userid+" does not exist"))}//return if user does not exist
+      if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}//return if user does not exist
       else{
         let restrict = await fetchUserNonAllergenRestrictions((req.query.userId))//gets and stores user non allergen restrictions
         if(restrict=="[]"){res.end(JSON.stringify(req.query.userId+" has no non allergenic restrictions"))}//return if user has no no allergen restrictions
@@ -206,7 +206,7 @@ async function deleteUserNonAllergenRestriction(userid, user_rest){
   if(doesUserExist=="null"){return userid+' does not exist'}//return if user does not exist
   else{
     let doesRestrictionExist = await UserNonAllergenRestriction.findOne({where:{userId:userid, restriction:user_rest}})//value to check if user has specified restriction
-    if(doesRestrictionExist == "null"){return userid+" does not have this restriction"}//return if user does not have specified restriction
+    if(doesRestrictionExist == null){return userid+" does not have this restriction"}//return if user does not have specified restriction
     else{
       await UserNonAllergenRestriction.destroy({where:{userId:userid,restriction:user_rest}})//destroy all restrictions that match specification
       return userid+" had deleted restriction "+user_rest//return value of success 
@@ -229,17 +229,21 @@ router.get('/deleteuserNonAllergenRestriction', (req,res)=>{
 async function createFavoriteFood(userid, foodid){
   let doesExist =await fetchUserData(userid)//checks if user is valid
   if(doesExist!="null"){
-  let new_fav_food = await FavoriteFoodsBridge.create({userId:userid, foodId:foodid});//creates a new favorite
-  return new_fav_food//returns created object
+    let alreadyFav=await FavoriteFoodsBridge.findOne({where:{userId:userid, foodId:foodid}})//value to check if already a favorite
+    if(alreadyFav!="null"){return userid+' has already favorited '+foodid}
+    else{
+      let new_fav_food = await FavoriteFoodsBridge.create({userId:userid, foodId:foodid});//creates a new favorite
+      return new_fav_food//returns created object
+    }
   }
-  else{return userId+" does not exist"}//return if user does not exist
+  else{return userid+" does not exist"}//return if user does not exist
 }
 router.post('/createFavFood',(req,res)=>{
   (async function createfav(){
-    if(req.query.userId==(undefined||"")||req.query.foodId==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//check if parameters are given
+    if(req.query.userId==(undefined||"")||req.query.name==(undefined||"")){res.end(JSON.stringify('invalid parameters'))}//check if parameters are given
     else{
       let food_id=await Food.findOne({where:{name:req.query.name}})//gets food object that is to be favorited
-      if(food_id=="null"){res.end(JSON.stringify('food does not exist'))}//return if food noes not exist
+      if(food_id==null){res.end(JSON.stringify(req.query.name+' does not exist'))}//return if food noes not exist
       else{
         let sendVal=await createFavoriteFood(req.query.userId, food_id.foodId)//creates and stores result of favotorite call
         res.end(JSON.stringify(sendVal))//attaches return to response
@@ -253,14 +257,7 @@ router.post('/createFavFood',(req,res)=>{
 //fetch favorite foods--works
 async function fetchFavoriteFoods(userid){
   const fav_food_list = await FavoriteFoodsBridge.findAll({where:{userId: userid}});//gets all foods favorited by user
-  fav_food_list.map(f=>f.foodId)//turns objects {userId, foodId} to lsit of food Ids
-  let foodNameList=[]//default return
-  for(let i=0;i<fav_food_list.length;++i){//loops over all favorite food ids
-    let food=await Food.findOne({where:{foodId:fav_food_list[i]}})//gets food item with correponding foodId
-    if(food=="null"){foodNameList.push(fav_food_list[i]+" is not in DB")}//value of food if not present in DB
-    else{foodNameList.push(food.name)}//pushes food name to return lsit
-  }
-  return foodNameList;//returns lsit of favorite foods
+  return fav_food_list.map(f=>f.foodId);//returns lsit of favorite foods
 }
 router.get('/getFavoriteFoods', (req,res)=>{
   (async function getFavoriteFoods(){
@@ -280,7 +277,7 @@ router.get('/getFavoriteFoods', (req,res)=>{
 //deletefavfood--works
 async function deleteFavFood(userid, foodid, name){
   let doesFavoriteExist=await FavoriteFoodsBridge.findOne({where:{userId:userid, foodId:foodid}})//checks if user has favorited item
-  if(doesFavoriteExist=="null"){return userid+" has not favorited this item"}//return if user has not favorited item
+  if(doesFavoriteExist==null){return userid+" has not favorited this item"}//return if user has not favorited item
   else{
     await FavoriteFoodsBridge.destroy({where:{userId:userid,foodId:foodid}})//destorys favorited iem
     return userid+" has unfavorited " + name//return of successful unfavorite
@@ -294,7 +291,7 @@ router.get('/deleteFavoriteFood', (req,res)=>{
       if(doesUserExit=="null"){res.end(JSON.stringify(req.query.userId+' does not exist'))}//return if user does not exist
       else{
         let food = await Food.findOne({where:{name: req.query.name}})//finds food that is to be deleted from name
-        if(food=="null"){res.end(JSON.stringify(req.query.name+' does not exist'))}//return if food to be deleted does exist in DB
+        if(food==null){res.end(JSON.stringify(req.query.name+' does not exist'))}//return if food to be deleted does exist in DB
         else{
           let delVal = await deleteFavFood(req.query.userId, food.foodId, req.query.name)//calls and stores return of delete call
           res.end(JSON.stringify(delVal))//attaches return to response
@@ -313,7 +310,7 @@ async function getFoodIDs(foods){//takes in lsit of food
   let foods_IDS=[]//default return
   for(let i=0;i<foods.length;++i){//loops over food list
     let F_ID=await Food.findOne({where:{name:foods[i]}})//value of food itemby name
-    if(F_ID!="null"){foods_IDS.push(F_ID.foodId)}//return if the food have an entry in DB
+    if(F_ID!=null){foods_IDS.push(F_ID.foodId)}//return if the food have an entry in DB
     else{foods_IDS.push("invalid food name")}//return if food does not exist
   }
   return foods_IDS;//return list of ids and invalid entries
@@ -325,9 +322,8 @@ async function createMeal(userid, food_IDS){
   let meal_ID=new_meal.mealId//stores mealId of new meal
   let counter=0
   for(let i=0;i<food_IDS.length;++i){//loops over foodIDs
-    if(food_IDS[i]!="invalid food name"){let newBridge=await MealFoodBridge.create({mealId:meal_ID, foodId:food_IDS[i]})//creates an entry in DB
-    if(food_IDS[i]=="invalid food name"){counter++}//increments counter of invalid foods 
-  }
+    if(typeof food_IDS[i]=='number'){let newBridge=await MealFoodBridge.create({mealId:meal_ID, foodId:food_IDS[i]})}//creates an entry in DB
+    if(typeof food_IDS[i]=='string'){counter=counter+1}//increments counter of invalid foods 
   }
   return JSON.stringify(userid+' has created a meal with ID '+ meal_ID+' with '+counter+' invalid foods')
 }
@@ -337,8 +333,8 @@ router.post('/createMeal', (req,res)=>{
     else{
       let foodlist=await req.query.foods.split(',') //spits list of foods by commas
       let foodAsIDS=await getFoodIDs(foodlist)//turns food names into ids
-      let doesUserExist=await fetchUserData(req.query.userid)//value ot check if user exists
-      if(doesUserExist.toString()==[].toString()){res.end(JSON.stringify(req.query.userId+" does not exist"))}//return if user id invalid
+      let doesUserExist=await fetchUserData(req.query.userId)//value ot check if user exists
+      if(doesUserExist=="null"){res.end(JSON.stringify(req.query.userId+" does not exist"))}//return if user id invalid
       else if(foodAsIDS==[]){res.end(JSON.stringify('There are no foods in meal'))}//return if empty array is returned
       else{
       let sendVal=await createMeal(req.query.userId, foodAsIDS)//creates and stores meal return
@@ -351,15 +347,15 @@ router.post('/createMeal', (req,res)=>{
 
 //fetch meals
 async function fetchMeals(userid){
-  let userMeals=await Meals.findAll({where:{userId:userid}})//gets meals for user
+  let userMeals=await Meal.findAll({where:{userId:userid}})//gets meals for user
   let returnMeals=[]//initailozed return value
-  if(userMeals=="[]"){return(userid+ ' has no meals')}//return if user has no meals created
+  console.log(userMeals)
+  if(userMeals.toString()==[].toString()){return(userid+ ' has no meals')}//return if user has no meals created
   else{
-    userMeals.map(f=>f.mealId)//turns list of meals into list of mealIds
     for(let i=0;i<userMeals.length;++i){//loops over all mealIds
-      let foodsInMeal=await MealFoodBridge.findAll({where:{mealId:userMeals[i]}})//finds foods in meal
-      foodsInMeal.map(f=>f.foodId)//turns objects {mealId, foodId} to array of foodIds
-      returnMeals.push({mealId:userMeals[i], foods:foodsInMeal})//adds an entry to return consisting of mealId and list of foods
+      let foodsInMeal=await MealFoodBridge.findAll({where:{mealId:userMeals[i].mealId}})//finds foods in meal
+      let ids=await foodsInMeal.map(f=>f.foodId)//turns food objs to food ids
+      returnMeals.push({mealId:userMeals[i].mealId, foods:ids})//adds an entry to return consisting of mealId and list of foods
     }
     return returnMeals;//return value
   }
@@ -384,7 +380,7 @@ async function deleteMeal(userid, mealid){
   let doesUserExist = (await fetchUserData(userid)).toString()//value to check if user exists
   let doesMealExist = (await Meal.findOne({where:{userId:userid, mealId:mealid}}))//value to check if meal exists
   if(doesUserExist=="null"){return userid+' does not exist'}//return if user does not exist
-  else if(doesMealExist=="null"){return userid+" does not have a meal with id "+ mealid}//return if user does not have a meal with given id
+  else if(doesMealExist==null){return userid+" does not have a meal with id "+ mealid}//return if user does not have a meal with given id
   else{
     await MealFoodBridge.destroy({where:{mealId:mealid}})//destroys meal listing in MealFoodBridge
     await Meal.destroy({where:{mealId:mealid}})//destorys meal in Meal, must be done last otherwise all listings of mealId will become null values
