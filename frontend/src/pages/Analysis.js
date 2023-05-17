@@ -1,6 +1,6 @@
 import { Link} from "react-router-dom"
 import { useLocation } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
 import Speedometer from "react-d3-speedometer";
 import styled from 'styled-components'
@@ -75,7 +75,28 @@ right: 75px;
 
 export default function Analysis(){
     const location = useLocation();
-    console.log(location.state);
+    const {foods} = location.state;
+    const [items,setItems] = useState([]);
+
+    const fetchData = (foodId) => {
+      fetch(`http://localhost:3001/facts?foodId=${foodId}`)
+      .then(res => res.json())
+      .then(data => {
+          let facts = {"calories" : data.calories, "carbs" : data.carbs, "fat" : data.fat, "protein" : data.protein,
+          "ingredients" : data.ingredients, "recipeLables" : data.recipeLables, "healthfulness" : data.healthfulness};
+          setItems([...items,facts]);
+          console.log(items)
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    };
+
+    useEffect(() => {
+      fetchData(foods[0].foodId);
+    }, [foods,fetchData])
+
+    //console.log(location.state);
     if (location.state === null || location.state.foods.length === 0){
         return (
             <div class  = "overlay">
@@ -88,8 +109,14 @@ export default function Analysis(){
             </div>
         )
     }
-    const {foods} = location.state;
-
+/*
+    for (let i = 0; i<foods.length; i++) {
+      let promise = fetchData(foods[i].foodId);
+      console.log(promise)
+      promise.then(res => {
+        items.push(res);
+      })
+    }*/
     return (
     <Container >
         <h1>hello</h1>
