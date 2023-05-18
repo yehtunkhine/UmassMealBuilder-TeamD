@@ -230,18 +230,29 @@ const MenuData = ({hall}) => {
     }
 
     useEffect(() => {
-        fetch(`http://localhost:3001/getUserRestrictions?userId=${user?.uid}`)
-        .then(response => response.json())
-        .then(data => {
-            const restrictions = data.map((r) => r.restriction);
-            fetch(`http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=${restrictions.join(", ")}&nonAllergenRestrictions=`)
+        if (user) {
+            fetch(`http://localhost:3001/getUserRestrictions?userId=${user?.uid}`)
+            .then(response => response.json())
+            .then(data => {
+                const restrictions = data.map((r) => r.restriction);
+                fetch(`http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=${restrictions.join(", ")}&nonAllergenRestrictions=`)
+                .then(res => res.json())
+                .then(data => {
+                    setTodayMeals(data);
+                    setLoading(false);
+                })
+                .catch(err => console.error(err))
+            })
+        } else {
+            fetch(`http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=&nonAllergenRestrictions=`)
             .then(res => res.json())
             .then(data => {
                 setTodayMeals(data);
                 setLoading(false);
             })
             .catch(err => console.error(err))
-        })
+
+        }
     }, [user, hall]);
 
     return (
