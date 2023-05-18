@@ -1,3 +1,5 @@
+import MenuData from "../components/MenuData";
+
 export default function Berkshire(){
-    return <h1>Berkshire</h1>
+    return <div><MenuData hall = "Berkshire Dining Commons"/></div>
 }

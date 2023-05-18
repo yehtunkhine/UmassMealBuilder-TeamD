@@ -143,6 +143,17 @@ const router = express.Router()
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
+async function testConnection() {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+}
+
+testConnection()
+
 router.post('/createFood', (req, res) => {
     (async function createAndSend(){
         const data = req.body;

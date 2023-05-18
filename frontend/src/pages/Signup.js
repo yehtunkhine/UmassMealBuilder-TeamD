@@ -16,7 +16,7 @@ const Signup = () => {
     const provider = new GoogleAuthProvider();
 
     const navigate = useNavigate();
-    
+
     const txtName = useRef(null);
     const txtEmail = useRef(null);
     const txtPassword = useRef(null);
@@ -39,7 +39,7 @@ const Signup = () => {
             }
         }
         try{
-            if(password.localeCompare(password.toUpperCase()) === 0 || password.localeCompare(password.toLowerCase()) === 0 
+            if(password.localeCompare(password.toUpperCase()) === 0 || password.localeCompare(password.toLowerCase()) === 0
                 || !/[0-9]/.test(password) || !strongPassword || len < 8){
                 throw new Error("Password is not strong enough, please have at least 1 number, 1 uppercase, 1 lowercase, 1 special character and at least 8 characters");
             }
@@ -54,22 +54,28 @@ const Signup = () => {
             alert(error);
             return;
         }
-      
+
         try {
-          await createUserWithEmailAndPassword(auth, email, password)
-        await updateProfile(auth.currentUser, {
-            displayName: name
-        })
-        signOut(auth);
-        await signInWithEmailAndPassword(auth, email, password);
-        navigate("/")
+            await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                fetch(`http://localhost:3001/createUser?userId=${user.uid}&name=${name}&email=${user.email}&phone`, {
+                    method: 'POST',
+                })
+            })
+            await updateProfile(auth.currentUser, {
+                displayName: name
+            })
+            signOut(auth);
+            await signInWithEmailAndPassword(auth, email, password);
+            navigate("/")
         }
         catch(error) {
           console.log(`There was an error: ${error}`);
           alert(error);
           return;
-        } 
-    };  
+        }
+    };
 
     const handleGoogleSignIn = async () => {
         console.log('signing in');
@@ -90,8 +96,8 @@ const Signup = () => {
             alert(error);
             console.log(error);
           });
-          
-    }  
+
+    }
 
     const hidePassword = () => {
         var x = document.getElementById("password");
@@ -107,7 +113,7 @@ const Signup = () => {
 
     return (
         <html>
-        <div class = "container">
+        <div class = "container min-height">
             <div class = "outerBox" >
             <text class = "labelText">Display Name:</text>
                 <input class = "inputText" ref = {txtName} type = "text" id = "name" name = "nameInput" placeholder="Display Name"/>
@@ -128,7 +134,7 @@ const Signup = () => {
                     <GoogleButton className='signUpButton ' onClick={handleGoogleSignIn} />
                 </div>
             </div>
-        </div>  
+        </div>
         </html>
     );
 }

@@ -1,9 +1,12 @@
-import React, {useState} from 'react'
-import { Data, FoodData } from './AccData'
+import { Link} from "react-router-dom"
+import React, {useState, useEffect, useContext} from 'react'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
+import Modal from './Modal'
+import { IoAdd, IoCloseOutline, IoInformationCircleOutline} from "react-icons/io5";
 
+import {AuthenticationContext} from './../App'
 
 const AccordionSection = styled.div`
 display: flex;
@@ -20,7 +23,7 @@ box-shadow: 2px 10px 35px 1px rgba(153,153,153,0.3);
 `;
 const Wrap = styled.div`
 flex-direction: row;
-background: lightgray;
+background: maroon;
 color: black;
 display: flex;
 justify-content: space-between;
@@ -34,68 +37,171 @@ border-right: 2px solid;
 h1 {
     padding: 2rem;
     font-size: 2rem;
+    color: white;
 }
-
 span {
     margin: 2em;
 }
 `;
 
+const ChosenItemsContainer = styled.div`
+    display: flex;
+`
+
+const ChosenItem = styled.div`
+    padding: 10px;
+    border: 1px solid black;
+`
+
 const Dropdown = styled.div`
 background: white;
 color: black;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
 border-bottom: 1px solid black;
 border-top: 1px solid black;
 border-left: 1px solid;
 border-right: 1px solid;
-
-
-
+max-height: 300px;
+overflow-y: scroll;
+overflow-x: hidden;
+align-items: start;
 `;
 
+
 const Menu = styled.div`
+
 
 `;
 
 const FCard = styled.div`
-align-items: center;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
-    display: flex;
-    justify-content: space-around;
-    height: 50px;
-    width: 300px;
-    scale: 20%;
-
 `;
 
 const FContent= styled.div`
-display: grid;
-  grid-gap: 1rem;
-  grid-template-rows: repeat(auto-fit, 100px);
 `;
 
+const RecipeContent = styled.div`
+`;
 
-const FoodCard = () => {
-    return (
-        <FContent>
-    { FoodData.map((_, i) => (
-        <FCard key={i}>
-            <img src = {_.image}></img>
-        </FCard>
-      ))
+const Plate = styled.div`
+text-align: center;
+`;
+const Recipe = styled.div`
+display: flex;
+justify-content: center;
+align-items: center;
+color: black;
+margin:30px;
+`;
+
+const ADButton = styled.button`
+all: unset;
+
+
+`;
+
+const Category = styled.div`
+padding: 25px;
+background-color: lightgray;
+text-align: center;
+`;
+const BUTTON_WRAPPER_STYLES={
+    position: 'relative',
+    zIndex: 1
+}
+
+const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    const currentDate = `${year}-${month}-${day}`;
+    return currentDate;
+}
+
+const MealCard = ({mdata, afunc, dfunc}) => {
+    // states
+    const [isOpen, setIsOpen] = useState(false);
+    const [modelContent, setModelContent] = useState({});
+
+    const itemFacts = (item) => {
+        return (
+            <itemProps>
+                <h2>Macros: </h2>
+                <p>Calories: {item.calories}</p>
+                <p>Carbs: {item.carbs}</p>
+                <p>Fat: {item.fat}</p>
+                <p>Protein: {item.protein}</p>
+                <h2>Ingredients: </h2>
+                <p>ingredients: {item.ingredients}</p>
+                <h2>Recipe Lables : {item.recipeLables}</h2>
+                <h2>Healthfulness : {item.healthfulness}</h2>
+                <h2>Serving Size : {item.servingSize}</h2>
+            </itemProps>
+        )
     }
+
+
+    const setModalContent = async (item) => {
+        try {
+            let name = item.name;
+            console.log(name);
+            let response = await fetch(`http://localhost:3001/getFoodIdFromName?name=${name}`);
+            console.log("response is", response);
+            let data = await response.json();
+            response = await fetch(`http://localhost:3001/facts?foodId=${data}`);
+            data = await response.json();
+            let facts = {"calories" : data.calories, "carbs" : data.carbs, "fat" : data.fat, "protein" : data.protein,
+            "ingredients" : data.ingredients, "recipeLables" : data.recipeLables, "healthfulness" : data.healthfulness};
+            console.log(facts);
+            setModelContent(facts);
+            return facts;
+          } catch (error) {
+            console.error(error);
+          }
+        };
+
+    return (
+        <FContent >
+            { mdata.map((_, i) => {
+                return (
+                <FCard key={i}>
+                    <Category><u>{_.category}</u></Category>
+                    <RecipeContent>
+                        {_.recipes.map((item,idx) => (
+                            <Recipe key={idx}>
+                                    <h1>{item.name}</h1>
+                                    <IconContext.Provider value = {{color: 'black', size: '25px'}}>
+                                    <ADButton onClick = {() => afunc(item)} ><IoAdd/></ADButton>
+                                    <ADButton onClick = {() => dfunc(item)} ><IoCloseOutline/></ADButton>
+
+                                <div style={BUTTON_WRAPPER_STYLES}>
+                                    <ADButton
+                                        onClick={()=>{setIsOpen(true); setModalContent(item)}}>
+                                        <IoInformationCircleOutline/>
+                                    </ADButton>
+                                </div>
+                                    </IconContext.Provider>
+                            </Recipe>
+                        ))}
+                        <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
+                            {itemFacts(modelContent)}
+                        </Modal>
+                    </RecipeContent>
+                </FCard>
+              )})
+            }
      </FContent>
     )
 }
 
-const MenuData = () => {
+const MenuData = ({hall}) => {
+    let auth = useContext(AuthenticationContext)
+    let user = auth.currentUser;
     const [clicked, setClicked] = useState(false);
+    const [todayMeals, setTodayMeals] = useState({});
+    const [chosenItems, setChosenItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     const toggle = index => {
         if(clicked === index) {
             // if clicked question is already active, then close
@@ -103,31 +209,83 @@ const MenuData = () => {
         }
         setClicked(index);
     }
-  return (
-    <Menu>
-      <IconContext.Provider value={{color: 'black', size: '30px'}}>
-          <AccordionSection>
-            <Container>
-                {Data.map((item, index) => {  
-                    return (
-                        <>
-                        <Wrap onClick={() => toggle(index)} key = {index}>
-                        <h1>{item.category}</h1>
-                        <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
-                        </Wrap>
-                        {clicked === index ? (
-                        <Dropdown>
-                            <FoodCard/>
-                        </Dropdown>
-                        ) : null}
-                        </>
-                    );
-                })}
-            </Container>
-          </AccordionSection>
-      </IconContext.Provider>
-      </Menu>
-  );
+    const addItem = (item) => {
+        if (chosenItems.includes(item)) {
+            chosenItems.filter((i) => i === item)[0]["count"] += 1;
+            let temp = [...chosenItems];
+            setChosenItems(temp);
+        } else {
+            item.count = 1;
+            setChosenItems([...chosenItems, item]);
+        }
+    }
+    const delItem = (item) => {
+        if (chosenItems.includes(item)) {
+            if (chosenItems.filter((i) => i === item)[0]["count"] === 1) {
+                setChosenItems(chosenItems.filter((i) => i !== item));
+            } else {
+                chosenItems.filter((i) => i === item)[0]["count"] -= 1;
+            }
+        }
+    }
+
+    useEffect(() => {
+        fetch(`http://localhost:3001/getUserRestrictions?userId=${user?.uid}`)
+        .then(response => response.json())
+        .then(data => {
+            const restrictions = data.map((r) => r.restriction);
+            fetch(`http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=${restrictions.join(", ")}&nonAllergenRestrictions=`)
+            .then(res => res.json())
+            .then(data => {
+                setTodayMeals(data);
+                setLoading(false);
+            })
+            .catch(err => console.error(err))
+        })
+    }, [user, hall]);
+
+    return (
+        <Menu>
+            <Plate>
+                <h1>{hall}</h1>
+                <ChosenItemsContainer>
+                    {chosenItems.map((item, index) => {
+                        return (
+                            <ChosenItem key={index}>
+                                <p>{item.name}</p>
+                                <p>{item.count}</p>
+                            </ChosenItem>
+                        )
+                    })}
+                </ChosenItemsContainer>
+                <Link to={{pathname: "/analysis"}} state={{foods : chosenItems}}>
+                    <button>Build Plate</button>
+                </Link>
+            </Plate>
+            <IconContext.Provider value={{color: 'white', size: '30px'}}>
+              <AccordionSection>
+                <Container>
+                    {loading && <h1>Loading...</h1>}
+                    {todayMeals && Object.keys(todayMeals).map((mealName, index) => {
+                        return (
+                            <div key={index}>
+                                <Wrap onClick={() => toggle(index)}>
+                                    <h1>{mealName}</h1>
+                                    <span>{clicked === index? <BsChevronUp/> : <BsChevronDown/>}</span>
+                                </Wrap>
+                                {clicked === index ? (
+                                <Dropdown>
+                                    <MealCard mdata={todayMeals[mealName]} afunc={addItem} dfunc={delItem}/>
+                                </Dropdown>
+                                ) : null}
+                            </div>
+                        );
+                    })}
+                </Container>
+              </AccordionSection>
+            </IconContext.Provider>
+        </Menu>
+    )
 };
 
 export default MenuData

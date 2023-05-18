@@ -9,9 +9,11 @@ import { where } from 'sequelize'
 import fill_database from '../database_filler/webscraper/database_enterer.js'
 import e from 'express'
 import * as process from 'process'
+import cors from 'cors'
 
 let app = express()
-const port = 3000
+app.use(cors())
+const port = 3001
 
 app.use('', foodRoutes)
 app.use('', locationRoutes)
