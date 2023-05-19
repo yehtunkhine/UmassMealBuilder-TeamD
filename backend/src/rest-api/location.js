@@ -182,6 +182,10 @@ async function deleteFavoriteLocationFromUser(uid, lid){
         where: {userId: uid}
     });
 
+    if(user == null){
+        throw new Error('No such user exists');
+    }
+
     const location = await Location.findOne({
         where: {locationId: lid}
     });
@@ -190,7 +194,7 @@ async function deleteFavoriteLocationFromUser(uid, lid){
     await user.removeLocation(location).then(() => {success = true;});
 
     if(success == false){
-        throw new Error("Could not add location '" + location.locationName + "' as favorite location for user with id '" + user.userId + "'");
+        throw new Error("Could not remove location '" + location.locationName + "' as favorite location for user with id '" + user.userId + "'");
     }
 }
 
@@ -254,16 +258,16 @@ async function createLocationTimesForDay(lid, dayOfWeek, open, close){
 }
 
 async function createTimesForEveryDayOfWeekForLocation(lid, open, close){
-    const location = Location.findOne({
+    const location = await Location.findOne({
         where: {
             locationId: lid
         }
     });
 
-    if(lid == null){
+    if(location == null){
         throw new Error("No such location exists");
-    }
-
+    }   
+    
     for(let i = 0; i < 7; i++){
         await createLocationTimesForDay(lid, i, open, close);    
     }
@@ -341,6 +345,10 @@ router.use(express.json())
 
 router.post('/createLocation', (req, res) => {
     let name = req.query.locationName;
+    if(name == undefined || name == null || name == ''){
+        res.status(400).send("No Name Given");
+        return;
+    }
 
     (async function anon(){
         let sendVal = await createLocation(name);
@@ -350,6 +358,11 @@ router.post('/createLocation', (req, res) => {
 
 router.delete('/deleteLocationById', (req, res) => {
     let id = req.query.locationId;
+
+    if(id == undefined || id == null || id == ''){
+        res.status(400).send("No ID Given");
+        return;
+    }
 
     (async function anon() {
         try{
@@ -363,6 +376,11 @@ router.delete('/deleteLocationById', (req, res) => {
 
 router.delete('/deleteLocationByName', (req, res) => {
     let name = req.query.locationName;
+
+    if(name == undefined || name == null || name == ''){
+        res.status(400).send("No Name Given");
+        return;
+    }
 
     (async function anon(){
         try{
@@ -378,6 +396,11 @@ router.delete('/deleteLocationByName', (req, res) => {
 router.get('/findLocationByName', (req, res) => {
     let name = req.query.locationName;
 
+    if(name == undefined || name == null || name == ''){
+        res.status(400).send("No Name Given");
+        return;
+    }
+
     (async function anon(){
         try{
             let locations = await findLocationByName(name);
@@ -391,6 +414,11 @@ router.get('/findLocationByName', (req, res) => {
 
 router.get('/findLocationById', (req, res) => {
     let id = req.query.locationId;
+
+    if(id == undefined || id == null || id == ''){
+        res.status(400).send("No ID Given");
+        return;
+    }
 
     (async function anon(){
         try{
@@ -406,6 +434,11 @@ router.get('/findLocationById', (req, res) => {
 router.get('/findLocationIdsByName', (req, res) => {
     let name = req.query.locationName;
 
+    if(name == undefined || name == null || name == ''){
+        res.status(400).send("No Name Given");
+        return;
+    }
+
     (async function anon(){
         try{
             let locationIds = await findLocationIdsByName(name);
@@ -419,6 +452,11 @@ router.get('/findLocationIdsByName', (req, res) => {
 
 router.get('/findAllLocationsServingFoodItemsById', (req, res) => {
     let foodItems = req.query.foodIds;
+
+    if(foodItems == undefined || foodItems == null || foodItems == ''){
+        res.status(400).send("No Item Id's Given");
+        return;
+    }
 
     (async function anon(){
         try{
@@ -434,6 +472,11 @@ router.get('/findAllLocationsServingFoodItemsById', (req, res) => {
 router.get('/findAllLocationsServingFoodItemsByNames', (req, res) => {
     let foodNames = req.query.foodNames;
 
+    if(foodNames == undefined || foodNames == null || foodNames == ''){
+        res.status(400).send("No Item Names Given");
+        return;
+    }
+
     (async function anon(){
         try{
             let locations = await findAllLocationsServingFoodItemsByNames(foodNames);
@@ -447,10 +490,20 @@ router.get('/findAllLocationsServingFoodItemsByNames', (req, res) => {
 
 router.get('/findAllLocationsServingFoodItemOnDate', (req, res) => {
     let foodId = req.query.foodId;
-    let date = moment(req.query.date).format('YYYY-MM-DD');
+    let date = req.query.date;
 
-    console.log(foodId);
-    console.log(date);
+    let err_msg = '';
+    if(foodId == undefined || foodId == null || foodId == ''){
+        err_message += "No Food ID Given";
+    }
+    if(foodId == undefined || foodId == null || foodId == ''){
+        err_msg += "\nNo Date Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
+    
+    date = moment().format('YYYY-MM-DD');
     
     (async function anon(){
         try{
@@ -468,6 +521,21 @@ router.get('/findAllLocationsServingFoodItemOnDateAtTime', (req, res) => {
     let date = req.query.date;
     let time = req.query.time;
 
+    let err_msg = '';
+    if(foodItem == undefined || foodItem == null || foodItem == ''){
+        err_msg += "No Food ID Given";
+    }
+    if(date == undefined || date == null || date == ''){
+        err_msg += "\nNo Date Given";
+    }
+    if(time == undefined || time == null || time == ''){
+        err_msg += "\nNo Time Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
+
+    date = moment(date).format('YYYY-MM-DD');
     (async function anon(){
         try{
             let locations = await findAllLocationsServingFoodItemOnDateAtTime(foodItem, date, time);
@@ -481,6 +549,15 @@ router.get('/findAllLocationsServingFoodItemOnDateAtTime', (req, res) => {
 
 router.get('/findFavoriteLocationsForUser', (req, res) => {
     let uid = req.query.userId;
+
+    let err_msg = '';
+    if(uid == undefined || uid == null || uid == ''){
+        err_msg += "No User ID Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
+
     (async function anon(){
         try{
             let locations = await findFavoriteLocationsForUser(uid);
@@ -495,6 +572,17 @@ router.get('/findFavoriteLocationsForUser', (req, res) => {
 router.post('/addNewFavoriteLocationForUser', (req, res) => {
     let uid = req.query.userId;
     let lid = req.query.locationId;
+
+    let err_msg = '';
+    if(lid == undefined || lid == null || lid == ''){
+        err_msg += "No Location ID Given";
+    }
+    if(uid == undefined || uid == null || uid == ''){
+        err_msg += "\nNo User ID Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
 
     (async function anon(){
         try{
@@ -511,6 +599,17 @@ router.delete('/deleteFavoriteLocationFromUser', (req, res) => {
     let uid = req.query.userId;
     let lid = req.query.locationId;
 
+    let err_msg = '';
+    if(lid == undefined || lid == null || lid == ''){
+        err_msg += "No Location ID Given";
+    }
+    if(uid == undefined || uid == null || uid == ''){
+        err_msg += "\nNo User ID Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
+
     (async function anon(){
         try{
             await deleteFavoriteLocationFromUser(uid, lid);
@@ -524,6 +623,14 @@ router.delete('/deleteFavoriteLocationFromUser', (req, res) => {
 
 router.get('/findAllTimesForLocation', (req, res) => {
     let lid = req.query.locationId;
+
+    let err_msg = '';
+    if(lid == undefined || lid == null || lid == ''){
+        err_msg += "No Location ID Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
 
     (async function anon(){
         try{
@@ -539,6 +646,17 @@ router.get('/findAllTimesForLocation', (req, res) => {
 router.get('/findTimesForLocationOnDay', (req, res) => {
     let lid = req.query.locationId;
     let day = req.query.day;
+
+    let err_msg = '';
+    if(lid == undefined || lid == null || lid == ''){
+        err_msg += "No Location ID Given";
+    }
+    if(day == undefined || day == null || day == ''){
+        err_msg += "\nNo Day Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
 
     (async function anon(){
         try{
@@ -557,6 +675,23 @@ router.post('/createLocationTimesForDay', (req, res) => {
     let open = req.query.openTime;
     let close = req.query.closeTime;
 
+    let err_msg = '';
+    if(lid == undefined || lid == null || lid == ''){
+        err_msg += "No Location ID Given";
+    }
+    if(day == undefined || day == null || day == ''){
+        err_msg += "\nNo Day Given";
+    }
+    if(open == undefined || open == null || open == ''){
+        err_msg += "\nNo Open Time Given";
+    }
+    if(close == undefined || close == null || close == ''){
+        err_msg += "\nNo Close Time Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
+
     (async function anon(){
         try{
             await createLocationTimesForDay(lid, day, open, close);
@@ -572,6 +707,20 @@ router.post('/createTimesForEveryDayOfWeekForLocation', (req, res) => {
     let lid = req.query.locationId;
     let open = req.query.openTime;
     let close = req.query.closeTime;
+
+    let err_msg = '';
+    if(lid == undefined || lid == null || lid == ''){
+        err_msg += "No Location ID Given";
+    }
+    if(open == undefined || open == null || open == ''){
+        err_msg += "\nNo Open Time Given";
+    }
+    if(close == undefined || close == null || close == ''){
+        err_msg += "\nNo Close Time Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
 
     (async function anon(){
         try{
@@ -590,6 +739,23 @@ router.put('/setMealTimeForLocationOnDay', (req, res) => {
     let time = req.query.time;
     let day = req.query.day;
 
+    let err_msg = '';
+    if(lid == undefined || lid == null || lid == ''){
+        err_msg += "No Location ID Given";
+    }
+    if(day == undefined || day == null || day == ''){
+        err_msg += "\nNo Day Given";
+    }
+    if(timeLabel == undefined || timeLabel == null || timeLabel == ''){
+        err_msg += "\nNo Time Label Given";
+    }
+    if(time == undefined || time == null || time == ''){
+        err_msg += "\nNo Time Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
+
     (async function anon(){
         try{
             await setMealTimeForLocationOnDay(lid, timeLabel, time, day);
@@ -605,6 +771,17 @@ router.delete('/deleteLocationTimeRowForDay', (req, res) => {
     let lid = req.query.locationId;
     let day = req.query.day;
 
+    let err_msg = '';
+    if(lid == undefined || lid == null || lid == ''){
+        err_msg += "No Location ID Given";
+    }
+    if(day == undefined || day == null || day == ''){
+        err_msg += "\nNo Day Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
+
     (async function anon(){
         try{
             await deleteLocationTimeRowForDay(lid, day);
@@ -618,6 +795,14 @@ router.delete('/deleteLocationTimeRowForDay', (req, res) => {
 
 router.delete('/deleteAllLocationTimes', (req, res) => {
     let lid = req.query.locationId;
+
+    let err_msg = '';
+    if(lid == undefined || lid == null || lid == ''){
+        err_msg += "No Location ID Given";
+    }
+    if(err_msg != ''){
+        res.status(400).send(err_msg);
+    }
 
     (async function anon(){
         try{
