@@ -1,10 +1,12 @@
 import { Link} from "react-router-dom"
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
 import Modal from './Modal'
 import { IoAdd, IoCloseOutline, IoInformationCircleOutline} from "react-icons/io5";
+
+import {AuthenticationContext} from './../App'
 
 const AccordionSection = styled.div`
 display: flex;
@@ -158,9 +160,6 @@ const MealCard = ({mdata, afunc, dfunc}) => {
           }
         };
 
-
-
-
     return (
         <FContent >
             { mdata.map((_, i) => {
@@ -195,9 +194,9 @@ const MealCard = ({mdata, afunc, dfunc}) => {
     )
 }
 
-
-
 const MenuData = ({hall}) => {
+    let auth = useContext(AuthenticationContext)
+    let user = auth.currentUser;
     const [clicked, setClicked] = useState(false);
     const [todayMeals, setTodayMeals] = useState({});
     const [chosenItems, setChosenItems] = useState([]);
@@ -231,15 +230,30 @@ const MenuData = ({hall}) => {
     }
 
     useEffect(() => {
-        const backendURL = `http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=&nonAllergenRestrictions=`
-        fetch(backendURL)
-        .then(res => res.json())
-        .then(data => {
-            setTodayMeals(data);
-            setLoading(false);
-        })
-        .catch(err => console.log(err))
-    }, [hall]);
+        if (user) {
+            fetch(`http://localhost:3001/getUserRestrictions?userId=${user?.uid}`)
+            .then(response => response.json())
+            .then(data => {
+                const restrictions = data.map((r) => r.restriction);
+                fetch(`http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=${restrictions.join(", ")}&nonAllergenRestrictions=`)
+                .then(res => res.json())
+                .then(data => {
+                    setTodayMeals(data);
+                    setLoading(false);
+                })
+                .catch(err => console.error(err))
+            })
+        } else {
+            fetch(`http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=&nonAllergenRestrictions=`)
+            .then(res => res.json())
+            .then(data => {
+                setTodayMeals(data);
+                setLoading(false);
+            })
+            .catch(err => console.error(err))
+
+        }
+    }, [user, hall]);
 
     return (
         <Menu>

@@ -1,10 +1,8 @@
 import { Link} from "react-router-dom"
-import MenuData from "../components/MenuData"
 import { useLocation } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Chart } from "react-google-charts";
 import Speedometer from "react-d3-speedometer";
-import ReactDOM from 'react-dom';
 import styled from 'styled-components'
 import './AnalysisStyles.css';
 
@@ -73,15 +71,40 @@ right: 75px;
 `;
 
 
-
-
 export default function Analysis(){
     const location = useLocation();
-    if (location.state === null){
+    const [items, setItems] = useState([]);
+
+    const fetchData = useCallback(async (foods) => {
+        foods.forEach(async (food) => {
+            const response = await fetch(`http://localhost:3001/facts?foodId=${food.foodId}`)
+            const data = await response.json();
+            const thisFoodFacts = {
+                name: data.name,
+                calories: data.calories,
+                carbs: data.carbs,
+                fat: data.fat,
+                protein: data.protein,
+                ingredients: data.ingredients,
+                recipeLables: data.recipeLables,
+                healthfulness: data.healthfulness
+            }
+            if (items.some(item => item.name == thisFoodFacts.name) === false) {
+                console.log(thisFoodFacts)
+                setItems(items => [...items, thisFoodFacts])
+            }
+        })
+    }, [items])
+
+    useEffect(() => {
+        fetchData(location.state.foods);
+    }, [])
+
+    if (location.state === null || location.state.foods.length === 0){
         return (
             <div class  = "overlay">
               <text class= "labelText">Select items to get started: </text>
-              <Link to={{pathname: "/DiningHalls"}}> 
+              <Link to={{pathname: "/DiningHalls"}}>
                   <div>
                   <button class = "itemButton">Select Items</button>
                   </div>
@@ -89,25 +112,19 @@ export default function Analysis(){
             </div>
         )
     }
-    const {foods} = location.state;
-    let foodlist = [];
-
-    let items = require('./items.json');
-
-    foods.forEach(x=> foodlist.push(items[x]));
 
     return (
     <Container >
-        <TotalInfo foodlist = {foodlist} foods = {foods}/>
-
+        {items.map((item, index) => (
+            <h1 key={index}>{item.name}</h1>
+        ))}
     </Container>
     )
-        
 }
 
 
 
-export const data = (fat, protein, carbs) =>[
+export const data = () =>[
     ["Task", "Hours per Day"],
     ["Work", 11],
     ["Eat", 2],
@@ -115,14 +132,12 @@ export const data = (fat, protein, carbs) =>[
     ["Watch TV", 2],
     ["Sleep", 7],
   ];
-  
+
   export const options = {
     title: "Nutrient Balance",
   };
- 
-const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const HealthScale = ({hScore}) => 
+const HealthScale = ({hScore}) =>
 {
 return (
 <div>
@@ -175,7 +190,7 @@ return (
           needleColor="#000080"
         />
       </div>
-  
+
 )
 
 
@@ -245,7 +260,7 @@ const TotalInfo = ({foodlist, foods}) => {
             </RightSide>
 
         </MainBody>
-        
+
     );
 
 }
