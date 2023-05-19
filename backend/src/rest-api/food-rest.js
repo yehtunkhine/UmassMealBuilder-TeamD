@@ -49,10 +49,11 @@ async function findLocationFoodBridges(key, value, allergenRestrictionStr, nonAl
         const nonAllergenRestrictionObjs = await FoodNonAllergenRestriction.findAll({
             where: {
                 restriction: {
-                    [Op.or]: nonAllergenRestrictionStrArr
+                    [Op.in]: nonAllergenRestrictionStrArr
                 }
             }
         });
+
         //get food ids from objs
         function getFoodIdsFromObjArr(objArr) {
             const retArr = [];
@@ -62,7 +63,17 @@ async function findLocationFoodBridges(key, value, allergenRestrictionStr, nonAl
             return retArr;
         }
         const allergenFoodIds = getFoodIdsFromObjArr(allergenRestrictionObjs);
-        const nonAllergenFoodIds = getFoodIdsFromObjArr(nonAllergenRestrictionObjs);
+        let nonAllergenFoodIds = getFoodIdsFromObjArr(nonAllergenRestrictionObjs);
+        
+        let counts = {};
+        for(let i = 0; i < nonAllergenFoodIds.length; i++){
+            counts[nonAllergenFoodIds[i]] = 0;
+        }
+        for(let i = 0; i < nonAllergenFoodIds.length; i++){
+            counts[nonAllergenFoodIds[i]]++;
+        }
+        console.log(counts);
+        nonAllergenFoodIds = nonAllergenFoodIds.filter((i) => counts[i] == nonAllergenRestrictionStrArr.length);
 
         if (nonAllergenFoodIds.length === 0) { //if not non allergens
             if (nonAllergenRestrictionStr === "") { //if none inputted
