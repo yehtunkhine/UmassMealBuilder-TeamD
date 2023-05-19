@@ -26,6 +26,23 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
     - Displaying the data from UMass Dining Nutritional website onto the correct places on the client side 
 - Updating the different meals available for different days. 
 - Locations open and close at different times based on the day of the week, weekends and holidays. This must be accounted for.
+
+## Backlogged Features
+- Add favorite items
+    - Be able to favorite items from the analysis/dining halls food and save them to user
+- See upcoming favorites
+    - In the user page add a calendar that will show upcoming favorite foods and the dining hall they are in.
+- Analyze future foods
+    - Be able to select the date when analyzing food in order to be able to plan future meals
+- Off campus dining
+    - Add off campus dining places/Blue Wall to the available foods, and being able to analyze them
+- Flag items
+    - Add a feature where the user can flag items in the current day’s dining hall in order to tell other users that it may not be there.
+- Search feature
+    - Add a feature to search foods, so you don’t have to scroll through every food
+- Popular items
+    - By using all user’s favorites or analyzed food, add a section where users can see popular food
+
 ## Releases
 
 ### 1.0 

@@ -1,4 +1,4 @@
-.loginBox {
+.loginBox {/*Used for login and signup boxes*/
   border-radius: 5px;
   background-color: #BE3C20;
   padding: 20px;
@@ -6,7 +6,7 @@
   margin: auto;
 }
 
-.outerBox {
+.outerBox {/*Used in login and signup outer boxes*/
   border-radius: 5px;
   background-color: #EFEFEF;
   padding: 20px;
@@ -14,13 +14,13 @@
   margin: auto;
 }
 
-.min-height{
+.min-height{/*Allows the login and signup pages to span whole height so the footer looks correct*/
   min-height: -webkit-calc(100vh - 72px - 112px);
   min-height: -moz-calc(100vh - 72px - 112px);
   min-height: calc(100vh - 72px - 112px)
 }
 
-.labelText {
+.labelText {/*Labels for the inputs*/
   text-align: left;
 }
 
@@ -30,7 +30,7 @@
   font-size: medium;
 }
 
-.input {
+.input {/*Input textboxes*/
   width: 90%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -40,7 +40,7 @@
   box-sizing: border-box;
 }
 
-.inputText {
+.inputText {/*Input text*/
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -54,7 +54,7 @@
   background-color: #151976;
 }
 
-.button {
+.button {/*Used for a couple buttons including login/signup*/
   border-radius: 5px;
   background-color: #810000;
   padding: 10px;
@@ -63,7 +63,7 @@
   color: white;
 }
 
-.signUpButton {
+.signUpButton {/*Google signup button*/
   justify-content: center;
   align-items: center;
   margin: auto;
@@ -76,7 +76,7 @@
   text-decoration:underline;
 }
 
-h4{
+h4{/*Used for userpage headers*/
   text-align: left;
 }
 
@@ -94,6 +94,7 @@ h4{
   width: 95%;
   margin: auto;
 }
+
 .userBoxDescription{
   border-radius: 10px;
   background-color: #EFEFEF;
@@ -103,7 +104,7 @@ h4{
   margin: auto;
 }
 
-.separate{
+.separate{/*Line that separates sections*/
   border-top:2px solid black;
   margin: auto;  
   padding: 20px;
@@ -117,20 +118,20 @@ h3{
   text-align: left;
 }
 
-.flex-container {
+.flex-container {/*Allows for things to be side by side*/
   display: flex;
 }
 
-.flex-child-nav {
+.flex-child-nav {/*Sidebar*/
   flex: 2;
 }  
 
-.flex-child{
+.flex-child{/*The user section*/
   flex: 9;
 }
 
 .innerBox{
-  background-color: #818181;
+  background-color: #810000;
 }
 
 /*w3 schools https://www.w3schools.com/howto/howto_css_fixed_sidebar.asp*/
@@ -159,11 +160,11 @@ h3{
   color: #810000;
 }
 
-.dropdown-btn {
+.dropdown-btn {/*For the settings dropdown*/
   padding: 6px 8px 6px 16px;
   text-decoration: none;
   font-size: 20px;
-  color: black;
+  color: white;
   display: block;
   border: none;
   background: none;
@@ -214,29 +215,66 @@ select{
 .flex-select{
   flex:6;
 }
-.flex-button{
+.flex-button{/*For the select button*/
   flex:4;
 }
 
-.flex-space{
+.flex-space{/*Allows for space between*/
   flex:1;
 }
 
-.flex-list{
+.flex-list{/*User preferences*/
   flex:15;
-  text-align: left;
+  text-align: center;
   font-size: 20px;
 }
 
-.flex-remove{
+.flex-remove{/*user preferences button*/
   flex:1;
-  display: grid;
+  display: grid
 }
 
 .removal-button{
+  display: block;
+  margin:auto;
   height: 20px;
   width: 20px;
+  padding: 0px;
+  line-height: .5px;
   text-align: center;
-  vertical-align: middle;
-  margin: auto;
+  align-items: center;
+}
+
+.user-preference{
+  margin: 5px 0;
+}
+
+ul{
+  list-style-type: none;
+}
+
+.color-gray{
+  background-color: white;
+}
+
+.color-white{
+  background-color: #EFEFEF;
+}
+
+.restrictions-container{
+  text-align: center;
+}
+
+.dropdown-inner-button{
+  border-radius: 5px;
+  background-color: #EFEFEF;
+  padding: 10px;
+  width: 80%;
+  align-items: center;
+  margin-bottom: 30px;
+  color: black;
+}
+
+.dropdown-inner-button:hover {
+  background-color: #818181;
 }

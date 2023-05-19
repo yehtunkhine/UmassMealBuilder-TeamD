@@ -21,7 +21,7 @@ export default function ResetPasswordEmail(){
                 throw new Error("Please enter your email");
             }
           await sendPasswordResetEmail(auth, email);
-          alert("If email exists, password reset link sent!");
+          alert("If email exists, password reset link sent!");//To try to have ambiguity
           navigate("/");
         } catch (err) {
             if(err.code === 'auth/user-not-found'){
