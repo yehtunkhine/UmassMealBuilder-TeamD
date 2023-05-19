@@ -6,6 +6,10 @@ import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
 import Modal from './Modal'
 import { IoAdd, IoCloseOutline, IoInformationCircleOutline} from "react-icons/io5";
 
+// STYLED COMPONENTS
+// CSS styling for each of these compenents 
+
+// Accordion Styling
 const AccordionSection = styled.div`
 display: flex;
 flex-direction: column;
@@ -42,15 +46,17 @@ span {
 }
 `;
 
+// Chosen items list stying
 const ChosenItemsContainer = styled.div`
     display: flex;
 `
-
+// Chosen items list styling
 const ChosenItem = styled.div`
     padding: 10px;
     border: 1px solid black;
 `
 
+// Styling for the dropdown section in the accordion
 const Dropdown = styled.div`
 background: white;
 color: black;
@@ -64,9 +70,8 @@ overflow-x: hidden;
 align-items: start;
 `;
 
-
+// Unused Styled Components
 const Menu = styled.div`
-
 
 `;
 
@@ -79,9 +84,12 @@ const FContent= styled.div`
 const RecipeContent = styled.div`
 `;
 
+// Stlying for the plate
 const Plate = styled.div`
 text-align: center;
 `;
+
+// Styling for the list of meals inside the dropdown
 const Recipe = styled.div`
 display: flex;
 justify-content: center;
@@ -90,17 +98,19 @@ color: black;
 margin:30px;
 `;
 
+// Styling for the add, delete, and infromation button
 const ADButton = styled.button`
 all: unset;
 
-
 `;
 
+// Styling for the categories in the accordion dropdown
 const Category = styled.div`
 padding: 25px;
 background-color: lightgray;
 text-align: center;
 `;
+
 const BUTTON_WRAPPER_STYLES={
     position: 'relative',
     zIndex: 1
@@ -167,14 +177,7 @@ const MealCard = ({mdata, afunc, dfunc}) => {
         };
     // Everything here is what appears after the dropdowns are clicked
 
-<<<<<<< HEAD
-    return ( 
-=======
-
-
-
     return (
->>>>>>> e839e8a96bffdc700e6d0cecb9b0c26359504052
         <FContent >
             { mdata.map((_, i) => { // meal data specific to a meal time and date
                 return (
@@ -207,18 +210,14 @@ const MealCard = ({mdata, afunc, dfunc}) => {
      </FContent>
     )
 }
-<<<<<<< HEAD
 // The main function that gets called for this page
 // Takes in a string containing the dining hall name as input.
+
+
+
 const MenuData = ({hall}) => {
     let auth = useContext(AuthenticationContext); 
     let user = auth.currentUser;
-=======
-
-
-
-const MenuData = ({hall}) => {
->>>>>>> e839e8a96bffdc700e6d0cecb9b0c26359504052
     const [clicked, setClicked] = useState(false);
     const [todayMeals, setTodayMeals] = useState({});
     const [chosenItems, setChosenItems] = useState([]);
