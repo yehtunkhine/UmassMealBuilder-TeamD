@@ -223,75 +223,75 @@ router.post('/deleteFood', (req, res) => {
     })();
 });
 
-router.post('/addFoodToLocation', (req, res) => {
-    (async function createAndSend(){
-        const data = req.body;
-        const food = await findFood('foodId', data.foodId);
-        if (food === null) res.send('ERROR: Food with ID ' + data.foodId + ' does not exist!');
-        else {
-            const location = await Location.findOne({
-                where: {
-                    locationName: data.diningHall
-                }
-            });
-            if (location === null) res.send('ERROR: ' + data.diningHall + ' is not a location!');
-            else {
-                const duplicate = await LocationFoodBridge.findOne({
-                    where: {
-                        Date: data.date,
-                        Time: data.time,
-                        foodId: data.foodId,
-                        locationId: location.locationId
-                    }
-                })
-                if (duplicate !== null) res.send('ERROR: ' + food.name + ' is already linked to ' + data.diningHall + ' during ' + data.time + ' on ' + data.date + '!');
-                else {
-                    const bridge = await LocationFoodBridge.create({
-                        Date: data.date,
-                        Time: data.time,
-                        foodId: data.foodId,
-                        locationId: location.locationId
-                    });
-                    res.send('Succesfully Added ' + food.name + ' (Food ID: ' + data.foodId + ') to ' + data.diningHall + ' during ' + data.time + ' on ' + data.date + '.');
-                }
-            }
-        }
-    })();
-});
+// router.post('/addFoodToLocation', (req, res) => {
+//     (async function createAndSend(){
+//         const data = req.body;
+//         const food = await findFood('foodId', data.foodId);
+//         if (food === null) res.send('ERROR: Food with ID ' + data.foodId + ' does not exist!');
+//         else {
+//             const location = await Location.findOne({
+//                 where: {
+//                     locationName: data.diningHall
+//                 }
+//             });
+//             if (location === null) res.send('ERROR: ' + data.diningHall + ' is not a location!');
+//             else {
+//                 const duplicate = await LocationFoodBridge.findOne({
+//                     where: {
+//                         Date: data.date,
+//                         Time: data.time,
+//                         foodId: data.foodId,
+//                         locationId: location.locationId
+//                     }
+//                 })
+//                 if (duplicate !== null) res.send('ERROR: ' + food.name + ' is already linked to ' + data.diningHall + ' during ' + data.time + ' on ' + data.date + '!');
+//                 else {
+//                     const bridge = await LocationFoodBridge.create({
+//                         Date: data.date,
+//                         Time: data.time,
+//                         foodId: data.foodId,
+//                         locationId: location.locationId
+//                     });
+//                     res.send('Succesfully Added ' + food.name + ' (Food ID: ' + data.foodId + ') to ' + data.diningHall + ' during ' + data.time + ' on ' + data.date + '.');
+//                 }
+//             }
+//         }
+//     })();
+// });
 
-router.post('/removeFoodFromLocation', (req, res) => {
-    (async function createAndSend() {
-        const data = req.body;
-        const location = await Location.findOne({
-            where: {
-                locationName: data.diningHall
-            }
-        });
-        if (location === null) res.send('ERROR: ' + data.diningHall + ' is not a location!');
-        else {
-            const bridge = await LocationFoodBridge.findOne({
-                where: {
-                    Date: data.date,
-                    Time: data.time,
-                    foodId: data.foodId,
-                    locationId: location.locationId
-                }
-            })
-            if (bridge === null) res.send('ERROR: No such bridge exists!');
-            else {
-                await LocationFoodBridge.destroy({
-                    where: {
-                        Date: data.date,
-                        Time: data.time,
-                        foodId: data.foodId,
-                        locationId: data.locationId
-                    }
-                });
-                res.send('Food successfully removed from location.');
-            }
-        }
-    })();
-});
+// router.post('/removeFoodFromLocation', (req, res) => {
+//     (async function createAndSend() {
+//         const data = req.body;
+//         const location = await Location.findOne({
+//             where: {
+//                 locationName: data.diningHall
+//             }
+//         });
+//         if (location === null) res.send('ERROR: ' + data.diningHall + ' is not a location!');
+//         else {
+//             const bridge = await LocationFoodBridge.findOne({
+//                 where: {
+//                     Date: data.date,
+//                     Time: data.time,
+//                     foodId: data.foodId,
+//                     locationId: location.locationId
+//                 }
+//             })
+//             if (bridge === null) res.send('ERROR: No such bridge exists!');
+//             else {
+//                 await LocationFoodBridge.destroy({
+//                     where: {
+//                         Date: data.date,
+//                         Time: data.time,
+//                         foodId: data.foodId,
+//                         locationId: data.locationId
+//                     }
+//                 });
+//                 res.send('Food successfully removed from location.');
+//             }
+//         }
+//     })();
+// });
 
 router.get('/analysis', (req, res) => {
     (async function getAndSend() {
