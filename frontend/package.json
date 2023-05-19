@@ -29,7 +29,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "fullStart": "npm install --legacy-peer-deps & npm install & npm start & (cd .. & cd backend & npm install & npm start)"
   },
   "eslintConfig": {
     "extends": [

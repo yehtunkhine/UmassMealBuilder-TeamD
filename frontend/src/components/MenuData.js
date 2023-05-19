@@ -1,12 +1,10 @@
 import { Link} from "react-router-dom"
-import React, {useState, useEffect, useContext} from 'react'
+import React, {useState, useEffect} from 'react'
 import styled from 'styled-components'
 import {IconContext} from 'react-icons'
 import {BsChevronDown, BsChevronUp} from 'react-icons/bs'
 import Modal from './Modal'
 import { IoAdd, IoCloseOutline, IoInformationCircleOutline} from "react-icons/io5";
-
-import {AuthenticationContext} from './../App'
 
 const AccordionSection = styled.div`
 display: flex;
@@ -169,7 +167,14 @@ const MealCard = ({mdata, afunc, dfunc}) => {
         };
     // Everything here is what appears after the dropdowns are clicked
 
+<<<<<<< HEAD
     return ( 
+=======
+
+
+
+    return (
+>>>>>>> e839e8a96bffdc700e6d0cecb9b0c26359504052
         <FContent >
             { mdata.map((_, i) => { // meal data specific to a meal time and date
                 return (
@@ -202,11 +207,18 @@ const MealCard = ({mdata, afunc, dfunc}) => {
      </FContent>
     )
 }
+<<<<<<< HEAD
 // The main function that gets called for this page
 // Takes in a string containing the dining hall name as input.
 const MenuData = ({hall}) => {
     let auth = useContext(AuthenticationContext); 
     let user = auth.currentUser;
+=======
+
+
+
+const MenuData = ({hall}) => {
+>>>>>>> e839e8a96bffdc700e6d0cecb9b0c26359504052
     const [clicked, setClicked] = useState(false);
     const [todayMeals, setTodayMeals] = useState({});
     const [chosenItems, setChosenItems] = useState([]);
@@ -243,30 +255,15 @@ const MenuData = ({hall}) => {
     }
 
     useEffect(() => {
-        if (user) {
-            fetch(`http://localhost:3001/getUserRestrictions?userId=${user?.uid}`)
-            .then(response => response.json())
-            .then(data => {
-                const restrictions = data.map((r) => r.restriction);
-                fetch(`http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=${restrictions.join(", ")}&nonAllergenRestrictions=`)
-                .then(res => res.json())
-                .then(data => {
-                    setTodayMeals(data);
-                    setLoading(false);
-                })
-                .catch(err => console.error(err))
-            })
-        } else {
-            fetch(`http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=&nonAllergenRestrictions=`)
-            .then(res => res.json())
-            .then(data => {
-                setTodayMeals(data);
-                setLoading(false);
-            })
-            .catch(err => console.error(err))
-
-        }
-    }, [user, hall]);
+        const backendURL = `http://localhost:3001/analysis?diningHall=${hall}&date=${getTodayDate()}&allergenRestrictions=&nonAllergenRestrictions=`
+        fetch(backendURL)
+        .then(res => res.json())
+        .then(data => {
+            setTodayMeals(data);
+            setLoading(false);
+        })
+        .catch(err => console.log(err))
+    }, [hall]);
 
     // Code below builds the page
     // Creates an accordion containing up to 4 categories (breakfast,lunch,dinner,late night) inside of AccordionSection
