@@ -89,7 +89,7 @@ export default function Analysis(){
                 recipeLables: data.recipeLables,
                 healthfulness: data.healthfulness
             }
-            if (items.some(item => item.name == thisFoodFacts.name) === false) {
+            if (items.some(item => item.name === thisFoodFacts.name) === false) {
                 console.log(thisFoodFacts)
                 setItems(items => [...items, thisFoodFacts])
             }
