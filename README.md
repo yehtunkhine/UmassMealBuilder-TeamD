@@ -23,8 +23,8 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
 
 ## Challenges and Risks
 - Integrating between frontend and backend
-    - Displaying the data from UMass Dining Nutritional website onto the correct places on the client side 
-- Updating the different meals available for different days. 
+    - Displaying the data from UMass Dining Nutritional website onto the correct places on the client side
+- Updating the different meals available for different days.
 - Locations open and close at different times based on the day of the week, weekends and holidays. This must be accounted for.
 
 ## Backlogged Features
@@ -45,15 +45,30 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
 
 ## Releases
 
-### 1.0 
+### 1.0
 
-
+## Test Cases
+- Integration tests to ensure that is possible to create a user account and sign in to it.
+- Integration tests checking that the user is able to favorite items and access them later.
+- Unit tests on all User API calls to ensure that all calls return something and do not result in a crash
+- Test the creation, fetching ad deletion of user restrictions under all circumstances, valid, invalid and missing parameters, without any crashes
+- Unit tests to ensure creation, fetching and deletion of no allergen restrictions works on all inputs and does not crash the system
+- Unit tests favorite foods functions with all inputs to ensure proper returns and error handling to prevent system crashes
+- Unit tests to ensure creating, fetching and deleting meals works on all inputs without any system crashes
+- Unit tests to ensure basic find, create, delete operations function for locations
+- Unit tests to ensure ability to find locations serving food items works as intended on all inputs without any crashes.
+- Unit tests to ensure functions to find or modify a users favorite locations work as intended on all inputs without any crashes.
+- Unit tests to ensure functions related to getting and setting a location's meal times and open/close times work as intended on all inputs without crashes.
+- Unit tests to ensure basic find, create, and remove functions related to foods work properly.
+- Unit tests to ensure that getting food nutritional information and analysis works properly.
 
 ## Build Process
-- Install git, npm , node on local machine. 
+- Install git, npm and python on local machine.
 - Clone the repository
 - Choose the main branch (or whatever branch you would like to update)
-- Run NPM install and then run node server.js in git bash terminal
+- Run 'npm install' to get dependencies
+- Change into backend directory and run 'python -m pip install -r requirements.txt'
+- Run 'node server.js' in git bash terminal ('server.js' file is located in '/backend/src/server/' directory)
 - Change into frontend directory in git bash terminal (cd frontend)
 - Run npm start in git bash terminal
 
@@ -62,6 +77,9 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
 - Continue to [SRS Doc](https://docs.google.com/document/d/1xARkV2M6CB3EhkK2Rf1cDI93MhJKZdLDTaTv2R8JQP0/edit)
 ## Software Design Specification (SDS)
 - Contine to [SDS Doc](https://docs.google.com/document/d/1RPasyq5xxhvOO15QfFHecmJ8BU1d_DJ6zW3PnVy-DZA/edit)
+## Test Plan Documentation
+- Continue to [Test_Doc](https://docs.google.com/document/d/10I2CrcpcRK6KH5of0NHJlbkwWZKUcQg38x7Yp3QMQwo/edit?usp=sharing)
+
 
 
 ## Scope

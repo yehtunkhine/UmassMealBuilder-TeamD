@@ -1,10 +1,8 @@
 import { Link} from "react-router-dom"
-import MenuData from "../components/MenuData"
 import { useLocation } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Chart } from "react-google-charts";
 import Speedometer from "react-d3-speedometer";
-import ReactDOM from 'react-dom';
 import styled from 'styled-components'
 import './AnalysisStyles.css';
 
@@ -73,41 +71,59 @@ right: 75px;
 `;
 
 
-
-
 export default function Analysis(){
     const location = useLocation();
-    if (location.state === null){
+    const [items, setItems] = useState([]);
+
+    const fetchData = useCallback(async (foods) => {
+        foods.forEach(async (food) => {
+            const response = await fetch(`http://localhost:3001/facts?foodId=${food.foodId}`)
+            const data = await response.json();
+            const thisFoodFacts = {
+                name: data.name,
+                calories: data.calories,
+                carbs: data.carbs,
+                fat: data.fat,
+                protein: data.protein,
+                ingredients: data.ingredients,
+                recipeLables: data.recipeLables,
+                healthfulness: data.healthfulness
+            }
+            if (items.some(item => item.name === thisFoodFacts.name) === false) {
+                setItems(items => [...items, thisFoodFacts])
+            }
+        })
+    }, [items])
+
+    useEffect(() => {
+        if (location.state !== null) {
+            fetchData(location.state.foods);
+        }
+    }, [])
+
+    if (location.state === null || location.state.foods.length === 0){
         return (
-            <div class  = "overlay">
-              <text class= "labelText">Select items to get started: </text>
-              <Link to={{pathname: "/DiningHalls"}}> 
+            <div className  = "overlay">
+              <p className= "labelText">Select items to get started: </p>
+              <Link to={{pathname: "/DiningHalls"}}>
                   <div>
-                  <button class = "itemButton">Select Items</button>
+                  <button className = "itemButton">Select Items</button>
                   </div>
               </Link>
             </div>
         )
     }
-    const {foods} = location.state;
-    let foodlist = [];
-
-    let items = require('./items.json');
-
-    foods.forEach(x=> foodlist.push(items[x]));
 
     return (
     <Container >
-        <TotalInfo foodlist = {foodlist} foods = {foods}/>
-
+        {items && <TotalInfo foods={items}/>}
     </Container>
     )
-        
 }
 
 
 
-export const data = (fat, protein, carbs) =>[
+export const data = () =>[
     ["Task", "Hours per Day"],
     ["Work", 11],
     ["Eat", 2],
@@ -115,14 +131,12 @@ export const data = (fat, protein, carbs) =>[
     ["Watch TV", 2],
     ["Sleep", 7],
   ];
-  
+
   export const options = {
     title: "Nutrient Balance",
   };
- 
-const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const HealthScale = ({hScore}) => 
+const HealthScale = ({hScore}) =>
 {
 return (
 <div>
@@ -175,7 +189,7 @@ return (
           needleColor="#000080"
         />
       </div>
-  
+
 )
 
 
@@ -196,27 +210,50 @@ const PChart = ({fat, protein, carbs}) => {
         />
     );
 }
-const TotalInfo = ({foodlist, foods}) => {
+
+function filterDuplicateObjects(array) {
+  return array.filter((obj, index) => {
+    // Use indexOf() or findIndex() to find the first occurrence of the object
+    const firstIndex = array.findIndex(
+      (item, idx) => JSON.stringify(item) === JSON.stringify(obj) && idx < index
+    );
+
+    // Keep only the objects that are not duplicate
+    return firstIndex === -1;
+  });
+}
+
+const TotalInfo = ({foods}) => {
     let tCalories = 0;
     let tFat = 0;
-    let tSatFat = 0;
     let tProtein = 0;
     let tCarbs = 0;
     let healthScore = 0;
-    foodlist.forEach(x => {
-        let info = x.nutrientInfo;
-        tCalories += Number(info.calories);
-        info.fat.replace('g', '');
-        tFat += parseFloat(info.fat);
-        info.saturatedFat.replace('g', '');
-        tSatFat += parseFloat(info.saturatedFat);
-        info.protein.replace('g','');
-        tProtein += parseFloat(info.protein);
-        info.carbohydrates.replace('g', '');
-        tCarbs += parseFloat(info.carbohydrates);
-        healthScore += parseInt(x.healthfulness);
-        healthScore = healthScore / foodlist.length;
-    });
+    const [tInfo, setTInfo] = useState({calories: 0, fat: 0, protein: 0, carbs: 0, healthScore: 0});
+    const filteredFoods = filterDuplicateObjects(foods);
+
+    useEffect(() => {
+        filteredFoods.forEach(info => {
+            console.log(info)
+            tCalories += Number(info.calories);
+            const calories = tInfo.calories + Number(info.calories);
+            setTInfo({...tInfo, calories: calories});
+            info.fat.replace('g', '');
+            tFat += parseFloat(info.fat);
+            setTInfo({...tInfo, fat: tFat});
+            info.protein.replace('g','');
+            tProtein += parseFloat(info.protein);
+            setTInfo({...tInfo, protein: tProtein});
+            info.carbs.replace('g', '');
+            tCarbs += parseFloat(info.carbs);
+            setTInfo({...tInfo, carbs: tCarbs});
+            healthScore += parseInt(info.healthfulness);
+            healthScore = healthScore / foods.length;
+            setTInfo({...tInfo, healthScore: healthScore});
+        });
+        console.log(tCalories, tFat, tProtein, tCarbs, healthScore);
+        console.log(tInfo);
+    }, [foods]);
 
     return (
       <MainBody>
@@ -226,9 +263,8 @@ const TotalInfo = ({foodlist, foods}) => {
               </PieChart>
             <Totals >
             <h1 align='center'>Nutrient Totals</h1>
-            <h2>Total Calories: {tCalories}</h2>
+            <h2>Total Calories: {tInfo.calories}</h2>
             <h2>Total Fat: {tFat.toFixed(1)}g</h2>
-            <h2>Total Saturated Fat: {tSatFat.toFixed(1)}g</h2>
             <h2>Total Protein: {tProtein.toFixed(1)}g</h2>
             <h2>Total Carbohydrates: {tCarbs.toFixed(1)}g</h2>
             </Totals>
@@ -238,14 +274,10 @@ const TotalInfo = ({foodlist, foods}) => {
             <h1>Health Score</h1>
             <HealthScale hScore = {Math.round(healthScore)} />
           </HealthMeter>
-            <Meals>
-            <h1 align='center'>Meals</h1>
-            <h2>{foods.toString()}</h2>
-            </Meals>
             </RightSide>
 
         </MainBody>
-        
+
     );
 
 }
