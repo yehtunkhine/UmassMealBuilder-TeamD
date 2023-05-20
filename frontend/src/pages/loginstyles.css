@@ -1,0 +1,280 @@
+.loginBox {/*Used for login and signup boxes*/
+  border-radius: 5px;
+  background-color: #BE3C20;
+  padding: 20px;
+  width: 50%;
+  margin: auto;
+}
+
+.outerBox {/*Used in login and signup outer boxes*/
+  border-radius: 5px;
+  background-color: #EFEFEF;
+  padding: 20px;
+  width: 50%;
+  margin: auto;
+}
+
+.min-height{/*Allows the login and signup pages to span whole height so the footer looks correct*/
+  min-height: -webkit-calc(100vh - 72px - 112px);
+  min-height: -moz-calc(100vh - 72px - 112px);
+  min-height: calc(100vh - 72px - 112px)
+}
+
+.labelText {/*Labels for the inputs*/
+  text-align: left;
+}
+
+.description{
+  text-align: left;
+  font-weight: bold;
+  font-size: medium;
+}
+
+.input {/*Input textboxes*/
+  width: 90%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.inputText {/*Input text*/
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.button:hover {
+  background-color: #151976;
+}
+
+.button {/*Used for a couple buttons including login/signup*/
+  border-radius: 5px;
+  background-color: #810000;
+  padding: 10px;
+  width: 80%;
+  margin: auto;
+  color: white;
+}
+
+.signUpButton {/*Google signup button*/
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  width: 60%;
+}
+
+.forgotPasswordButton{
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+}
+
+h4{/*Used for userpage headers*/
+  text-align: left;
+}
+
+.labelBox{
+  border: 2px solid black;
+  margin: auto;  
+  padding: 20px;
+}
+
+.userBox{
+  border-radius: 10px;
+  background-color: #810000;
+  color: #FFFFFF;
+  padding: 20px;
+  width: 95%;
+  margin: auto;
+}
+
+.userBoxDescription{
+  border-radius: 10px;
+  background-color: #EFEFEF;
+  color: #000000;
+  padding: 20px;
+  width: 95%;
+  margin: auto;
+}
+
+.separate{/*Line that separates sections*/
+  border-top:2px solid black;
+  margin: auto;  
+  padding: 20px;
+}
+
+h2{
+  text-align: left;
+}
+
+h3{
+  text-align: left;
+}
+
+.flex-container {/*Allows for things to be side by side*/
+  display: flex;
+}
+
+.flex-child-nav {/*Sidebar*/
+  flex: 2;
+}  
+
+.flex-child{/*The user section*/
+  flex: 9;
+}
+
+.innerBox{
+  background-color: #810000;
+}
+
+/*w3 schools https://www.w3schools.com/howto/howto_css_fixed_sidebar.asp*/
+
+.sidenav {
+  height: 100%;
+  width: 160px;
+  position:relative;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #EFEFEF;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav text {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+}
+
+.sidenav text:hover {
+  color: #810000;
+}
+
+.dropdown-btn {/*For the settings dropdown*/
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: white;
+  display: block;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  outline:none;
+}
+.dropdown-btn:hover {
+  color: #2712b1;
+}
+.dropdown-container {
+  display: none;
+  padding-left: 8px;
+  color: black;
+  border-color: black;
+}
+.dropdown-text {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: black;
+  display: block;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.fa-caret-down {
+  float: right;
+  padding-right: 8px;
+}
+
+select{
+  padding: 6px 8px 6px 6px;
+  text-decoration: none;
+  font-size: 20px;
+  color: black;
+  display: block;
+  width: 50%;
+  text-align: center;
+  cursor: pointer;
+  outline:none;
+  margin:auto;
+}
+
+.flex-select{
+  flex:6;
+}
+.flex-button{/*For the select button*/
+  flex:4;
+}
+
+.flex-space{/*Allows for space between*/
+  flex:1;
+}
+
+.flex-list{/*User preferences*/
+  flex:15;
+  text-align: center;
+  font-size: 20px;
+}
+
+.flex-remove{/*user preferences button*/
+  flex:1;
+  display: grid
+}
+
+.removal-button{
+  display: block;
+  margin:auto;
+  height: 20px;
+  width: 20px;
+  padding: 0px;
+  line-height: .5px;
+  text-align: center;
+  align-items: center;
+}
+
+.user-preference{
+  margin: 5px 0;
+}
+
+ul{
+  list-style-type: none;
+}
+
+.color-gray{
+  background-color: white;
+}
+
+.color-white{
+  background-color: #EFEFEF;
+}
+
+.restrictions-container{
+  text-align: center;
+}
+
+.dropdown-inner-button{
+  border-radius: 5px;
+  background-color: #EFEFEF;
+  padding: 10px;
+  width: 80%;
+  align-items: center;
+  margin-bottom: 30px;
+  color: black;
+}
+
+.dropdown-inner-button:hover {
+  background-color: #818181;
+}

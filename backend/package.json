@@ -1,0 +1,14 @@
+{
+    "scripts": {
+        "start": "node src/server/server.js"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "moment": "^2.29.4",
+        "pg": "^8.10.0",
+        "pg-hstore": "^2.3.4",
+        "sequelize": "^6.30.0"
+    },
+    "type": "module"
+}
