@@ -67,10 +67,10 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
 - Clone the repository
 - Choose the main branch (or whatever branch you would like to update)
 - Run 'npm install' to get dependencies
-- Change into backend directory and run 'python -m pip install -r requirements.txt'
+- Change into backend directory(cd backend) and run 'python -m pip install -r requirements.txt'
 - Run 'node server.js' in git bash terminal ('server.js' file is located in '/backend/src/server/' directory)
-- Change into frontend directory in git bash terminal (cd frontend)
-- Run npm start in git bash terminal
+- Change into frontend directory in a seperate git bash terminal (cd frontend)
+- Run 'npm start' in git bash terminal
 
 
 ## Software Requirement Specifications (SRS)
