@@ -21,40 +21,14 @@ const Login = () => {
     const txtEmail = useRef(null);
     const txtPassword = useRef(null);
 
-    //const [user, setUser] = useState();
-    /*useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-          if (user) {
-            //setUser(user);
-            // User is signed in, see docs for a list of available properties
-            // https://firebase.google.com/docs/reference/js/firebase.User
-            //const uid = user.uid;
-          } 
-        });
-      }, []);*/
 
     const handleGoogleSignIn = async () => {
         console.log('signing in');
         signInWithPopup(auth, provider)
           .then((result) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            /*const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
-            // The signed-in user info.
-            const user = result.user;
-            // IdP data available using getAdditionalUserInfo(result)
-            console.log('user', user);
-            console.log('token', token);
-            console.log('credential', credential);*/
-            navigate("/");
+            navigate("/");//If works then navigate home
           }).catch((error) => {
-            /*// Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.customData.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);*/
+            /*// Handle Errors here.*/
             alert(error);
             console.log(error);
           });
@@ -72,7 +46,6 @@ const Login = () => {
             await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
             .then((userCredential) => {
                 // Signed in 
-                //const user = userCredential.user;
               });
             navigate("/")
             

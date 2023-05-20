@@ -11,7 +11,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 
 export default function User(){
     let auth = useContext(AuthenticationContext);//Firebase authentication
-    let user = auth.currentUser;
+    let user = auth.currentUser;//Firebase user
     const allergensRef = useRef(null);
     const settingsRef = useRef(null);
     const favoritesRef = useRef(null);
