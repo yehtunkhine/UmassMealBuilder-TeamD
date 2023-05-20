@@ -97,16 +97,18 @@ export default function Analysis(){
     }, [items])
 
     useEffect(() => {
-        fetchData(location.state.foods);
+        if (location.state !== null) {
+            fetchData(location.state.foods);
+        }
     }, [])
 
     if (location.state === null || location.state.foods.length === 0){
         return (
-            <div class  = "overlay">
-              <text class= "labelText">Select items to get started: </text>
+            <div className  = "overlay">
+              <p className= "labelText">Select items to get started: </p>
               <Link to={{pathname: "/DiningHalls"}}>
                   <div>
-                  <button class = "itemButton">Select Items</button>
+                  <button className = "itemButton">Select Items</button>
                   </div>
               </Link>
             </div>
