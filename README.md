@@ -81,12 +81,7 @@ A nutrition-based web app designed to provide University of Massachusetts Amhers
 - Continue to [Test_Doc](https://docs.google.com/document/d/10I2CrcpcRK6KH5of0NHJlbkwWZKUcQg38x7Yp3QMQwo/edit?usp=sharing)
 
 
-
-## Scope
-
-
 ## Team Structure
-
 - Full Stack Developer - 2 - Sivan, Jahkobee, Khiem
 - Front - End Developers/UI - 2 - Lauren, Joseph
 - Back-end Developers - 2 - Rishik, Chris
