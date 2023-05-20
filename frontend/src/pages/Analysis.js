@@ -90,7 +90,6 @@ export default function Analysis(){
                 healthfulness: data.healthfulness
             }
             if (items.some(item => item.name === thisFoodFacts.name) === false) {
-                console.log(thisFoodFacts)
                 setItems(items => [...items, thisFoodFacts])
             }
         })
@@ -117,9 +116,7 @@ export default function Analysis(){
 
     return (
     <Container >
-        {items.map((item, index) => (
-            <h1 key={index}>{item.name}</h1>
-        ))}
+        {items && <TotalInfo foods={items}/>}
     </Container>
     )
 }
@@ -213,27 +210,50 @@ const PChart = ({fat, protein, carbs}) => {
         />
     );
 }
-const TotalInfo = ({foodlist, foods}) => {
+
+function filterDuplicateObjects(array) {
+  return array.filter((obj, index) => {
+    // Use indexOf() or findIndex() to find the first occurrence of the object
+    const firstIndex = array.findIndex(
+      (item, idx) => JSON.stringify(item) === JSON.stringify(obj) && idx < index
+    );
+
+    // Keep only the objects that are not duplicate
+    return firstIndex === -1;
+  });
+}
+
+const TotalInfo = ({foods}) => {
     let tCalories = 0;
     let tFat = 0;
-    let tSatFat = 0;
     let tProtein = 0;
     let tCarbs = 0;
     let healthScore = 0;
-    foodlist.forEach(x => {
-        let info = x.nutrientInfo;
-        tCalories += Number(info.calories);
-        info.fat.replace('g', '');
-        tFat += parseFloat(info.fat);
-        info.saturatedFat.replace('g', '');
-        tSatFat += parseFloat(info.saturatedFat);
-        info.protein.replace('g','');
-        tProtein += parseFloat(info.protein);
-        info.carbohydrates.replace('g', '');
-        tCarbs += parseFloat(info.carbohydrates);
-        healthScore += parseInt(x.healthfulness);
-        healthScore = healthScore / foodlist.length;
-    });
+    const [tInfo, setTInfo] = useState({calories: 0, fat: 0, protein: 0, carbs: 0, healthScore: 0});
+    const filteredFoods = filterDuplicateObjects(foods);
+
+    useEffect(() => {
+        filteredFoods.forEach(info => {
+            console.log(info)
+            tCalories += Number(info.calories);
+            const calories = tInfo.calories + Number(info.calories);
+            setTInfo({...tInfo, calories: calories});
+            info.fat.replace('g', '');
+            tFat += parseFloat(info.fat);
+            setTInfo({...tInfo, fat: tFat});
+            info.protein.replace('g','');
+            tProtein += parseFloat(info.protein);
+            setTInfo({...tInfo, protein: tProtein});
+            info.carbs.replace('g', '');
+            tCarbs += parseFloat(info.carbs);
+            setTInfo({...tInfo, carbs: tCarbs});
+            healthScore += parseInt(info.healthfulness);
+            healthScore = healthScore / foods.length;
+            setTInfo({...tInfo, healthScore: healthScore});
+        });
+        console.log(tCalories, tFat, tProtein, tCarbs, healthScore);
+        console.log(tInfo);
+    }, [foods]);
 
     return (
       <MainBody>
@@ -243,9 +263,8 @@ const TotalInfo = ({foodlist, foods}) => {
               </PieChart>
             <Totals >
             <h1 align='center'>Nutrient Totals</h1>
-            <h2>Total Calories: {tCalories}</h2>
+            <h2>Total Calories: {tInfo.calories}</h2>
             <h2>Total Fat: {tFat.toFixed(1)}g</h2>
-            <h2>Total Saturated Fat: {tSatFat.toFixed(1)}g</h2>
             <h2>Total Protein: {tProtein.toFixed(1)}g</h2>
             <h2>Total Carbohydrates: {tCarbs.toFixed(1)}g</h2>
             </Totals>
@@ -255,10 +274,6 @@ const TotalInfo = ({foodlist, foods}) => {
             <h1>Health Score</h1>
             <HealthScale hScore = {Math.round(healthScore)} />
           </HealthMeter>
-            <Meals>
-            <h1 align='center'>Meals</h1>
-            <h2>{foods.toString()}</h2>
-            </Meals>
             </RightSide>
 
         </MainBody>
